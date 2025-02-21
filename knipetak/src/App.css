@@ -1,0 +1,59 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Aleo', serif;
+}
+
+/* Style for the navbar */
+.navBar {
+  display: flex;
+  justify-content: space-between;  
+  align-items: center;             
+  padding: 1rem 3rem;
+  background-color: #6FB5C0;      
+  color: #FFF                  
+}
+
+.navLinks {
+  display: flex;
+  gap: 4rem;                       
+}
+
+.navLinks p {
+  cursor: pointer;   
+  font-size: 1.2rem;     
+}
+
+/* Style for the logo */
+.logo {
+  width: 12%;
+  height: auto;
+}
+
+.mainContent {
+  background-color: #F8F0FF;
+  min-height: 100vh;   
+  width: 100%;
+}
+
+/* Style for the title */
+.title {
+  text-align: center;
+  padding-top: 2rem;             
+  font-size: 2.5rem;
+}
+
+.footer {
+  height: 6rem;
+  background-color: #6FB5C0;  
+  color: #FFF;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 2rem;
+  font-size: 1.2rem;
+}
