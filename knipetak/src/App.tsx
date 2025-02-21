@@ -14,6 +14,7 @@ function App() {
         </div>
       </div>
 
+      // Testing
       <div className="mainContent">
         <h1 className="title">Knipetak - En muskelterapaut på hjul!</h1>
       </div>
