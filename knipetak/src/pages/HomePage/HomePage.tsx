@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
-import { fetchUsers, UserData } from "../../backend/firebase/services/firebase.service.ts";
-import "./HomePage.css";
-import logo from "../../assets/images/logo.png";
+import { fetchUsers, UserData} from "../../backend/firebase/services/firebase.userservice";
+import { onAuthStateChanged, auth, logOut } from "../../backend/firebase/services/firebase.authservice";
+import NavigationBar from '../../components/NavigationBar/NavigationBar';
+import Footer from '../../components/Footer/Footer';
+import './HomePage.css';
 
 function HomePage() {
   const [data, setData] = useState<UserData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
 
+  // Effect hook to fetch user data from Firestore when component mounts
   useEffect(() => {
     const getData = async () => {
       try {
@@ -22,20 +26,43 @@ function HomePage() {
     getData();
   }, []);
 
+  // Effect hook to get and set the current user's display name from Firebase Auth
+  useEffect(() => {
+    // Subscribe to auth state changes to get the current user's display name
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user?.displayName) {
+        setCurrentUser(user.displayName);
+      } else {
+        setCurrentUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+   // Function to handle sign out
+   const handleSignOut = async () => {
+    try {
+      await logOut();
+      setCurrentUser(null);
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
+
   return (
     <>
-      <div className="navBar">
-        <img src={logo} alt="LOGO" className="logo" />
-        <div className="navLinks">
-          <p>Hjem</p>
-          <p>Behandlinger</p>
-          <p>Book Time</p>
-          <p>Kontakt</p>
-        </div>
-      </div>
-
+      <NavigationBar />
       <div className="mainContent">
         <h1 className="title">Knipetak - En muskelterapeut på hjul!</h1>
+        
+        {currentUser && (
+          <div className="user-info">
+            <p>Innlogget bruker: {currentUser}</p>
+            <button className="logout-button" onClick={handleSignOut}>Logg ut</button>
+          </div>
+        )}
 
         <div className="firestore">
           {loading ? (
@@ -46,9 +73,11 @@ function HomePage() {
             <div>
               <h3>Fetched Data fra Firestore:</h3>
               {data.map((item) => (
-                <div key={item.id}>
-                  <p>Id: {item.id} (Bruker dokument ID som id)</p>
+                <div key={item.uid}>
+                  <p>Id: {item.uid}</p>
+                  <p>Email: {item.email}</p>
                   <p>Alder: {item.age}</p>
+                  <p>Navn: {item.displayName}</p>
                   <p>Lokasjon: {item.location}</p>
                   <p>Helseproblemer: {item.healthIssues}</p>
                   <p>Telefonnummer: {item.phoneNumber}</p>
@@ -61,10 +90,7 @@ function HomePage() {
           )}
         </div>
       </div>
-
-      <div className="footer">
-        <p>post@knipetak.no</p>
-      </div>
+      <Footer />
     </>
   );
 }
