@@ -46,7 +46,6 @@ interface AvailabilityResult {
 
 /**
  * Returns the number of hours offset for Norway on a given date.
- * For example, if the timeZoneName is "CET" returns 1, if "CEST" returns 2.
  */
 function getOsloOffsetForDate(date: Date): number {
   const dtf = new Intl.DateTimeFormat("en-US", {
@@ -63,21 +62,14 @@ function getOsloOffsetForDate(date: Date): number {
 /**
  * Given a date string in "YYYY-MM-DD", returns the start and end of day boundaries
  * in UTC corresponding to midnight in the Norwegian timezone.
- *
- * For example, for "2025-03-11" during CET (offset 1):
- *   startOfDay: 2025-03-10T23:00:00.000Z  (i.e. 00:00 in Oslo)
- *   endOfDay:   2025-03-11T23:00:00.000Z
  */
 function getOsloDayBounds(dateStr: string): {
   startOfDay: Date;
   endOfDay: Date;
 } {
   const [year, month, day] = dateStr.split("-").map(Number);
-  // Create a temporary date from the string (assumes local interpretation)
   const tempDate = new Date(dateStr + "T00:00:00");
-  const osloOffset = getOsloOffsetForDate(tempDate); // e.g. 1 for CET, 2 for CEST
-
-  // For midnight in Oslo (00:00 local), the UTC time is 00:00 minus the offset.
+  const osloOffset = getOsloOffsetForDate(tempDate);
   const startOfDay = new Date(
     Date.UTC(year, month - 1, day, 0 - osloOffset, 0, 0)
   );
@@ -88,12 +80,15 @@ function getOsloDayBounds(dateStr: string): {
 }
 
 /**
- * Utility function to generate 30-minute time slots.
+ * Utility function to generate time slots.
+ * The slots are generated from start to end with a given interval (in minutes),
+ * excluding any slots whose time strings appear in the bookedSlots array.
  */
 const generateTimeSlots = (
   start: string,
   end: string,
-  bookedSlots: string[]
+  bookedSlots: string[],
+  interval: number = 30
 ): string[] => {
   const slots: string[] = [];
   const startTime = new Date(`1970-01-01T${start}:00`);
@@ -102,7 +97,7 @@ const generateTimeSlots = (
   for (
     let time = startTime;
     time < endTime;
-    time = new Date(time.getTime() + 30 * 60000)
+    time = new Date(time.getTime() + interval * 60000)
   ) {
     const timeStr = time.toTimeString().substring(0, 5); // "HH:MM"
     if (!bookedSlots.includes(timeStr)) {
@@ -126,19 +121,13 @@ export const getAvailableSlotsByDate = async (
     let location: string | null = null;
     let eventDetails: EventDetails | null = null;
 
-    // Calculate Norwegian day bounds based on the provided date string.
+    // Calculate Norwegian day boundaries
     const { startOfDay, endOfDay } = getOsloDayBounds(dateStr);
     console.log(`Oslo startOfDay (UTC): ${startOfDay.toISOString()}`);
     console.log(`Oslo endOfDay (UTC): ${endOfDay.toISOString()}`);
 
-    // STEP 1: Check for an override on this calendar day.
+    // STEP 1: Check for an override on this day.
     console.log(`🔎 Checking for overrides for ${dateStr}`);
-    console.log(
-      "Override query: timestamps between",
-      startOfDay.toISOString(),
-      "and",
-      endOfDay.toISOString()
-    );
     const overrideQuery = query(
       collection(db, "availibilityOverrides"),
       where("date", ">=", Timestamp.fromDate(startOfDay)),
@@ -157,41 +146,26 @@ export const getAvailableSlotsByDate = async (
       location = overrideData.location;
 
       if (overrideData.eventId) {
-        console.log(
-          `Fetching event details for eventId: ${overrideData.eventId}`
-        );
         const eventRef = doc(db, "events", overrideData.eventId);
         const eventDoc = await getDoc(eventRef);
         if (eventDoc.exists()) {
           eventDetails = eventDoc.data() as EventDetails;
-          console.log("Event details:", eventDetails);
-        } else {
-          console.warn(
-            "No event details found for eventId:",
-            overrideData.eventId
-          );
         }
       }
     } else {
       console.log("No override found. Falling back to default schedule.");
-      // Use the English weekday from the Oslo midnight.
       const englishDay = new Intl.DateTimeFormat("en-US", {
         weekday: "long",
         timeZone: "Europe/Oslo",
       }).format(startOfDay);
-      const dayKey = englishDay.toLowerCase(); // e.g. "tuesday"
-      console.log(`📆 Checking default schedule for: ${dayKey}`);
-
+      const dayKey = englishDay.toLowerCase();
       const defaultRef = doc(db, "defaultAvailability", "default_workhours");
       const defaultDoc = await getDoc(defaultRef);
       if (!defaultDoc.exists()) {
         console.warn("⚠️ No default schedule found.");
         return null;
       }
-
       const defaultData = defaultDoc.data() as DefaultAvailability;
-      console.log("Default schedule data:", defaultData);
-
       if (defaultData.weeklySchedule[dayKey]) {
         workHours = defaultData.weeklySchedule[dayKey].workhours;
         location = defaultData.weeklySchedule[dayKey].location;
@@ -207,7 +181,7 @@ export const getAvailableSlotsByDate = async (
     }
     console.log(`✅ Work hours for ${dateStr}:`, workHours);
 
-    // STEP 3: Fetch booked slots for this date.
+    // STEP 2: Fetch booked slots for this day.
     const bookingsRef = collection(db, "bookings");
     const bookingsQueryRef = query(
       bookingsRef,
@@ -219,16 +193,46 @@ export const getAvailableSlotsByDate = async (
       `Bookings query returned ${bookingsSnapshot.size} document(s).`
     );
 
-    const bookedSlots = bookingsSnapshot.docs.map(
-      (doc) => (doc.data().timeSlot as { start: string }).start
-    );
+    // Define a travel buffer in minutes (e.g. 15 minutes)
+    const travelBuffer = 15;
+
+    // For each booking, generate 15-minute increments from booking.start to booking.end + travelBuffer.
+    // Using 15-minute increments ensures we can capture a slot like "17:15" if booking.end + travelBuffer equals that.
+    const bookedSlots: string[] = [];
+    bookingsSnapshot.docs.forEach((doc) => {
+      const data = doc.data();
+      // Use the correct field "timeslot"
+      const timeslot = data.timeslot;
+      if (timeslot && timeslot.start && timeslot.end) {
+        const startTime = timeslot.start.toDate
+          ? timeslot.start.toDate()
+          : new Date(timeslot.start);
+        const endTime = timeslot.end.toDate
+          ? timeslot.end.toDate()
+          : new Date(timeslot.end);
+        // Calculate the blocking end time (non-inclusive)
+        const blockingEndTime = new Date(
+          endTime.getTime() + travelBuffer * 60000
+        );
+        // Generate 15-minute increments
+        for (
+          let t = new Date(startTime);
+          t < blockingEndTime;
+          t = new Date(t.getTime() + 15 * 60000)
+        ) {
+          const timeStr = t.toTimeString().substring(0, 5);
+          bookedSlots.push(timeStr);
+        }
+      }
+    });
     console.log(`Booked slots for ${dateStr}:`, bookedSlots);
 
-    // STEP 4: Generate available time slots dynamically.
+    // STEP 3: Generate available slots using a 15-minute increment.
     const availableSlots = generateTimeSlots(
       workHours.start,
       workHours.end,
-      bookedSlots
+      bookedSlots,
+      15 // Use 15-minute increments
     );
     console.log(`Available slots for ${dateStr}:`, availableSlots);
 

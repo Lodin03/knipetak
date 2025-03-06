@@ -6,13 +6,10 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import app from "../firebase";
+import BookingData from "../../interfaces/BookingData";
 
 const db = getFirestore(app);
 
-/**
- * Define the shape of a booking's timeslot.
- * The timeslot fields can be either JavaScript Date objects or Firestore Timestamps.
- */
 export interface BookingTimeslot {
   start: Date | Timestamp;
   end: Date | Timestamp;
@@ -31,28 +28,22 @@ export interface Booking {
   price: number; // E.g. 1550
   status: string; // E.g. "pending"
   timeslot: BookingTimeslot; // Start and end times as timestamps
-  treatmentId: string; // E.g. "deep_tissue"
+  treatmentId: string;
 }
 
 /**
  * Creates a new booking in the Firestore "bookings" collection.
- * The `bookingData` parameter should include all booking properties except `createdAt`,
- * which will be automatically set to Firestore's server timestamp.
- *
- * @param bookingData - The data for the booking (excluding createdAt)
- * @returns The document ID of the created booking.
+ * The `bookingData` parameter should include all properties defined in BookingData.
+ * The `createdAt` field will be automatically set to Firestore's server timestamp.
  */
 export const createBooking = async (
-  bookingData: Omit<Booking, "createdAt">
+  bookingData: BookingData
 ): Promise<string> => {
   try {
-    // Prepare the booking object with a server-generated timestamp
     const bookingWithTimestamp = {
       ...bookingData,
       createdAt: serverTimestamp(),
     };
-
-    // Add the booking to the "bookings" collection
     const docRef = await addDoc(
       collection(db, "bookings"),
       bookingWithTimestamp
