@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchUsers, UserData} from "../../backend/firebase/services/firebase.userservice";
+import { fetchUsers } from "../../backend/firebase/services/firebase.userservice";
+import { UserData } from "../../backend/interfaces/UserData";
 import { onAuthStateChanged, auth, logOut } from "../../backend/firebase/services/firebase.authservice";
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
@@ -78,7 +79,7 @@ function HomePage() {
                   <p>Email: {item.email}</p>
                   <p>Alder: {item.age}</p>
                   <p>Navn: {item.displayName}</p>
-                  <p>Lokasjon: {item.location}</p>
+                  <p>Addresse: {item.location?.address}</p>
                   <p>Helseproblemer: {item.healthIssues}</p>
                   <p>Telefonnummer: {item.phoneNumber}</p>
                   <p>Bruker type: {item.userType}</p>

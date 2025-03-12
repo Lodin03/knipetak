@@ -1,7 +1,7 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, User, onAuthStateChanged, signOut } from 'firebase/auth';
 import app from '../firebase.ts';
-import { createUserDocument, UserType } from './firebase.userservice';
-
+import { createUserDocument } from './firebase.userservice';
+import { UserType } from '../../interfaces/UserData';
 export const auth = getAuth(app);
 
 // Function to get current user
