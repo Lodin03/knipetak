@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  min-height: 77.75vh;
 }
 
 h1 {

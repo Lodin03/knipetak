@@ -9,7 +9,7 @@ const BookPage: React.FC = () => {
     <>
     <NavigationBar />
     <div className="book-page">
-      <h1>Book an Appointment</h1>
+      <h1>Book en time</h1>
       <BookingCalendar />
     </div>
     <Footer />

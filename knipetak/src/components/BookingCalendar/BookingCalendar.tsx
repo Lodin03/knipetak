@@ -29,6 +29,8 @@ const BookingCalendar: React.FC = () => {
   const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null);
   // State for tracking the appointment address
   const [address, setAddress] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [postalCode, setPostalCode] = useState<number>(0);
 
   // State for treatments fetched from Firestore
   const [treatments, setTreatments] = useState<Treatment[]>([]);
@@ -148,8 +150,11 @@ const BookingCalendar: React.FC = () => {
       customerId: currentUser.uid,
       date: new Date(selectedDate),
       duration,
-      location: "Haukeland",
-      address,
+      location: {
+        address,
+        city,
+        postalCode
+      },
       paymentStatus: "pending",
       price,
       status: "pending",
@@ -165,7 +170,9 @@ const BookingCalendar: React.FC = () => {
       alert(`Booking bekreftet! Din booking-ID er: ${bookingId}`);
       setShowConfirmation(false);
       setSelectedTime(null);
-      // Optionally reset additional modal fields...
+      setAddress("");
+      setCity("");
+      setPostalCode(0);
     } catch (error) {
       console.error("Error creating booking:", error);
       alert("Det oppsto en feil ved oppretting av booking, vennligst prøv igjen.");
@@ -214,7 +221,7 @@ const BookingCalendar: React.FC = () => {
           <p>
             <strong>Dato:</strong> {selectedDate}
           </p>
-          <p>
+          <p className="start-time">
             <strong>Starttid:</strong> {selectedTime}
           </p>
           <div>
@@ -225,6 +232,28 @@ const BookingCalendar: React.FC = () => {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Skriv inn adresse"
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              By:
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="Skriv inn by"
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              Postnummer:
+              <input
+                type="number"
+                value={postalCode}
+                onChange={(e) => setPostalCode(Number(e.target.value))}
+                placeholder="Skriv inn postnummer"
               />
             </label>
           </div>
