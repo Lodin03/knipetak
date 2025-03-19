@@ -46,32 +46,7 @@ function HomePage() {
       <NavigationBar />
       <div className="mainContent">
         <h1 className="title">Knipetak - En muskelterapeut på hjul!</h1>
-
-        <div className="firestore">
-          {loading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p style={{ color: "red" }}>{error}</p>
-          ) : data.length ? (
-            <div>
-              <h3>Fetched Data fra Firestore:</h3>
-              {data.map((item) => (
-                <div key={item.uid}>
-                  <p>Id: {item.uid}</p>
-                  <p>Email: {item.email}</p>
-                  <p>Alder: {item.age}</p>
-                  <p>Navn: {item.displayName}</p>
-                  <p>Lokasjon: {item.location}</p>
-                  <p>Helseproblemer: {item.healthIssues}</p>
-                  <p>Telefonnummer: {item.phoneNumber}</p>
-                  <p>Bruker type: {item.userType}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No data found.</p>
-          )}
-        </div>
+    
       </div>
       <Footer />
     </>

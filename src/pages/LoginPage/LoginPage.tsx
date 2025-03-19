@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signIn, signUp } from '../../backend/firebase/services/firebase.authservice';
+import { signIn, signUp, signInWithGoogle } from '../../backend/firebase/services/firebase.authservice';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
 import './LoginPage.css';
+
 
 function LoginPage() {
     const [email, setEmail] = useState('');
@@ -12,6 +13,15 @@ function LoginPage() {
     const [error, setError] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
     const navigate = useNavigate();
+
+    const handleGoogleSignIn = async () => {
+        try {
+            await signInWithGoogle();
+            navigate('/'); // Redirect to homepage after successful login
+        } catch (error) {
+            setError('Kunne ikke logge inn med Google. Prøv igjen.');
+        }
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -78,6 +88,11 @@ function LoginPage() {
                             {isRegistering ? 'Registrer deg' : 'Logg Inn'}
                         </button>
                     </form>
+    
+                    <button className="google-button" onClick={handleGoogleSignIn}>
+                        Logg inn med Google
+                    </button>
+    
                     <div className="toggle-form">
                         <button 
                             className="toggle-button"
