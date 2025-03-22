@@ -11,8 +11,8 @@ import {
   UserCredential 
 } from 'firebase/auth';
 import app from '../firebase.ts';
-import { createUserDocument, UserType } from './firebase.userservice';
-
+import { createUserDocument } from './firebase.userservice';
+import { UserType } from '../../interfaces/UserData';
 export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 

@@ -1,35 +1,9 @@
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
 import app from '../firebase.ts';
+import { UserData, UserType } from '../../interfaces/UserData.ts';
 
 // Firestore instance
 const db = getFirestore(app);
-
-// Defining so that Booking is an array
-export interface Booking {
-    bookingId: string; 
-    date: string;
-    service: string;
-}
-
-// Defining so UserType can only be either "kunde" or "admin"
-export enum UserType {
-    CUSTOMER = "kunde",
-    ADMIN = "admin",
-}
-
-// Interface that defines the structure for user data
-export interface UserData {
-    uid: string;
-    displayName: string;
-    email: string;
-    age?: number;
-    bookings?: Booking[];
-    healthIssues?: string;
-    location?: string;
-    phoneNumber?: string;
-    userType: UserType;
-    createdAt: Date;
-}
 
 export const createUserDocument = async (userId: string, userData: UserData) => {
     try {
