@@ -34,7 +34,7 @@ function NavigationBar() {
             <Link to={userType === UserType.ADMIN ? "/AdminHomePage" : "/"}><img src={logo} alt="LOGO" className="logo" /></Link>
             <div className="navLinks">
                 <Link to={userType === UserType.ADMIN ? "/AdminHomePage" : "/"}>{userType === UserType.ADMIN ? "Admin Hjem" : "Hjem"}</Link>
-                <Link to={userType === UserType.ADMIN ? "/AdminCalenderPage" : "/"}>{userType === UserType.ADMIN ? "Admin Kalender" : "Book Time"}</Link>
+                <Link to={userType === UserType.ADMIN ? "/AdminCalenderPage" : "/book"}>{userType === UserType.ADMIN ? "Admin Kalender" : "Book Time"}</Link>
                 <Link to="/Behandlinger">Behandlinger</Link>
                 <Link to="/kontakt">Kontakt</Link>
                 {user && <Link to="/profile">Profil</Link>} {/* ✅ Show only if user is logged in */}
