@@ -52,7 +52,6 @@ function HomePage() {
     }
    };
 
-const HomePage: React.FC = () => {
   return (
     <>
       <NavigationBar />
@@ -95,6 +94,6 @@ const HomePage: React.FC = () => {
       <Footer />
     </>
   );
-};
+}
 
 export default HomePage;

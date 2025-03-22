@@ -8,7 +8,7 @@ import { getTreatments } from "../../backend/firebase/services/firebase.treatmen
 import { getLocations } from "../../backend/firebase/services/firebase.locationservice";
 import { BookingData } from "../../backend/interfaces/BookingData";
 import "./BookingCalendar.css";
-import TimeSlot from "../../backend/interfaces/TimeSlot";
+import TimeSlot from "../../backend/interfaces/timeSlot";
 import EventDetails from "../../backend/interfaces/availabilityInterfaces/EventDetails";
 import { Treatment } from "../../backend/interfaces/Treatment";
 import { Location } from "../../backend/interfaces/Location";
