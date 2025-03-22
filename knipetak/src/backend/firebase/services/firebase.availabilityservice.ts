@@ -15,7 +15,7 @@ import app from "../firebase";
 
 import WorkHours from "../../interfaces/availabilityInterfaces/WorkHours";
 import OverrideData from "../../interfaces/availabilityInterfaces/OverrideData";
-import EventDetails from "../../interfaces/EventDetails";
+import EventDetails from "../../interfaces/availabilityInterfaces/EventDetails";
 import WeeklySchedule from "../../interfaces/availabilityInterfaces/WeeklySchedule";
 import DefaultAvailability from "../../interfaces/availabilityInterfaces/DefaultAvailability";
 import AvailabilityResult from "../../interfaces/availabilityInterfaces/AvailabilityResult";
@@ -88,7 +88,6 @@ export const getAvailableSlotsByDate = async (
     console.log(`🔍 Fetching availability for ${dateStr}`);
 
     let workHours: WorkHours | null = null;
-    let location: string | null = null;
     let eventDetails: EventDetails | null = null;
 
     // Calculate Norwegian day boundaries
@@ -113,7 +112,6 @@ export const getAvailableSlotsByDate = async (
       const overrideData = overrideSnapshot.docs[0].data() as OverrideData;
       console.log("Override document data:", overrideData);
       workHours = overrideData.workhours;
-      location = overrideData.location;
 
       if (overrideData.eventId) {
         const eventRef = doc(db, "events", overrideData.eventId);
@@ -138,14 +136,13 @@ export const getAvailableSlotsByDate = async (
       const defaultData = defaultDoc.data() as DefaultAvailability;
       if (defaultData.weeklySchedule[dayKey]) {
         workHours = defaultData.weeklySchedule[dayKey].workhours;
-        location = defaultData.weeklySchedule[dayKey].location;
       } else {
         console.warn(`⚠️ No default work hours found for ${dayKey}`);
         return null;
       }
     }
 
-    if (!workHours) {
+    if (!workHours || !workHours.timeSlots.length) {
       console.error(`🚨 Invalid work hours format for ${dateStr}:`, workHours);
       return null;
     }
@@ -167,11 +164,9 @@ export const getAvailableSlotsByDate = async (
     const travelBuffer = 15;
 
     // For each booking, generate 15-minute increments from booking.start to booking.end + travelBuffer.
-    // Using 15-minute increments ensures we can capture a slot like "17:15" if booking.end + travelBuffer equals that.
     const bookedSlots: string[] = [];
     bookingsSnapshot.docs.forEach((doc) => {
       const data = doc.data();
-      // Use the correct field "timeslot"
       const timeslot = data.timeslot;
       if (timeslot && timeslot.start && timeslot.end) {
         const startTime = timeslot.start.toDate
@@ -196,18 +191,29 @@ export const getAvailableSlotsByDate = async (
     });
     console.log(`Booked slots for ${dateStr}:`, bookedSlots);
 
-    // STEP 3: Generate available slots using a 15-minute increment.
-    const availableSlots = generateTimeSlots(
-      workHours.start,
-      workHours.end,
-      bookedSlots,
-      15 // increment of 15 minutes
-    );
-    console.log(`Available slots for ${dateStr}:`, availableSlots);
+    // STEP 3: Generate available slots for each work hour time slot
+    const availabilityByLocation = workHours.timeSlots
+      .map((timeSlot) => {
+        const availableSlots = generateTimeSlots(
+          timeSlot.start,
+          timeSlot.end,
+          bookedSlots,
+          15 // increment of 15 minutes
+        );
+
+        return {
+          location: timeSlot.location,
+          availableSlots,
+          workHours: {
+            start: timeSlot.start,
+            end: timeSlot.end,
+          },
+        };
+      })
+      .filter((slot) => slot.availableSlots.length > 0);
 
     return {
-      location,
-      availableSlots,
+      availabilityByLocation,
       eventDetails,
     };
   } catch (error) {

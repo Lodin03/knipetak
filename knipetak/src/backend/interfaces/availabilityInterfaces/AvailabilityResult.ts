@@ -1,9 +1,17 @@
-import EventDetails from "../EventDetails";
+import EventDetails from "./EventDetails";
 
 // This is what we return when asking for available time slots on a specific day
 
-export default interface AvailabilityResult {
-  location: string | null;
+interface LocationAvailability {
+  location: string;
   availableSlots: string[];
+  workHours: {
+    start: string;
+    end: string;
+  };
+}
+
+export default interface AvailabilityResult {
+  availabilityByLocation: LocationAvailability[];
   eventDetails: EventDetails | null;
 }
