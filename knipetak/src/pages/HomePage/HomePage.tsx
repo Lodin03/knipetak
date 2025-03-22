@@ -50,8 +50,9 @@ function HomePage() {
     } catch (error) {
       console.error("Error signing out: ", error);
     }
-  };
+   };
 
+const HomePage: React.FC = () => {
   return (
     <>
       <NavigationBar />
@@ -94,6 +95,6 @@ function HomePage() {
       <Footer />
     </>
   );
-}
+};
 
 export default HomePage;

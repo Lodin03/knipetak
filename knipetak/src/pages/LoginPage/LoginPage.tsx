@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signIn, signUp } from '../../backend/firebase/services/firebase.authservice';
+import { signIn, signUp, signInWithGoogle } from '../../backend/firebase/services/firebase.authservice';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
 import { validateUsername, validatePassword, calculatePasswordStrength } from '../../utils/contentValidation';
 import './LoginPage.css';
+
 
 function LoginPage() {
     const [email, setEmail] = useState('');
@@ -19,6 +20,15 @@ function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
     const navigate = useNavigate();
+
+
+    const handleGoogleSignIn = async () => {
+        try {
+            await signInWithGoogle();
+            navigate('/'); // Redirect to homepage after successful login
+        } catch (error) {
+            setError('Kunne ikke logge inn med Google. Prøv igjen.');
+     }
 
     const passwordRequirements = [
         'Minst 6 tegn',
@@ -134,7 +144,7 @@ function LoginPage() {
                     <form onSubmit={isRegistering ? handleRegister : handleLogin}>
                         {isRegistering && (
                             <div className="form-group">
-                                <label htmlFor="username">Brukernavn</label>
+                                <label htmlFor="username">Navn</label>
                                 <input
                                     type="text"
                                     id="username"
@@ -248,6 +258,11 @@ function LoginPage() {
                             )}
                         </button>
                     </form>
+    
+                    <button className="google-button" onClick={handleGoogleSignIn}>
+                        Logg inn med Google
+                    </button>
+    
                     <div className="toggle-form">
                         <button 
                             className="toggle-button"
