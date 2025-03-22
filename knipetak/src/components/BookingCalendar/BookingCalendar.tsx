@@ -6,12 +6,14 @@ import { getAvailableSlotsByDate } from "../../backend/firebase/services/firebas
 import { createBooking } from "../../backend/firebase/services/firebase.bookingservice";
 import { getTreatments } from "../../backend/firebase/services/firebase.treatmentservice";
 import { getLocations } from "../../backend/firebase/services/firebase.locationservice";
+import { auth } from "../../backend/firebase/services/firebase.authservice";
 import { BookingData } from "../../backend/interfaces/BookingData";
 import "./BookingCalendar.css";
 import TimeSlot from "../../backend/interfaces/timeSlot";
 import EventDetails from "../../backend/interfaces/availabilityInterfaces/EventDetails";
 import { Treatment } from "../../backend/interfaces/Treatment";
 import { Location } from "../../backend/interfaces/Location";
+import { useNavigate } from "react-router-dom";
 
 // Register Norwegian locale
 registerLocale('nb', nb);
@@ -96,9 +98,6 @@ const LoadingSpinner: React.FC = () => (
   </div>
 );
 
-// Dummy currentUser for demonstration—replace with your authentication context/hook.
-const currentUser = { uid: "user123" };
-
 interface LocationSlots {
   location: Location | null;
   workHours: {
@@ -115,6 +114,7 @@ interface BookingLocation {
 }
 
 const BookingCalendar: React.FC = () => {
+  const navigate = useNavigate();
   // Core booking state
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -138,6 +138,10 @@ const BookingCalendar: React.FC = () => {
   const [address, setAddress] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [postalCode, setPostalCode] = useState<number | null>(null);
+  const [isGuestBooking, setIsGuestBooking] = useState(false);
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
 
   // Fetch treatments and locations when the component mounts
   useEffect(() => {
@@ -206,9 +210,27 @@ const BookingCalendar: React.FC = () => {
 
   // Confirm booking by constructing the booking object and calling createBooking
   const handleBookingConfirm = async () => {
+    if (!auth.currentUser && !isGuestBooking) {
+      const confirmGuest = window.confirm("Du er ikke logget inn. Vil du fortsette som gjest?");
+      if (confirmGuest) {
+        setIsGuestBooking(true);
+        return;
+      } else {
+        navigate('/login');
+        return;
+      }
+    }
+
     if (!selectedDate || !selectedTime || !selectedTreatment || !selectedLocation) {
       alert("Vennligst fyll ut alle detaljer for bookingen.");
       return;
+    }
+
+    if (isGuestBooking) {
+      if (!guestEmail || !guestName || !guestPhone) {
+        alert("Vennligst fyll ut all gjesteinformasjon.");
+        return;
+      }
     }
 
     if (!address || !city || !postalCode) {
@@ -278,7 +300,10 @@ const BookingCalendar: React.FC = () => {
     };
 
     const bookingData: BookingData = {
-      customerId: currentUser.uid,
+      customerId: auth.currentUser?.uid || `guest_${Date.now()}`,
+      customerEmail: isGuestBooking ? guestEmail : auth.currentUser?.email || '',
+      customerName: isGuestBooking ? guestName : auth.currentUser?.displayName || '',
+      customerPhone: isGuestBooking ? guestPhone : '',
       date: selectedDate,
       duration,
       location: bookingLocation,
@@ -290,6 +315,7 @@ const BookingCalendar: React.FC = () => {
         end: endDateTime,
       },
       treatmentId: selectedTreatment.id,
+      isGuestBooking: isGuestBooking
     };
 
     try {
@@ -394,155 +420,199 @@ const BookingCalendar: React.FC = () => {
             <strong>Starttid:</strong> {selectedTime}
           </p>
           
-          <div>
-            <label className="checkbox-label">
-              Bookes for en gruppe?
-              <input
-                type="checkbox"
-                checked={isGroupBooking}
-                onChange={(e) => {
-                  setIsGroupBooking(e.target.checked);
-                  setSelectedDuration(null);
-                }}
-              />
-            </label>
-          </div>
           <div className="booking-inputs-container">
-
-          {isGroupBooking && (
-            <>
-              <div>
-                <label>
-                  Gruppestørrelse:
-                  <input
-                    type="number"
-                    min="2"
-                    value={groupSize || ''}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      // If empty string, set to undefined, otherwise parse as number
-                      const numValue = value === '' ? 2 : parseInt(value, 10);
-                      setGroupSize(numValue);
-                    }}
-                  />
-                </label>
-              </div>
-              <div>
-                <label>
-                  Total varighet:
-                  <select
-                    value={selectedDuration || ""}
-                    onChange={(e) => setSelectedDuration(Number(e.target.value))}
-                  >
-                    <option value="">Velg total varighet</option>
-                    {selectedTreatment?.durations.map((d) => {
-                      const total = d.duration * groupSize;
-                      return (
-                        <option key={d.duration} value={total}>
-                          {total} minutter ({d.duration} min per person)
-                        </option>
-                      );
-                    })}
-                  </select>
-                </label>
-              </div>
-            </>
-          )}
-
-          <div>
-            <label>
-              Behandlingstype:
-              <select
-                value={selectedTreatment ? selectedTreatment.id : ""}
-                onChange={(e) => {
-                  const behandling = treatments.find((t) => t.id === e.target.value) || null;
-                  setSelectedTreatment(behandling);
-                  setSelectedDuration(null);
-                }}
-              >
-                <option value="">Velg behandling</option>
-                {treatments.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          {selectedTreatment && !isGroupBooking && (
             <div>
               <label>
-                Varighet:
+                Behandlingstype:
                 <select
-                  value={selectedDuration || ""}
-                  onChange={(e) => setSelectedDuration(Number(e.target.value))}
+                  value={selectedTreatment ? selectedTreatment.id : ""}
+                  onChange={(e) => {
+                    const behandling = treatments.find((t) => t.id === e.target.value) || null;
+                    setSelectedTreatment(behandling);
+                    setSelectedDuration(null);
+                  }}
                 >
-                  <option value="">Velg varighet</option>
-                  {selectedTreatment.durations.map((d) => (
-                    <option key={d.duration} value={d.duration}>
-                      {d.duration} minutter
+                  <option value="">Velg behandling</option>
+                  {treatments.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
                     </option>
                   ))}
                 </select>
               </label>
             </div>
-          )}
 
-          <div className="location-display">
-            <label>
-              Knipetak's plassering denne dagen:
-              <p className="location-value">{selectedLocation?.name || "Ikke tilgjengelig"}</p>
-            </label>
-            <p className="location-warning">
-              ⚠️ Merk: Hvis adressen din er for langt unna {selectedLocation?.name}, 
-              kan bookingen måtte kanselleres eller flyttes til en annen dato.
-            </p>
-          </div>
+            {selectedTreatment && !isGroupBooking && (
+              <div>
+                <label>
+                  Varighet:
+                  <select
+                    value={selectedDuration || ""}
+                    onChange={(e) => setSelectedDuration(Number(e.target.value))}
+                  >
+                    <option value="">Velg varighet</option>
+                    {selectedTreatment.durations.map((d) => (
+                      <option key={d.duration} value={d.duration}>
+                        {d.duration} minutter
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
 
-          <div>
-            <label>
-              Din adresse:
-              <input
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Skriv inn din adresse"
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              By:
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="Skriv inn by"
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              Postnummer:
-              <input
-                type="number"
-                value={postalCode || ''}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  const numValue = value === '' ? 0 : parseInt(value, 10);
-                  setPostalCode(numValue);
-                }}
-                placeholder="Skriv inn postnummer"
-              />
-            </label>
-          </div>
+            <div>
+              <label className="checkbox-label">
+                Bookes for en gruppe?
+                <input
+                  type="checkbox"
+                  checked={isGroupBooking}
+                  onChange={(e) => {
+                    setIsGroupBooking(e.target.checked);
+                    setSelectedDuration(null);
+                  }}
+                />
+              </label>
+            </div>
 
+            {isGroupBooking && (
+              <>
+                <div>
+                  <label>
+                    Gruppestørrelse:
+                    <input
+                      type="number"
+                      min="2"
+                      value={groupSize || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // If empty string, set to undefined, otherwise parse as number
+                        const numValue = value === '' ? 2 : parseInt(value, 10);
+                        setGroupSize(numValue);
+                      }}
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    Total varighet:
+                    <select
+                      value={selectedDuration || ""}
+                      onChange={(e) => setSelectedDuration(Number(e.target.value))}
+                    >
+                      <option value="">Velg total varighet</option>
+                      {selectedTreatment?.durations.map((d) => {
+                        const total = d.duration * groupSize;
+                        return (
+                          <option key={d.duration} value={total}>
+                            {total} minutter ({d.duration} min per person)
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </label>
+                </div>
+              </>
+            )}
+
+            <div className="location-display">
+              <label>
+                Knipetak's plassering denne dagen:
+                <p className="location-value">{selectedLocation?.name || "Ikke tilgjengelig"}</p>
+              </label>
+              <p className="location-warning">
+                ⚠️ Merk: Hvis adressen din er for langt unna {selectedLocation?.name}, 
+                kan bookingen måtte kanselleres eller flyttes til en annen dato.
+              </p>
+            </div>
+
+            <div>
+              <label>
+                Din adresse:
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Skriv inn din adresse"
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                By:
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="Skriv inn by"
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                Postnummer:
+                <input
+                  type="number"
+                  value={postalCode || ''}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const numValue = value === '' ? 0 : parseInt(value, 10);
+                    setPostalCode(numValue);
+                  }}
+                  placeholder="Skriv inn postnummer"
+                />
+              </label>
+            </div>
+
+            {isGuestBooking && (
+              <div className="guest-info">
+                <h4>Gjesteinformasjon</h4>
+                <div>
+                  <label>
+                    Navn:
+                    <input
+                      type="text"
+                      value={guestName}
+                      onChange={(e) => setGuestName(e.target.value)}
+                      placeholder="Ditt navn"
+                      required
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    E-post:
+                    <input
+                      type="email"
+                      value={guestEmail}
+                      onChange={(e) => setGuestEmail(e.target.value)}
+                      placeholder="Din e-post"
+                      required
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    Telefon:
+                    <input
+                      type="tel"
+                      value={guestPhone}
+                      onChange={(e) => setGuestPhone(e.target.value)}
+                      placeholder="Ditt telefonnummer"
+                      required
+                    />
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="modal-actions">
             <button onClick={handleBookingConfirm}>Bekreft booking</button>
-            <button onClick={() => setShowConfirmation(false)}>Avbryt</button>
+            <button onClick={() => {
+              setShowConfirmation(false);
+              setIsGuestBooking(false);
+            }}>Avbryt</button>
           </div>
         </div>
       )}
