@@ -12,12 +12,7 @@
 
 .navLinks {
     display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    flex-grow: inherit;
     gap: 2rem;
-    padding: 0.5rem;
-    min-width: 0;
 }
 
 .navLinks a {
@@ -27,8 +22,6 @@
     font-size: 1.2rem;
     transition: all 0.3s ease;
     position: relative;
-    white-space: nowrap;
-    flex-shrink: 0;
 }
 
 .navLinks a:hover {
