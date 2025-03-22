@@ -4,12 +4,14 @@ import { nb } from 'date-fns/locale';
 import "react-datepicker/dist/react-datepicker.css";
 import { getAvailableSlotsByDate } from "../../backend/firebase/services/firebase.availabilityservice";
 import { createBooking } from "../../backend/firebase/services/firebase.bookingservice";
-import { getTreatments} from "../../backend/firebase/services/firebase.treatmentservice";
+import { getTreatments } from "../../backend/firebase/services/firebase.treatmentservice";
+import { getLocations } from "../../backend/firebase/services/firebase.locationservice";
 import { BookingData } from "../../backend/interfaces/BookingData";
 import "./BookingCalendar.css";
-import TimeSlot from "../../backend/interfaces/timeSlot";
-import EventDetails from "../../backend/interfaces/EventDetails";
+import TimeSlot from "../../backend/interfaces/TimeSlot";
+import EventDetails from "../../backend/interfaces/availabilityInterfaces/EventDetails";
 import { Treatment } from "../../backend/interfaces/Treatment";
+import { Location } from "../../backend/interfaces/Location";
 
 // Register Norwegian locale
 registerLocale('nb', nb);
@@ -97,54 +99,66 @@ const LoadingSpinner: React.FC = () => (
 // Dummy currentUser for demonstration—replace with your authentication context/hook.
 const currentUser = { uid: "user123" };
 
-const BookingCalendar: React.FC = () => {
-  // State for available times, selected date, location, event details, and selected time
-  const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [location, setLocation] = useState<string | null>(null);
-  const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+interface LocationSlots {
+  location: Location | null;
+  workHours: {
+    start: string;
+    end: string;
+  };
+  availableSlots: string[];
+}
 
-  // State for booking confirmation modal and additional booking details
-  const [showConfirmation, setShowConfirmation] = useState(false);
+interface BookingLocation {
+  address: string;
+  city: string;
+  postalCode: number;
+}
+
+const BookingCalendar: React.FC = () => {
+  // Core booking state
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [locationSlots, setLocationSlots] = useState<LocationSlots[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  
+  // Treatment and group booking state
   const [isGroupBooking, setIsGroupBooking] = useState(false);
   const [groupSize, setGroupSize] = useState<number>(1);
-  // For individual bookings, selectedDuration represents the appointment duration in minutes.
-  // For group bookings, it represents the total duration.
+  const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null);
-
-  // State for treatments fetched from Firestore
-  const [treatments, setTreatments] = useState<Treatment[]>([]);
-
-  // Add loading state
-  const [isLoading, setIsLoading] = useState(false);
-
-  // State for completed booking
+  
+  // Form and modal state
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [showCompletedBooking, setShowCompletedBooking] = useState(false);
   const [completedBookingId, setCompletedBookingId] = useState<string>("");
-
-  // State for address input
   const [address, setAddress] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [postalCode, setPostalCode] = useState<number | null>(null);
 
-  // Fetch treatments from Firestore when the component mounts
+  // Fetch treatments and locations when the component mounts
   useEffect(() => {
-    const fetchTreatments = async () => {
+    const fetchInitialData = async () => {
       try {
-        const data = await getTreatments();
-        setTreatments(data);
+        const [treatmentsData, locationsData] = await Promise.all([
+          getTreatments(),
+          getLocations()
+        ]);
+        setTreatments(treatmentsData);
+        setLocations(locationsData);
       } catch (error) {
-        console.error("Error fetching treatments:", error);
+        console.error("Error fetching initial data:", error);
       }
     };
-    fetchTreatments();
+    fetchInitialData();
   }, []);
 
   // Fetch available timeslots when a date is selected
   useEffect(() => {
-    if (!selectedDate) return;
+    if (!selectedDate || !locations.length) return;
     
     const fetchSlots = async () => {
       setIsLoading(true);
@@ -152,46 +166,53 @@ const BookingCalendar: React.FC = () => {
       console.log(`Fetching slots for ${dateStr}`);
       try {
         const data = await getAvailableSlotsByDate(dateStr);
-        if (data) {
-          const formattedSlots: TimeSlot[] = data.availableSlots.map((slot: string) => ({
-            start: slot,
-            end: ""
+        if (data && data.availabilityByLocation?.length > 0) {
+          const slotsWithLocationData = data.availabilityByLocation.map(slot => ({
+            location: locations.find(loc => loc.id === slot.location) || null,
+            workHours: slot.workHours,
+            availableSlots: slot.availableSlots
           }));
-          setAvailableSlots(formattedSlots);
-          setLocation(data.location || "Ukjent");
+          setLocationSlots(slotsWithLocationData);
           if (data.eventDetails) {
+            const eventName = typeof data.eventDetails.name === 'string' ? data.eventDetails.name : "Ukjent arrangement";
+            const eventLocation = typeof data.eventDetails.location === 'string' ? data.eventDetails.location : "Ukjent sted";
             setEventDetails({
-              name: (data.eventDetails as { name?: string }).name || "Ukjent arrangement",
-              location: (data.eventDetails as { location?: string }).location || "Ukjent sted",
+              name: eventName,
+              location: eventLocation
             });
           } else {
             setEventDetails(null);
           }
         } else {
-          console.warn(`No data found for ${dateStr}`);
-          setAvailableSlots([]);
-          setLocation(null);
+          setLocationSlots([]);
           setEventDetails(null);
         }
       } catch (error) {
         console.error(`Error fetching slots for ${dateStr}:`, error);
+        setLocationSlots([]);
       } finally {
         setIsLoading(false);
       }
     };
     fetchSlots();
-  }, [selectedDate]);
+  }, [selectedDate, locations]);
 
   // Handle timeslot click by showing the confirmation modal
-  const handleSlotClick = (slot: TimeSlot) => {
+  const handleSlotClick = (slot: TimeSlot, location: Location | null) => {
     setSelectedTime(slot.start);
+    setSelectedLocation(location);
     setShowConfirmation(true);
   };
 
   // Confirm booking by constructing the booking object and calling createBooking
   const handleBookingConfirm = async () => {
-    if (!selectedDate || !selectedTime || !selectedTreatment || !location) {
+    if (!selectedDate || !selectedTime || !selectedTreatment || !selectedLocation) {
       alert("Vennligst fyll ut alle detaljer for bookingen.");
+      return;
+    }
+
+    if (!address || !city || !postalCode) {
+      alert("Vennligst fyll ut din adresse, by og postnummer.");
       return;
     }
 
@@ -250,15 +271,17 @@ const BookingCalendar: React.FC = () => {
     const startDateTime = new Date(`${dateStr}T${selectedTime}:00`);
     const endDateTime = new Date(startDateTime.getTime() + duration * 60000);
 
+    const bookingLocation: BookingLocation = {
+      address,
+      city,
+      postalCode
+    };
+
     const bookingData: BookingData = {
       customerId: currentUser.uid,
       date: selectedDate,
       duration,
-      location: {
-        address: location,
-        city: "",
-        postalCode: 0
-      },
+      location: bookingLocation,
       paymentStatus: "pending",
       price,
       status: "pending",
@@ -301,6 +324,10 @@ const BookingCalendar: React.FC = () => {
     });
   };
 
+  const handleLocationDisplay = (location: Location | null): string => {
+    return location?.name || "Ukjent lokasjon";
+  };
+
   return (
     <div className="booking-calendar">
       <h2>Velg en dato</h2>
@@ -324,24 +351,35 @@ const BookingCalendar: React.FC = () => {
           <h3>Tilgjengelige tider for {formatDateNorwegian(selectedDate)}</h3>
           {eventDetails ? (
             <p>
-              📅 Helene deltar på <strong>{eventDetails.name}</strong> på {eventDetails.location}
+              📅 Helene deltar på <strong>{eventDetails['name'] as string}</strong> på {eventDetails['location'] as string}
             </p>
+          ) : isLoading ? (
+            <LoadingSpinner />
+          ) : locationSlots.length > 0 ? (
+            <div className="locations-grid">
+              {locationSlots.map((locationSlot, index) => (
+                <div key={index} className="location-slots">
+                  <h4>📍 {handleLocationDisplay(locationSlot.location)}</h4>
+                  <p className="work-hours">
+                    Arbeidstid: {locationSlot.workHours.start} - {locationSlot.workHours.end}
+                  </p>
+                  <div className="timeslot-grid">
+                    {locationSlot.availableSlots.map((slot) => (
+                      <button
+                        key={slot}
+                        onClick={() => handleSlotClick({ start: slot, end: "" }, locationSlot.location)}
+                        className="time-slot-button"
+                      >
+                        {slot}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
-            <p>📍 Sted: {location || "Ikke tilgjengelig"}</p>
+            <p>Ingen tilgjengelige tider denne dagen.</p>
           )}
-          <div className="timeslot-grid">
-            {isLoading ? (
-              <LoadingSpinner />
-            ) : availableSlots.length > 0 ? (
-              availableSlots.map((slot) => (
-                <button key={slot.start} onClick={() => handleSlotClick(slot)}>
-                  {slot.start}
-                </button>
-              ))
-            ) : (
-              <p>Ingen tilgjengelige tider.</p>
-            )}
-          </div>
           {selectedTime && <p className="selected-time">Valgt tid: {selectedTime}</p>}
         </>
       )}
@@ -454,10 +492,10 @@ const BookingCalendar: React.FC = () => {
           <div className="location-display">
             <label>
               Knipetak's plassering denne dagen:
-              <p className="location-value">{location || "Ikke tilgjengelig"}</p>
+              <p className="location-value">{selectedLocation?.name || "Ikke tilgjengelig"}</p>
             </label>
             <p className="location-warning">
-              ⚠️ Merk: Hvis adressen din er for langt unna {location}, 
+              ⚠️ Merk: Hvis adressen din er for langt unna {selectedLocation?.name}, 
               kan bookingen måtte kanselleres eller flyttes til en annen dato.
             </p>
           </div>
@@ -509,7 +547,7 @@ const BookingCalendar: React.FC = () => {
         </div>
       )}
 
-      {showCompletedBooking && selectedDate && selectedTime && selectedTreatment && location && (
+      {showCompletedBooking && selectedDate && selectedTime && selectedTreatment && selectedLocation && (
         <CompletedBooking
           bookingId={completedBookingId}
           date={selectedDate}
@@ -519,9 +557,9 @@ const BookingCalendar: React.FC = () => {
           isGroup={isGroupBooking}
           groupSize={isGroupBooking ? groupSize : undefined}
           location={{
-            address: location,
-            city: "",
-            postalCode: 0
+            address,
+            city,
+            postalCode: postalCode || 0
           }}
           onClose={handleCloseCompletedBooking}
         />
