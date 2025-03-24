@@ -14,11 +14,21 @@ const HomePage: React.FC = () => {
     return () => clearInterval(slideInterval);
   }, [])
 
+  const nextSlides = () => {
+    setCurrentSlide((prev => (prev + 1 ) % slides.length))
+  }
+
+  const prevSlides = () => {
+    if (currentSlide > 0) {
+    setCurrentSlide((prev => (prev - 1 + slides.length) % slides.length))
+  }
+}
+
   return (
     <>
     <NavigationBar />
 
-    <>
+    
     
       
 
@@ -73,6 +83,9 @@ Massasje på benk – utføres med olje /flytende voks (bievoks) direkte på hud
           </div> 
             </div>
             <div className='SlideShowImage'>
+              <div className='SlideShowButtons'>
+            <button onClick={prevSlides}> {"<"} </button>
+            </div>
 {slides.map((src, index) => (
 <img
 key = {index}
@@ -84,12 +97,16 @@ width = "350px"
 />
 
 ))}
+<div className='SlideShowButtons'>
+  <button onClick={nextSlides}> {">"} </button>
+  </div>
+
 </div>
         </div>
         
         <div className='imageSlideshow'>
-        <img className="slide" src="/src/assets/images/BildeMassasje.jpg" alt="massasjebilde" height="500px" width="300px"></img>
-        <img className="slide" src="/src/assets/images/Massasje2.jpg" alt="massasjebilde" height="500px" width="300px"></img>
+        <img className="slide" src="/src/assets/images/BildeMassasje.jpg" alt="massasjebilde"></img>
+        <img className="slide" src="/src/assets/images/Massasje2.jpg" alt="massasjebilde" ></img>
 
 
         </div>
@@ -103,7 +120,7 @@ width = "350px"
       
 
       
-    </>
+    
   
     <Footer />
     </>
