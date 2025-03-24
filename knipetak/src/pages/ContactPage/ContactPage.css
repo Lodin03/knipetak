@@ -1,7 +1,143 @@
 .contact-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem 0;
-    min-height: 77.75vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 77.75vh;
+  padding: 2rem 0;
+  background-color: #f5f5f5;
+}
+
+.contact-box {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.625rem;
+  box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 40rem;
+}
+
+.contact-box h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.contact-info {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-info__text {
+  color: #555;
+  font-size: 1.125rem;
+  margin: 0.5rem 0;
+}
+
+.contact-info__divider {
+  width: 200px;
+  height: 1px;
+  background-color: #ddd;
+  margin: 1rem auto;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0.3125rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #6FB5C0;
+}
+
+.form-input--short {
+  height: 2.5rem;
+}
+
+.form-input--tall {
+  height: 9.375rem;
+  resize: vertical;
+}
+
+.form-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #6FB5C0;
+  color: #fff;
+  border: none;
+  border-radius: 0.3125rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: #f8d7da;
+  border-radius: 0.3125rem;
+}
+
+.success-message {
+  color: #28a745;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: #d4edda;
+  border-radius: 0.3125rem;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
 }
