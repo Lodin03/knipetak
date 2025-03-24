@@ -1,9 +1,4 @@
-// Defining so that Booking is an array
-export interface Booking {
-    bookingId: string; 
-    date: string;
-    service: string;
-}
+import { BookingData } from './BookingData';
 
 export interface Location {
     address: string;
@@ -23,7 +18,7 @@ export interface UserData {
     displayName: string;
     email: string;
     age?: number;
-    bookings?: Booking[];
+    bookings?: BookingData[];
     healthIssues?: string;
     location?: Location;
     phoneNumber?: string;

@@ -195,8 +195,8 @@ export const getAvailableSlotsByDate = async (
     const availabilityByLocation = workHours.timeSlots
       .map((timeSlot) => {
         const availableSlots = generateTimeSlots(
-          timeSlot.start,
-          timeSlot.end,
+          timeSlot.start.toTimeString().substring(0, 5),
+          timeSlot.end.toTimeString().substring(0, 5),
           bookedSlots,
           15 // increment of 15 minutes
         );
@@ -204,10 +204,7 @@ export const getAvailableSlotsByDate = async (
         return {
           location: timeSlot.location,
           availableSlots,
-          workHours: {
-            start: timeSlot.start,
-            end: timeSlot.end,
-          },
+          workHours: timeSlot
         };
       })
       .filter((slot) => slot.availableSlots.length > 0);

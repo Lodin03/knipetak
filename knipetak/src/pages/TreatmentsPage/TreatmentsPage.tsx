@@ -2,7 +2,7 @@ import { useState } from "react";
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
 import { TreatmentType } from '../../interfaces/treatment.interface';
-import { treatmentSections } from '../../data/treatmentData';
+import { treatmentData } from '../../data/treatmentData';
 import './TreatmentsPage.css';
 
 function TreatmentsPage() {
@@ -35,7 +35,7 @@ function TreatmentsPage() {
           </h3>
 
           <div className="treatments__buttons">
-            {Object.entries(treatmentSections).map(([key, section]) => (
+            {Object.entries(treatmentData).map(([key, section]) => (
               <button
                 key={key}
                 className="treatments__toggle-button"
@@ -48,7 +48,7 @@ function TreatmentsPage() {
 
           {activeSection && (
             <div className="treatments__grid">
-              {treatmentSections[activeSection].content.map((item, index) => (
+              {treatmentData[activeSection].content.map((item: { heading: string; description: string }, index: number) => (
                 <article key={index} className="treatments__card">
                   <h3 className="treatments__card-title">{item.heading}</h3>
                   <p className="treatments__card-text">{item.description}</p>
