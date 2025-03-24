@@ -12,8 +12,9 @@ import "./BookingCalendar.css";
 import TimeSlot from "../../backend/interfaces/timeSlot";
 import EventDetails from "../../backend/interfaces/availabilityInterfaces/EventDetails";
 import { Treatment } from "../../backend/interfaces/Treatment";
-import { Location } from "../../backend/interfaces/Location";
-import { useNavigate } from "react-router-dom";
+import { Location as VenueLocation } from "../../backend/interfaces/Location";
+import { Location as BookingLocation } from "../../backend/interfaces/UserData";
+
 
 // Register Norwegian locale
 registerLocale('nb', nb);
@@ -26,11 +27,7 @@ interface CompletedBookingProps {
   duration: number;
   isGroup: boolean;
   groupSize?: number;
-  location: {
-    address: string;
-    city: string;
-    postalCode: number;
-  };
+  location: BookingLocation;
   onClose: () => void;
 }
 
@@ -99,18 +96,12 @@ const LoadingSpinner: React.FC = () => (
 );
 
 interface LocationSlots {
-  location: Location | null;
+  location: VenueLocation | null;
   workHours: {
     start: string;
     end: string;
   };
   availableSlots: string[];
-}
-
-interface BookingLocation {
-  address: string;
-  city: string;
-  postalCode: number;
 }
 
 const BookingCalendar: React.FC = () => {
@@ -120,9 +111,9 @@ const BookingCalendar: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<VenueLocation[]>([]);
   const [locationSlots, setLocationSlots] = useState<LocationSlots[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<VenueLocation | null>(null);
   
   // Treatment and group booking state
   const [isGroupBooking, setIsGroupBooking] = useState(false);
@@ -202,7 +193,7 @@ const BookingCalendar: React.FC = () => {
   }, [selectedDate, locations]);
 
   // Handle timeslot click by showing the confirmation modal
-  const handleSlotClick = (slot: TimeSlot, location: Location | null) => {
+  const handleSlotClick = (slot: TimeSlot, location: VenueLocation | null) => {
     setSelectedTime(slot.start);
     setSelectedLocation(location);
     setShowConfirmation(true);
@@ -293,10 +284,11 @@ const BookingCalendar: React.FC = () => {
     const startDateTime = new Date(`${dateStr}T${selectedTime}:00`);
     const endDateTime = new Date(startDateTime.getTime() + duration * 60000);
 
+    // Create a booking location using the BookingLocation interface
     const bookingLocation: BookingLocation = {
       address,
       city,
-      postalCode
+      postalCode: Number(postalCode)
     };
 
     const bookingData: BookingData = {
@@ -350,7 +342,7 @@ const BookingCalendar: React.FC = () => {
     });
   };
 
-  const handleLocationDisplay = (location: Location | null): string => {
+  const handleLocationDisplay = (location: VenueLocation | null): string => {
     return location?.name || "Ukjent lokasjon";
   };
 
@@ -629,7 +621,7 @@ const BookingCalendar: React.FC = () => {
           location={{
             address,
             city,
-            postalCode: postalCode || 0
+            postalCode: Number(postalCode || 0)
           }}
           onClose={handleCloseCompletedBooking}
         />
