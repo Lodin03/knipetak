@@ -57,6 +57,7 @@ function HomePage() {
       <NavigationBar />
       <div className="mainContent">
         <h1 className="title">Knipetak - En muskelterapeut på hjul!</h1>
+        {/* Testing push to branch*/}
         
         {currentUser && (
           <div className="user-info">
