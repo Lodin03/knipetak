@@ -1,12 +1,35 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, User, onAuthStateChanged, signOut } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider, UserCredential } from 'firebase/auth';
 import app from '../firebase.ts';
 import { createUserDocument } from './firebase.userservice';
 import { UserType } from '../../interfaces/UserData';
-export const auth = getAuth(app);
 
-// Function to get current user
-export const getCurrentUser = (): User | null => {
-    return auth.currentUser;
+export const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+
+// Function to sign in with Google
+export const signInWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+
+    // Check if the user already exists in Firestore, if not, create a new document
+    const userCredential = result as UserCredential & { additionalUserInfo?: { isNewUser?: boolean } };
+    if (userCredential.additionalUserInfo?.isNewUser) {
+      await createUserDocument(user.uid, {
+        uid: user.uid,
+        displayName: user.displayName || "",
+        email: user.email || "",
+        userType: UserType.CUSTOMER,
+        createdAt: new Date(),
+      });
+    }
+
+    console.log('User signed in with Google: ', user);
+    return user;
+  } catch (error) {
+    console.error('Error signing in with Google: ', error);
+    throw error;
+  }
 };
 
 // Export onAuthStateChanged for components to use
@@ -19,9 +42,7 @@ export const signUp = async (email: string, password: string, username: string) 
     const user = userCredential.user;
     
     // Update the user's display name
-    await updateProfile(user, {
-      displayName: username
-    });
+    await updateProfile(user, { displayName: username });
 
     // Create user document in Firestore
     await createUserDocument(user.uid, {
@@ -31,7 +52,7 @@ export const signUp = async (email: string, password: string, username: string) 
       userType: UserType.CUSTOMER,
       createdAt: new Date()
     });
-    
+
     console.log('User signed up: ', user);
     return user;
   } catch (error) {
@@ -56,10 +77,10 @@ export const signIn = async (email: string, password: string) => {
 // Function to log out the current user
 export const logOut = async () => {
   try {
-      await signOut(auth);
-      console.log('User signed out');
+    await signOut(auth);
+    console.log('User signed out');
   } catch (error) {
-      console.error('Error signing out: ', error);
-      throw error;
+    console.error('Error signing out: ', error);
+    throw error;
   }
 };

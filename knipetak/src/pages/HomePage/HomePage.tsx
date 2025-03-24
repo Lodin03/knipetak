@@ -50,7 +50,7 @@ function HomePage() {
     } catch (error) {
       console.error("Error signing out: ", error);
     }
-  };
+   };
 
   return (
     <>
