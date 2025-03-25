@@ -4,34 +4,59 @@ import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
 import { logOut } from '../../backend/firebase/services/firebase.authservice';
+import { getUserData, updateUserProfile } from '../../backend/firebase/services/firebase.userservice';
 import { useNavigate } from 'react-router-dom';
 import { getUserBookings } from '../../backend/firebase/services/firebase.bookingservice';
 import { BookingData } from '../../backend/interfaces/BookingData';
 import { getTreatments } from '../../backend/firebase/services/firebase.treatmentservice';
 import { Treatment } from '../../backend/interfaces/Treatment';
+import { Gender, UserData } from '../../backend/interfaces/UserData';
 
 const Profile: React.FC = () => {
     const [profileImage, setProfileImage] = useState("src/assets/images/defaultProfileIcon.png");
     const [user, setUser] = useState<User | null>(null);
+    const [userData, setUserData] = useState<Partial<UserData> | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [bookings, setBookings] = useState<BookingData[]>([]);
     const [treatments, setTreatments] = useState<Treatment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    const [gender, setGender] = useState<Gender | ''>('');
+    const [age, setAge] = useState<number | ''>('');
+    const [address, setAddress] = useState<string>('');
+    const [city, setCity] = useState<string>('');
+    const [postalCode, setPostalCode] = useState<number | null>(null);
+    const [healthIssues, setHealthIssues] = useState<string>('');
+    const [addressError, setAddressError] = useState<string>('');
+    const [ageError, setAgeError] = useState<string>('');
+    const [phoneNumber, setPhoneNumber] = useState<string>('');
+    const [phoneError, setPhoneError] = useState<string>('');
 
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            console.log('Current user:', currentUser?.uid);
             setUser(currentUser);
             if (currentUser) {
                 try {
-                    console.log('Fetching user data...');
-                    const [userBookings, treatmentsData] = await Promise.all([
+                    const [userDataResult, userBookings, treatmentsData] = await Promise.all([
+                        getUserData(currentUser.uid),
                         getUserBookings(currentUser.uid),
                         getTreatments()
                     ]);
-                    console.log('Fetched bookings:', userBookings);
-                    console.log('Fetched treatments:', treatmentsData);
+                    
+                    if (userDataResult) {
+                        setUserData(userDataResult);
+                        setGender(userDataResult.gender || '');
+                        setAge(userDataResult.age || '');
+                        setHealthIssues(userDataResult.healthIssues || '');
+                        setPhoneNumber(userDataResult.phoneNumber || '');
+                        if (userDataResult.location) {
+                            setAddress(userDataResult.location.address || '');
+                            setCity(userDataResult.location.city || '');
+                            setPostalCode(userDataResult.location.postalCode || null);
+                        }
+                    }
+                    
                     setBookings(userBookings);
                     setTreatments(treatmentsData);
                 } catch (error) {
@@ -40,7 +65,6 @@ const Profile: React.FC = () => {
                     setIsLoading(false);
                 }
             } else {
-                console.log('No user logged in');
                 setIsLoading(false);
             }
         });
@@ -91,6 +115,83 @@ const Profile: React.FC = () => {
         return treatment?.name || "Ukjent behandling";
     };
 
+    // Valideringsfunksjoner
+    const validateAge = (value: string) => {
+        const numValue = parseInt(value);
+        if (isNaN(numValue)) {
+            setAgeError('Alder må være et tall');
+            return false;
+        }
+        if (numValue < 0 || numValue > 120) {
+            setAgeError('Alder må være mellom 0 og 120 år');
+            return false;
+        }
+        if (!Number.isInteger(numValue)) {
+            setAgeError('Alder må være et helt tall');
+            return false;
+        }
+        setAgeError('');
+        return true;
+    };
+
+    const validateAddress = (value: string) => {
+        // Norsk adresseformat: Gatenavn nummer, f.eks. "Kongens gate 1" eller "Slottsplassen 1"
+        const addressRegex = /^[a-zA-ZæøåÆØÅ\s]+ \d+$/;
+        if (!addressRegex.test(value)) {
+            setAddressError('Ugyldig adresse. Må være på format: Gatenavn nummer');
+            return false;
+        }
+        setAddressError('');
+        return true;
+    };
+
+    const validatePhoneNumber = (value: string) => {
+        // Norsk telefonnummerformat: 8 siffer, kan starte med +47 eller 0047
+        const phoneRegex = /^(\+47|0047)?\s*[2-9]\d{7}$/;
+        if (!phoneRegex.test(value.replace(/\s/g, ''))) {
+            setPhoneError('Ugyldig telefonnummer. Må være 8 siffer og kan starte med +47');
+            return false;
+        }
+        setPhoneError('');
+        return true;
+    };
+
+    const handleSave = async () => {
+        if (!user) return;
+
+        const isAgeValid = age === '' || validateAge(age.toString());
+        const isAddressValid = address === '' || validateAddress(address);
+        const isPhoneValid = phoneNumber === '' || validatePhoneNumber(phoneNumber);
+        
+        if (!isAgeValid || !isAddressValid || !isPhoneValid) {
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            const updatedData: Partial<UserData> = {
+                gender: gender || undefined,
+                age: age === '' ? undefined : Number(age),
+                healthIssues: healthIssues || undefined,
+                phoneNumber: phoneNumber || undefined,
+                location: address ? {
+                    address,
+                    city,
+                    postalCode: postalCode || 0
+                } : undefined
+            };
+
+            await updateUserProfile(user.uid, updatedData);
+            setUserData(prev => ({ ...prev, ...updatedData }));
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Feil ved lagring av profil:', error);
+            alert('Det oppsto en feil ved lagring av profilen. Vennligst prøv igjen.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     return (
         <>
             <NavigationBar />
@@ -135,23 +236,139 @@ const Profile: React.FC = () => {
                     <div className="profile-content">
                         <div className="profile-section">
                             <h3>Personlig Informasjon</h3>
-                            <div className="info-grid">
-                                <div className="info-item">
-                                    <label>Kjønn</label>
-                                    <p>{isEditing ? <input type="text" /> : "Ikke spesifisert"}</p>
+                            {isLoading ? (
+                                <p>Laster inn brukerdata...</p>
+                            ) : (
+                                <div className="info-grid">
+                                    <div className="info-item">
+                                        <label>Kjønn</label>
+                                        <p>
+                                            {isEditing ? (
+                                                <select 
+                                                    value={gender} 
+                                                    onChange={(e) => setGender(e.target.value as Gender)}
+                                                    className="form-select"
+                                                >
+                                                    <option value="">Velg kjønn</option>
+                                                    {Object.values(Gender).map((genderOption) => (
+                                                        <option key={genderOption} value={genderOption}>
+                                                            {genderOption}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            ) : (
+                                                gender || "Ikke spesifisert"
+                                            )}
+                                        </p>
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Alder</label>
+                                        <p>
+                                            {isEditing ? (
+                                                <div className="input-with-error">
+                                                    <input 
+                                                        type="number" 
+                                                        value={age}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setAge(value === '' ? '' : parseInt(value));
+                                                            validateAge(value);
+                                                        }}
+                                                        min="0"
+                                                        max="120"
+                                                        step="1"
+                                                    />
+                                                    {ageError && <span className="error-message">{ageError}</span>}
+                                                </div>
+                                            ) : (
+                                                age || "Ikke spesifisert"
+                                            )}
+                                        </p>
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Adresse</label>
+                                        <p>
+                                            {isEditing ? (
+                                                <div className="input-with-error">
+                                                    <input 
+                                                        type="text" 
+                                                        value={address}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setAddress(value);
+                                                            validateAddress(value);
+                                                        }}
+                                                        placeholder="F.eks: Kongens gate 1"
+                                                    />
+                                                    {addressError && <span className="error-message">{addressError}</span>}
+                                                    <input 
+                                                        type="text" 
+                                                        value={city}
+                                                        onChange={(e) => setCity(e.target.value)}
+                                                        placeholder="By"
+                                                        className="mt-2"
+                                                    />
+                                                    <input 
+                                                        type="number" 
+                                                        value={postalCode || ''}
+                                                        onChange={(e) => setPostalCode(e.target.value ? parseInt(e.target.value) : null)}
+                                                        placeholder="Postnummer"
+                                                        className="mt-2"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                address ? `${address}, ${postalCode} ${city}` : "Ikke spesifisert"
+                                            )}
+                                        </p>
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Telefonnummer</label>
+                                        <p>
+                                            {isEditing ? (
+                                                <div className="input-with-error">
+                                                    <input 
+                                                        type="tel" 
+                                                        value={phoneNumber}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setPhoneNumber(value);
+                                                            validatePhoneNumber(value);
+                                                        }}
+                                                        placeholder="F.eks: +47 12345678"
+                                                    />
+                                                    {phoneError && <span className="error-message">{phoneError}</span>}
+                                                </div>
+                                            ) : (
+                                                phoneNumber || "Ikke spesifisert"
+                                            )}
+                                        </p>
+                                    </div>
+                                    <div className="info-item full-width">
+                                        <label>Helseproblemer</label>
+                                        <p>
+                                            {isEditing ? (
+                                                <textarea 
+                                                    value={healthIssues}
+                                                    onChange={(e) => setHealthIssues(e.target.value)}
+                                                    placeholder="Beskriv eventuelle helseproblemer her..."
+                                                />
+                                            ) : (
+                                                healthIssues || "Ingen spesifisert"
+                                            )}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="info-item">
-                                    <label>Alder</label>
-                                    <p>{isEditing ? <input type="number" /> : "Ikke spesifisert"}</p>
-                                </div>
-                                <div className="info-item">
-                                    <label>Adresse</label>
-                                    <p>{isEditing ? <input type="text" /> : "Ikke spesifisert"}</p>
-                                </div>
-                                <div className="info-item">
-                                    <label>Helseproblemer</label>
-                                    <p>{isEditing ? <textarea /> : "Ingen spesifisert"}</p>
-                                </div>
+                            )}
+                            <div className="save-button-container">
+                                {isEditing && (
+                                    <button 
+                                        className="action-button save"
+                                        onClick={handleSave}
+                                        disabled={!!ageError || !!addressError || !!phoneError || isSaving}
+                                    >
+                                        {isSaving ? 'Lagrer...' : 'Lagre endringer'}
+                                    </button>
+                                )}
                             </div>
                         </div>
 
