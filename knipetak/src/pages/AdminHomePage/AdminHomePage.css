@@ -129,40 +129,10 @@
   margin: 0 auto;
 }
 
-.admin-info h2 {
-  color: #333;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-}
-
 .admin-info p {
   margin: 0.5rem 0;
   color: #333;
   font-size: 1.1rem;
-}
-
-.bookings-section {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-}
-
-.bookings-section h3 {
-  color: #333;
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
-}
-
-.booking-item {
-  background-color: #f8f9fa;
-  padding: 1rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-}
-
-.booking-item p {
-  margin: 0.3rem 0;
-  font-size: 1rem;
 }
 
 .loading {

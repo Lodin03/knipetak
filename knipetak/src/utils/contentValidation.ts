@@ -69,11 +69,11 @@ export function validateUsername(username: string): { valid: boolean; reason?: s
         return contentCheck;
     }
 
-    // Check for valid characters (allow only letters, numbers and certain special characters)
-    if (!/^[a-zA-ZæøåÆØÅ0-9._-]+$/.test(username)) {
+    // Check for valid characters (allow letters, numbers, spaces and certain special characters)
+    if (!/^[a-zA-ZæøåÆØÅ0-9\s._-]+$/.test(username)) {
         return {
             valid: false,
-            reason: 'Ugyldig tegn i brukernavn.'
+            reason: 'Ugyldig tegn i brukernavn. Kun bokstaver, tall, mellomrom og tegnene . _ - er tillatt.'
         };
     }
 

@@ -4,6 +4,9 @@ import {
   addDoc,
   serverTimestamp,
   Timestamp,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import app from "../firebase";
 import BookingData from "../../interfaces/BookingData";
@@ -52,6 +55,56 @@ export const createBooking = async (
     return docRef.id;
   } catch (error) {
     console.error("Error creating booking:", error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches all bookings for a specific user from Firestore
+ */
+export const getUserBookings = async (userId: string): Promise<BookingData[]> => {
+  try {
+    console.log('Fetching bookings for user:', userId);
+    const bookingsRef = collection(db, "bookings");
+    const q = query(
+      bookingsRef,
+      where("customerId", "==", userId)
+    );
+    
+    console.log('Executing Firestore query...');
+    const querySnapshot = await getDocs(q);
+    console.log(`Found ${querySnapshot.size} bookings`);
+    
+    const bookings: BookingData[] = [];
+    
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      console.log('Raw booking data:', data);
+      
+      try {
+        // Convert Firestore Timestamps to Dates
+        const booking: BookingData = {
+          ...data,
+          date: data.date?.toDate?.() || new Date(),
+          timeslot: {
+            start: data.timeslot?.start?.toDate?.() || new Date(),
+            end: data.timeslot?.end?.toDate?.() || new Date()
+          }
+        } as BookingData;
+        console.log('Processed booking:', booking);
+        bookings.push(booking);
+      } catch (error) {
+        console.error('Error processing booking:', error, 'Raw data:', data);
+      }
+    });
+    
+    // Sort bookings by date manually
+    bookings.sort((a, b) => b.date.getTime() - a.date.getTime());
+    
+    console.log('Final bookings array:', bookings);
+    return bookings;
+  } catch (error) {
+    console.error("Error fetching user bookings:", error);
     throw error;
   }
 };
