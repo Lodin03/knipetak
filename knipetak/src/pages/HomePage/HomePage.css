@@ -146,6 +146,7 @@
     padding: 25px 10px;
     color: white;
     
+    
   }
 
   .Image {
@@ -232,7 +233,9 @@ transform: scale(110%);
   opacity: 0;
   visibility: hidden;
   transition: opacity 3s ease-in-out, visibility 0s 1s;;
-  object-fit: contain;
+  object-fit: cover;
+  padding: 0;
+  box-shadow: 4px 4px 10px 4px rgba(0, 0, 0, 0.1);
   
 }
 .slide.active {
@@ -243,3 +246,47 @@ display: block;
 
 }
 
+.ProgressBarContainer {
+
+  width: 100px;
+  height: 5px;
+  background-color: #ddd;
+margin: auto;
+margin-top: 20px;
+  
+ 
+
+}
+
+.ProgressBar {
+  height: 100%;
+  background-color: #4caf50;
+  width: 0;
+ 
+  
+}
+
+.Reviews {
+
+  display: flex;
+  justify-content: center;
+flex-direction: row;
+
+gap: 20px;
+}
+
+.Review {
+max-width: 450px;
+display: flex;
+justify-content: flex-start;
+border: 2px solid #ddd;
+border-radius: 10px;
+background-color: #f5f5f5;
+flex-direction: column;
+align-items: center;
+ text-align: center;
+}
+
+.Feedback {
+  width: 90%;
+}
