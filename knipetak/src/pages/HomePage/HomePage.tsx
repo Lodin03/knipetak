@@ -11,6 +11,8 @@ const HomePage: React.FC = () => {
 "/src/assets/images/Massasje2.jpg", 
 "/src/assets/images/KnipetakBilde.jpg"]
 
+
+
   useEffect(() => {
     const slideInterval = setInterval(() => {
       setProgress(prev =>  {
@@ -42,6 +44,8 @@ const HomePage: React.FC = () => {
       <div className="mainContentHomepage">
         <h1 className="title">Knipetak - En muskelterapaut på hjul!</h1>
         <br></br>
+
+      
         <div className="ContainerHomePage">
         <div className="TextContainer">
         <h3 className="text">Mitt navn er Helene og er muskelterapeut. Jeg er tilgjengelig til å komme der hvor du er. Det vil derfor si at jeg kan komme til deres bedrift eller deres hjem. 
@@ -62,6 +66,49 @@ const HomePage: React.FC = () => {
             </div>
         </div>
 <br></br>
+<br></br>
+<p className='tickerText'><strong> Kommende eventer  </strong> </p>
+<div className='ticker-wrapper'>
+         <div className='ticker'>
+          <div className='tickerInfo'>
+           
+          <p> Myrkdalen Hotel: 9-13 Mars. Bestill nå </p>
+          <img className='imageTicker' src='/src/assets/images/Myrkdalen.jpg'></img>
+          </div>
+          <div className='tickerInfo'>
+          <p> Thon Hotels: 17-20 Mars. Bestill nå </p>
+          <img className='imageTicker' src='/src/assets/images/finsehytta.jpg'></img>
+          </div>
+          <div className='tickerInfo'>
+          <p> Elverum Hundeløp: 9-15 April. Bestill nå </p>
+          <img className='imageTicker' src='/src/assets/images/KnipetakHelene.jpg'></img>
+          </div>
+          <div className='tickerInfo'>
+          <p> Thon Hotels: 17-20 Mars. Bestill nå </p>
+          <img className='imageTicker' src='/src/assets/images/finsehytta.jpg'></img>
+          </div>
+          <div className='tickerInfo'>
+           
+           <p> Myrkdalen Hotel: 9-13 Mars. Bestill nå </p>
+           <img className='imageTicker' src='/src/assets/images/Myrkdalen.jpg'></img>
+           </div>
+           <div className='tickerInfo'>
+           <p> Thon Hotels: 17-20 Mars. Bestill nå </p>
+           <img className='imageTicker' src='/src/assets/images/finsehytta.jpg'></img>
+           </div>
+           <div className='tickerInfo'>
+           <p> Elverum Hundeløp: 9-15 April. Bestill nå </p>
+           <img className='imageTicker' src='/src/assets/images/KnipetakHelene.jpg'></img>
+           </div>
+           <div className='tickerInfo'>
+           <p> Thon Hotels: 17-20 Mars. Bestill nå </p>
+           <img className='imageTicker' src='/src/assets/images/finsehytta.jpg'></img>
+           </div>
+         
+         </div>
+        </div>
+        <br></br>
+        <br></br>
 
         <div className="ContainerHomePage2">
           <div className="TextContainer2">
