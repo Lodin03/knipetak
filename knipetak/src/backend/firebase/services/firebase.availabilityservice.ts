@@ -329,3 +329,54 @@ export async function deleteWorkHoursOverride(
     throw error;
   }
 }
+
+/**
+ * Retrieves the override work hours for a specific date
+ */
+export async function getOverrideWorkHours(
+  date: string
+): Promise<OverrideData | null> {
+  try {
+    const { startOfDay, endOfDay } = getOsloDayBounds(date);
+    const overrideQuery = query(
+      collection(db, "availibilityOverrides"),
+      where("date", ">=", Timestamp.fromDate(startOfDay)),
+      where("date", "<", Timestamp.fromDate(endOfDay))
+    );
+    const overrideSnapshot = await getDocs(overrideQuery);
+
+    if (!overrideSnapshot.empty) {
+      const overrideData = overrideSnapshot.docs[0].data() as OverrideData;
+      return overrideData;
+    }
+    return null;
+  } catch (error) {
+    console.error("❌ Error fetching override work hours:", error);
+    throw error;
+  }
+}
+
+/**
+ * Sets the override work hours for a specific date
+ */
+export async function setOverrideWorkHours(
+  date: string,
+  overrideData: OverrideData
+): Promise<void> {
+  try {
+    const { startOfDay } = getOsloDayBounds(date);
+    const overrideRef = doc(collection(db, "availibilityOverrides"), date);
+    await setDoc(
+      overrideRef,
+      {
+        ...overrideData,
+        date: Timestamp.fromDate(startOfDay),
+      },
+      { merge: true }
+    );
+    console.log("✅ Override work hours set successfully for", date);
+  } catch (error) {
+    console.error("❌ Error setting override work hours:", error);
+    throw error;
+  }
+}

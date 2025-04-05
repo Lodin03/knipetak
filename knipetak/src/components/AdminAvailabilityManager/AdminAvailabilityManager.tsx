@@ -3,6 +3,7 @@ import { WorkHoursManager } from "./WorkHoursManager/WorkHoursManager";
 import { getLocations } from "../../backend/firebase/services/firebase.locationservice";
 import type { Location } from "../../backend/interfaces/Location";
 import "./AdminAvailabilityManager.css";
+import { OverrideManager } from "./OverrideManager/OverrideManager";
 
 type AvailabilitySection = "workHours" | "overrides" | null;
 
@@ -82,7 +83,7 @@ export function AdminAvailabilityManager() {
           
           {expandedSection === "overrides" && (
             <div className="expanded-section">
-              <p>Overstyring av arbeidstider kommer snart...</p>
+              <OverrideManager locations={locations} />
             </div>
           )}
         </div>

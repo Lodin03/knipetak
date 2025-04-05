@@ -14,6 +14,7 @@ import EventDetails from "../../backend/interfaces/availabilityInterfaces/EventD
 import { Treatment } from "../../backend/interfaces/Treatment";
 import { Location as VenueLocation } from "../../backend/interfaces/Location";
 import { Location as BookingLocation } from "../../backend/interfaces/UserData";
+import { useNavigate } from 'react-router-dom';
 
 
 // Register Norwegian locale
