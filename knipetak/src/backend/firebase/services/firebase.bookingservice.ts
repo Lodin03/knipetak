@@ -7,6 +7,8 @@ import {
   query,
   where,
   getDocs,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import app from "../firebase";
 import BookingData from "../../interfaces/BookingData";
@@ -105,6 +107,92 @@ export const getUserBookings = async (userId: string): Promise<BookingData[]> =>
     return bookings;
   } catch (error) {
     console.error("Error fetching user bookings:", error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches all bookings from Firestore
+ */
+export const getAllBookings = async (): Promise<BookingData[]> => {
+  try {
+    console.log('Fetching all bookings');
+    const bookingsRef = collection(db, "bookings");
+    const querySnapshot = await getDocs(bookingsRef);
+    console.log(`Found ${querySnapshot.size} bookings`);
+    
+    const bookings: BookingData[] = [];
+    
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      console.log('Raw booking data:', data);
+      
+      try {
+        // Convert Firestore Timestamps to Dates
+        const booking: BookingData = {
+          bookingId: doc.id,
+          customerId: data.customerId || '',
+          customerEmail: data.customerEmail || '',
+          customerName: data.customerName || '',
+          customerPhone: data.customerPhone || '',
+          date: data.date?.toDate?.() || new Date(),
+          duration: data.duration || 0,
+          location: data.location || { address: '', city: '', postalCode: 0 },
+          paymentStatus: data.paymentStatus || 'pending',
+          price: data.price || 0,
+          status: data.status || 'pending',
+          timeslot: {
+            start: data.timeslot?.start?.toDate?.() || new Date(),
+            end: data.timeslot?.end?.toDate?.() || new Date()
+          },
+          treatmentId: data.treatmentId || '',
+          isGuestBooking: data.isGuestBooking || false
+        };
+        console.log('Processed booking:', booking);
+        bookings.push(booking);
+      } catch (error) {
+        console.error('Error processing booking:', error, 'Raw data:', data);
+      }
+    });
+    
+    // Sort bookings by date manually
+    bookings.sort((a, b) => b.date.getTime() - a.date.getTime());
+    
+    console.log('Final bookings array:', bookings);
+    return bookings;
+  } catch (error) {
+    console.error("Error fetching all bookings:", error);
+    throw error;
+  }
+};
+
+/**
+ * Oppdaterer en eksisterende booking i Firestore
+ */
+export const updateBooking = async (
+  bookingId: string,
+  updateData: Partial<BookingData>
+): Promise<void> => {
+  try {
+    const bookingRef = doc(db, "bookings", bookingId);
+    await updateDoc(bookingRef, updateData);
+    console.log("Booking oppdatert med ID:", bookingId);
+  } catch (error) {
+    console.error("Feil ved oppdatering av booking:", error);
+    throw error;
+  }
+};
+
+/**
+ * Kansellerer en booking ved å endre status til "cancelled"
+ */
+export const cancelBooking = async (bookingId: string): Promise<void> => {
+  try {
+    const bookingRef = doc(db, "bookings", bookingId);
+    await updateDoc(bookingRef, { status: "cancelled" });
+    console.log("Booking kansellert med ID:", bookingId);
+  } catch (error) {
+    console.error("Feil ved kansellering av booking:", error);
     throw error;
   }
 };

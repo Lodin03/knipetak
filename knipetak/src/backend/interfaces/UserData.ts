@@ -6,7 +6,7 @@ export interface Location {
 
 // Defining so UserType can only be either "kunde" or "admin"
 export enum UserType {
-    CUSTOMER = 'customer',
+    CUSTOMER = 'kunde',
     ADMIN = 'admin'
 }
 

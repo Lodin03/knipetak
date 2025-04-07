@@ -17,8 +17,8 @@ const AppRoutes = () => (
       <Route path="/kontakt" element={<ContactPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/AdminHomePage" element={<AdminHomePage />} />
-      <Route path="/AdminCalenderPage" element={<AdminCalenderPage />} />
+      <Route path="/admin-home-page" element={<AdminHomePage />} />
+      <Route path="/admin-calendar-page" element={<AdminCalenderPage />} />
     </Routes>
   </BrowserRouter>
 );

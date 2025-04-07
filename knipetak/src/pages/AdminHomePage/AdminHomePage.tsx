@@ -4,8 +4,8 @@ import { UserData } from "../../backend/interfaces/UserData";
 import { onAuthStateChanged, auth } from "../../backend/firebase/services/firebase.authservice";
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
-import './AdminHomePage.css';
-
+import './AdminHomePage.css'; 
+import { AdminAvailabilityManager } from "../../components/AdminAvailabilityManager/AdminAvailabilityManager";
 function AdminHomePage() {
   const [data, setData] = useState<UserData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -66,6 +66,7 @@ function AdminHomePage() {
             </div>
           )}
         </div>
+        <AdminAvailabilityManager />
       </div>
       <Footer />
     </>
