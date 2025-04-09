@@ -33,11 +33,16 @@
 }
 
 .treatments__image {
-  height: 400px;
+  height: 360px;
   width: 270px;
   object-fit: cover;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: ease-in-out 0.3s;
+}
+
+.treatments__image:hover {
+  transform: scale(102%);
 }
 
 .treatments__section-title {
@@ -101,4 +106,30 @@
 .treatments__card-text {
   font-size: 1rem;
   line-height: 1.6;
+}
+
+.treatments__header {
+  display: flex;
+  gap: 20px;
+
+}
+.ContainerTreatmentPage {
+display: flex;
+flex-direction: column;
+gap: 10px;
+
+}
+
+.TextContainerTreatment {
+  display: block;
+  border-radius: 1%;
+  height: 175px;
+  width: 450px;
+  background-color: #6FB5C0;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+  transition: ease-in-out 0.3s;
+}
+
+.TextContainerTreatment:hover {
+  transform: scale(102%);
 }

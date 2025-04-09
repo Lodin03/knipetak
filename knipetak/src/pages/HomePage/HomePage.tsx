@@ -104,9 +104,12 @@ const HomePage: React.FC = () => {
            <p> Thon Hotels: 17-20 Mars. Bestill nå </p>
            <img className='imageTicker' src='/src/assets/images/finsehytta.jpg'></img>
            </div>
+           
          
          </div>
         </div>
+
+        
         <br></br>
         <br></br>
 
