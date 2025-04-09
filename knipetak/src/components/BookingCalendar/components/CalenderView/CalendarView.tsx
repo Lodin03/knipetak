@@ -11,8 +11,8 @@ import {
   isToday
 } from 'date-fns';
 import { nb } from 'date-fns/locale';
-import EventDetails from "../../../backend/interfaces/availabilityInterfaces/EventDetails";
-import { Location as VenueLocation } from "../../../backend/interfaces/Location";
+import EventDetails from "../../../../backend/interfaces/availabilityInterfaces/EventDetails";
+import { Location as VenueLocation } from "../../../../backend/interfaces/Location";
 import "./CalendarView.css";
 
 // Helper function to format date as YYYY-MM-DD
@@ -25,6 +25,8 @@ interface LocationSlots {
   workHours: {
     start: string;
     end: string;
+    startString?: string;
+    endString?: string;
   };
   availableSlots: string[];
 }
@@ -124,7 +126,7 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
             <span className="work-hours">
               {dayInfo?.locationSlots.length > 1 
                 ? "Flere tidspunkter" 
-                : `${dayInfo?.locationSlots[0].workHours.start}-${dayInfo?.locationSlots[0].workHours.end}`
+                : `${dayInfo?.locationSlots[0].workHours.startString || dayInfo?.locationSlots[0].workHours.start}-${dayInfo?.locationSlots[0].workHours.endString || dayInfo?.locationSlots[0].workHours.end}`
               }
             </span>
           </div>
@@ -207,6 +209,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       onDateSelect(date); // This will trigger data load in the parent
     }
   };
+  
+  // Call onMonthChange when the component mounts to start loading data for the current month
+  useEffect(() => {
+    // Trigger initial month loading when component mounts
+    onMonthChange(currentMonth);
+  }, []); // Empty dependency array means this runs once on mount
   
   // Debug log for initialDataLoaded
   useEffect(() => {

@@ -45,15 +45,36 @@ export const createBooking = async (
   bookingData: BookingData
 ): Promise<string> => {
   try {
+    console.log("📝 Creating new booking with details:", {
+      date: bookingData.date.toISOString(),
+      timeslot: {
+        start: bookingData.timeslot.start.toTimeString(),
+        end: bookingData.timeslot.end.toTimeString(),
+      },
+      duration: bookingData.duration,
+      treatmentId: bookingData.treatmentId,
+    });
+
+    // Convert JS Date objects to Firestore Timestamps to ensure consistency
     const bookingWithTimestamp = {
       ...bookingData,
       createdAt: serverTimestamp(),
+      // Ensure timeslot dates are handled correctly
+      timeslot: {
+        start: Timestamp.fromDate(bookingData.timeslot.start),
+        end: Timestamp.fromDate(bookingData.timeslot.end),
+      },
     };
+
     const docRef = await addDoc(
       collection(db, "bookings"),
       bookingWithTimestamp
     );
-    console.log("Booking created with ID:", docRef.id);
+    console.log("✅ Booking created successfully with ID:", docRef.id);
+    console.log(
+      `📅 Booking timeslot: ${bookingData.timeslot.start.toTimeString()} - ${bookingData.timeslot.end.toTimeString()}`
+    );
+    console.log(`⏱️ Duration: ${bookingData.duration} minutes`);
     return docRef.id;
   } catch (error) {
     console.error("Error creating booking:", error);

@@ -1,6 +1,6 @@
 import React from "react";
-import { Location as VenueLocation } from "../../../backend/interfaces/Location";
-import EventDetails from "../../../backend/interfaces/availabilityInterfaces/EventDetails";
+import { Location as VenueLocation } from "../../../../backend/interfaces/Location";
+import EventDetails from "../../../../backend/interfaces/availabilityInterfaces/EventDetails";
 import "./BookingSlotsPerDay.css";
 
 // Loading spinner component
@@ -15,6 +15,8 @@ interface LocationSlots {
   workHours: {
     start: string;
     end: string;
+    startString?: string;
+    endString?: string;
   };
   availableSlots: string[];
 }
@@ -72,24 +74,31 @@ const BookingSlotsPerDay: React.FC<BookingSlotsPerDayProps> = ({
             <div key={index} className="location-slots">
               <h4>📍 {handleLocationDisplay(locationSlot.location)}</h4>
               <p className="work-hours">
-                Arbeidstid: {locationSlot.workHours.start} - {locationSlot.workHours.end}
+                Arbeidstid: {locationSlot.workHours.startString || locationSlot.workHours.start} - {locationSlot.workHours.endString || locationSlot.workHours.end}
               </p>
-              <div className="timeslot-grid">
-                {locationSlot.availableSlots.map((slot) => (
-                  <button
-                    key={slot}
-                    onClick={() => onSlotClick(slot, locationSlot.location)}
-                    className={`time-slot-button ${selectedTime === slot ? "selected" : ""}`}
-                  >
-                    {slot}
-                  </button>
-                ))}
-              </div>
+              {locationSlot.availableSlots.length > 0 ? (
+                <div className="timeslot-grid">
+                  {locationSlot.availableSlots.map((slot) => (
+                    <button
+                      key={slot}
+                      onClick={() => onSlotClick(slot, locationSlot.location)}
+                      className={`time-slot-button ${selectedTime === slot ? "selected" : ""}`}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="no-slots-message">Ingen ledige tider for denne plasseringen. Alle tider kan være booket eller reservert.</p>
+              )}
             </div>
           ))}
         </div>
       ) : (
-        <p>Ingen tilgjengelige tider denne dagen.</p>
+        <div className="no-slots-container">
+          <p className="no-slots-message">Ingen tilgjengelige tider denne dagen.</p>
+          <p className="no-slots-suggestion">Dette kan være fordi alle tider er booket eller fordi det ikke er planlagt noen arbeidstid på denne datoen. Det er også mulig at en eksisterende booking blokkerer tilgjengelige tider med 15 minutters reisebuffer.</p>
+        </div>
       )}
       {selectedTime && <p className="selected-time">Valgt tid: {selectedTime}</p>}
     </>

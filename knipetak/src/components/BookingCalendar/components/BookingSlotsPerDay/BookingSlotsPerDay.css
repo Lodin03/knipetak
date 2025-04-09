@@ -118,3 +118,24 @@
   transition: background-color 0.5s ease;
   animation: highlightSection 1.5s ease-out;
 }
+
+/* No slots message styles */
+.no-slots-container {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  margin: 20px 0;
+}
+
+.no-slots-message {
+  color: #dc3545;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.no-slots-suggestion {
+  color: #6c757d;
+  font-size: 0.9rem;
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Location as VenueLocation } from "../../../backend/interfaces/Location";
-import { Treatment } from "../../../backend/interfaces/Treatment";
+import { Location as VenueLocation } from "../../../../backend/interfaces/Location";
+import { Treatment } from "../../../../backend/interfaces/Treatment";
 import "./BookingForm.css";
 
 export interface BookingFormProps {
