@@ -33,8 +33,8 @@ function NavigationBar() {
         <div className="navBar">
             <img src={logo} alt="LOGO" className="logo" />
             <div className="navLinks">
-                <Link to={userType === UserType.ADMIN ? "/AdminHomePage" : "/"}>{userType === UserType.ADMIN ? "Admin Hjem" : "Hjem"}</Link>
-                <Link to={userType === UserType.ADMIN ? "/AdminCalenderPage" : "/book"}>{userType === UserType.ADMIN ? "Admin Kalender" : "Book Time"}</Link>
+                <Link to={userType === UserType.ADMIN ? "/admin-home-page" : "/"}>{userType === UserType.ADMIN ? "Admin Hjem" : "Hjem"}</Link>
+                <Link to={userType === UserType.ADMIN ? "/admin-calendar-page" : "/book"}>{userType === UserType.ADMIN ? "Admin Kalender" : "Book Time"}</Link>
                 <Link to="/behandlinger">Behandlinger</Link>
                 <Link to="/kontakt">Kontakt</Link>
                 {user && <Link to="/profile">Profil</Link>} 

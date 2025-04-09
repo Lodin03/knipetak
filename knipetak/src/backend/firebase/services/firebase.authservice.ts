@@ -1,7 +1,7 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider, UserCredential } from 'firebase/auth';
 import app from '../firebase.ts';
 import { createUserDocument } from './firebase.userservice';
-import { UserType } from '../../interfaces/UserData';
+import { UserType, UserData } from '../../interfaces/UserData';
 
 export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
@@ -15,13 +15,23 @@ export const signInWithGoogle = async () => {
     // Check if the user already exists in Firestore, if not, create a new document
     const userCredential = result as UserCredential & { additionalUserInfo?: { isNewUser?: boolean } };
     if (userCredential.additionalUserInfo?.isNewUser) {
-      await createUserDocument(user.uid, {
+      const newUserData: UserData = {
         uid: user.uid,
         displayName: user.displayName || "",
         email: user.email || "",
         userType: UserType.CUSTOMER,
         createdAt: new Date(),
-      });
+        // Optional fields with default values
+        age: 0,
+        healthIssues: "",
+        location: {
+          address: "",
+          city: "",
+          postalCode: 0
+        },
+        phoneNumber: ""
+      };
+      await createUserDocument(user.uid, newUserData);
     }
 
     console.log('User signed in with Google: ', user);
@@ -44,14 +54,23 @@ export const signUp = async (email: string, password: string, username: string) 
     // Update the user's display name
     await updateProfile(user, { displayName: username });
 
-    // Create user document in Firestore
-    await createUserDocument(user.uid, {
+    // Create user document in Firestore with all UserData fields
+    const newUserData: UserData = {
       uid: user.uid,
       displayName: username,
       email: email,
       userType: UserType.CUSTOMER,
-      createdAt: new Date()
-    });
+      createdAt: new Date(),
+      age: 0,
+      healthIssues: "",
+      location: {
+        address: "",
+        city: "",
+        postalCode: 0
+      },
+      phoneNumber: ""
+    };
+    await createUserDocument(user.uid, newUserData);
 
     console.log('User signed up: ', user);
     return user;

@@ -9,13 +9,11 @@ import { getLocations } from "../../backend/firebase/services/firebase.locations
 import { auth } from "../../backend/firebase/services/firebase.authservice";
 import { BookingData } from "../../backend/interfaces/BookingData";
 import "./BookingCalendar.css";
-import TimeSlot from "../../backend/interfaces/timeSlot";
 import EventDetails from "../../backend/interfaces/availabilityInterfaces/EventDetails";
 import { Treatment } from "../../backend/interfaces/Treatment";
 import { Location as VenueLocation } from "../../backend/interfaces/Location";
 import { Location as BookingLocation } from "../../backend/interfaces/UserData";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
 
 // Register Norwegian locale
 registerLocale('nb', nb);
@@ -165,7 +163,18 @@ const BookingCalendar: React.FC = () => {
         if (data && data.availabilityByLocation?.length > 0) {
           const slotsWithLocationData = data.availabilityByLocation.map(slot => ({
             location: locations.find(loc => loc.id === slot.location) || null,
-            workHours: slot.workHours,
+            workHours: {
+              start: slot.workHours.start instanceof Date 
+                ? slot.workHours.start.toTimeString().substring(0, 5)
+                : typeof slot.workHours.start === 'string'
+                ? slot.workHours.start
+                : (slot.workHours.start as any).toDate().toTimeString().substring(0, 5),
+              end: slot.workHours.end instanceof Date
+                ? slot.workHours.end.toTimeString().substring(0, 5)
+                : typeof slot.workHours.end === 'string'
+                ? slot.workHours.end
+                : (slot.workHours.end as any).toDate().toTimeString().substring(0, 5)
+            },
             availableSlots: slot.availableSlots
           }));
           setLocationSlots(slotsWithLocationData);
@@ -194,8 +203,8 @@ const BookingCalendar: React.FC = () => {
   }, [selectedDate, locations]);
 
   // Handle timeslot click by showing the confirmation modal
-  const handleSlotClick = (slot: TimeSlot, location: VenueLocation | null) => {
-    setSelectedTime(slot.start);
+  const handleSlotClick = (time: string, location: VenueLocation | null) => {
+    setSelectedTime(time);
     setSelectedLocation(location);
     setShowConfirmation(true);
   };
@@ -386,7 +395,7 @@ const BookingCalendar: React.FC = () => {
                     {locationSlot.availableSlots.map((slot) => (
                       <button
                         key={slot}
-                        onClick={() => handleSlotClick({ start: slot, end: "" }, locationSlot.location)}
+                        onClick={() => handleSlotClick(slot, locationSlot.location)}
                         className="time-slot-button"
                       >
                         {slot}

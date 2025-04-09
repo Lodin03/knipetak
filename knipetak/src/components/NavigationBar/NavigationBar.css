@@ -8,12 +8,14 @@
 .logo {
     height: 50px;
     width: auto;
+    object-fit: contain;
 }
 
 .navLinks {
     display: flex;
     gap: 2rem;
 }
+
 
 .navLinks a {
     text-decoration: none;

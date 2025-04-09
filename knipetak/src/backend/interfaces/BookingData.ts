@@ -1,6 +1,7 @@
 import { Location } from "./UserData.ts"; // Importing the Location interface from UserData.ts
 
 export interface BookingData {
+  bookingId?: string; // ID of the booking document
   customerId: string; // ID of the user making the booking
   customerEmail: string; // Email of the customer (required for guest bookings)
   customerName: string; // Name of the customer (required for guest bookings)

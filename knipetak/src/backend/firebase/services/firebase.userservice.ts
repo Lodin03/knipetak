@@ -1,6 +1,6 @@
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
 import app from '../firebase.ts';
-import { UserData, UserType } from '../../interfaces/UserData.ts';
+import { UserData, UserType, Gender, Location } from '../../interfaces/UserData';
 
 // Firestore instance
 const db = getFirestore(app);
@@ -21,21 +21,33 @@ export const createUserDocument = async (userId: string, userData: UserData) => 
     }
 };
 
-export const getUserData = async (userId: string) => {
+export async function getUserData(uid: string): Promise<UserData | null> {
     try {
-        const userRef = doc(db, 'users', userId);
-        const userDoc = await getDoc(userRef);
-        
+        const userDoc = await getDoc(doc(db, 'users', uid));
         if (userDoc.exists()) {
             return userDoc.data() as UserData;
-        } else {
-            throw new Error('User document not found');
         }
+        return null;
     } catch (error) {
         console.error('Error getting user data:', error);
         throw error;
     }
-};
+}
+
+export async function updateUserProfile(uid: string, userData: Partial<UserData>): Promise<void> {
+    try {
+        const userRef = doc(db, 'users', uid);
+        await updateDoc(userRef, {
+            ...userData,
+            // Ensure updatedAt is set whenever we update the profile
+            updatedAt: new Date()
+        });
+        console.log('Brukerprofil oppdatert vellykket');
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+        throw error;
+    }
+}
 
 export const updateUserData = async (userId: string, updates: Partial<UserData>) => {
     try {
