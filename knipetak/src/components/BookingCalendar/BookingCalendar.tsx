@@ -15,7 +15,6 @@ import { Location as VenueLocation } from "../../backend/interfaces/Location";
 import { Location as BookingLocation } from "../../backend/interfaces/UserData";
 import { useNavigate } from "react-router-dom";
 
-
 // Register Norwegian locale
 registerLocale('nb', nb);
 

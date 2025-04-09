@@ -9,9 +9,10 @@ export interface BookingData {
   date: Date; // Appointment date
   duration: number; // Total booking duration (in minutes)
   location: Location; // Contains "address", "city", "postalCode"
-  paymentStatus: string; // e.g. "pending" or "paid"
+  paymentStatus: false; // e.g. "pending" or "paid"
   price: number; // e.g. 1550
   status: string; // e.g. "pending"
+  customerMessage: string;
   timeslot: {
     start: Date;
     end: Date;
