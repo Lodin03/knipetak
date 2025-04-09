@@ -1,5 +1,3 @@
-import { BookingData } from './BookingData';
-
 export interface Location {
     address: string;
     city: string;
@@ -8,8 +6,14 @@ export interface Location {
 
 // Defining so UserType can only be either "kunde" or "admin"
 export enum UserType {
-    CUSTOMER = "kunde",
-    ADMIN = "admin",
+    CUSTOMER = 'kunde',
+    ADMIN = 'admin'
+}
+
+export enum Gender {
+    MALE = 'Mann',
+    FEMALE = 'Kvinne',
+    OTHER = 'Annet'
 }
 
 // Interface that defines the structure for user data
@@ -18,7 +22,7 @@ export interface UserData {
     displayName: string;
     email: string;
     age?: number;
-    bookings?: BookingData[];
+    gender?: Gender;
     healthIssues?: string;
     location?: Location;
     phoneNumber?: string;

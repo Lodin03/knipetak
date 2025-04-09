@@ -194,9 +194,18 @@ export const getAvailableSlotsByDate = async (
     // STEP 3: Generate available slots for each work hour time slot
     const availabilityByLocation = workHours.timeSlots
       .map((timeSlot) => {
+        // Konverter streng til Date-objekt hvis nødvendig
+        const startTime = typeof timeSlot.start === 'string' 
+          ? new Date(`1970-01-01T${timeSlot.start}:00`)
+          : timeSlot.start;
+        
+        const endTime = typeof timeSlot.end === 'string'
+          ? new Date(`1970-01-01T${timeSlot.end}:00`)
+          : timeSlot.end;
+
         const availableSlots = generateTimeSlots(
-          timeSlot.start.toTimeString().substring(0, 5),
-          timeSlot.end.toTimeString().substring(0, 5),
+          startTime.toTimeString().substring(0, 5),
+          endTime.toTimeString().substring(0, 5),
           bookedSlots,
           15 // increment of 15 minutes
         );

@@ -164,7 +164,18 @@ const BookingCalendar: React.FC = () => {
         if (data && data.availabilityByLocation?.length > 0) {
           const slotsWithLocationData = data.availabilityByLocation.map(slot => ({
             location: locations.find(loc => loc.id === slot.location) || null,
-            workHours: slot.workHours,
+            workHours: {
+              start: slot.workHours.start instanceof Date 
+                ? slot.workHours.start.toTimeString().substring(0, 5)
+                : typeof slot.workHours.start === 'string'
+                ? slot.workHours.start
+                : (slot.workHours.start as any).toDate().toTimeString().substring(0, 5),
+              end: slot.workHours.end instanceof Date
+                ? slot.workHours.end.toTimeString().substring(0, 5)
+                : typeof slot.workHours.end === 'string'
+                ? slot.workHours.end
+                : (slot.workHours.end as any).toDate().toTimeString().substring(0, 5)
+            },
             availableSlots: slot.availableSlots
           }));
           setLocationSlots(slotsWithLocationData);

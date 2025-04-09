@@ -15,6 +15,7 @@
     box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 25rem;
+    padding-top: 2rem
 }
 
 .login-box h1 {
@@ -26,6 +27,7 @@
 
 .form-group {
     margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
 }
 
 .form-group label {
