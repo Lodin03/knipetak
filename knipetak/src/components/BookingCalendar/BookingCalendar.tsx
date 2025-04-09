@@ -14,96 +14,25 @@ import { Treatment } from "../../backend/interfaces/Treatment";
 import { Location as VenueLocation } from "../../backend/interfaces/Location";
 import { Location as BookingLocation } from "../../backend/interfaces/UserData";
 import { useNavigate } from "react-router-dom";
-import { Timestamp } from "firebase/firestore";
 import { 
-  format, 
   startOfMonth, 
   endOfMonth, 
-  eachDayOfInterval, 
-  isSameMonth, 
-  isSameDay,
-  addMonths,
-  subMonths,
-  isToday
+  eachDayOfInterval 
 } from 'date-fns';
+
+// Import our new components
+import CalendarView from "./components/CalenderView/CalendarView";
+import BookingSlotsPerDay from "./components/BookingSlotsPerDay/BookingSlotsPerDay";
+import BookingForm from "./components/BookingForm/BookingForm";
+import CompletedBookingComponent from "./components/CompletedBooking/CompletedBooking";
 
 // Register Norwegian locale
 registerLocale('nb', nb);
-
-interface CompletedBookingProps {
-  bookingId: string;
-  date: Date;
-  time: string;
-  treatment: Treatment;
-  duration: number;
-  isGroup: boolean;
-  groupSize?: number;
-  location: BookingLocation;
-  onClose: () => void;
-}
-
-const CompletedBooking: React.FC<CompletedBookingProps> = ({
-  bookingId,
-  date,
-  time,
-  treatment,
-  duration,
-  isGroup,
-  groupSize,
-  location,
-  onClose
-}) => {
-  return (
-    <div className="completed-booking-modal">
-      <div className="completed-booking-content">
-        <h3>Booking Bekreftet! 🎉</h3>
-        <p className="booking-id">Booking ID: {bookingId}</p>
-        
-        <div className="booking-details">
-          <h4>Detaljer for din booking:</h4>
-          <p><strong>Dato:</strong> {date.toLocaleDateString('nb-NO', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}</p>
-          <p><strong>Tid:</strong> {time}</p>
-          <p><strong>Behandling:</strong> {treatment.name}</p>
-          {isGroup ? (
-            <>
-              <p><strong>Gruppestørrelse:</strong> {groupSize} personer</p>
-              <p><strong>Total varighet:</strong> {duration} minutter</p>
-            </>
-          ) : (
-            <p><strong>Varighet:</strong> {duration} minutter</p>
-          )}
-          
-          <div className="location-details">
-            <h4>Sted:</h4>
-            <p>{location.address}</p>
-            <p>{location.postalCode} {location.city}</p>
-          </div>
-        </div>
-
-        <button className="close-button" onClick={onClose}>
-          Lukk
-        </button>
-      </div>
-    </div>
-  );
-};
 
 // Helper function to format date as YYYY-MM-DD
 function formatDateForAPI(date: Date): string {
   return date.toLocaleDateString('sv-SE'); // Using Swedish locale which gives us YYYY-MM-DD format
 }
-
-// Loading spinner component
-const LoadingSpinner: React.FC = () => (
-  <div className="loading-spinner">
-    <div className="spinner"></div>
-  </div>
-);
 
 interface LocationSlots {
   location: VenueLocation | null;
@@ -121,250 +50,6 @@ interface DayInfoCache {
   } | null;
 }
 
-// Calendar Day component to display information for a single day
-interface CalendarDayProps {
-  date: Date;
-  isCurrentMonth: boolean;
-  isSelected: boolean;
-  dayInfo: {
-    locationSlots: LocationSlots[];
-    eventDetails: EventDetails | null;
-  } | null;
-  isLoading: boolean;
-  onClick: () => void;
-  onMouseEnter: () => void;
-  initialDataLoaded: boolean;
-}
-
-const CalendarDay: React.FC<CalendarDayProps> = ({
-  date,
-  isCurrentMonth,
-  isSelected,
-  dayInfo,
-  isLoading,
-  onClick,
-  onMouseEnter,
-  initialDataLoaded
-}) => {
-  const dayNum = date.getDate();
-  const dayOfWeek = date.getDay(); // 0 = søndag, 6 = lørdag
-  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-  const isDisabled = date < new Date(new Date().setHours(0, 0, 0, 0));
-  const hasLocationInfo = dayInfo && dayInfo.locationSlots.length > 0;
-  const hasEvent = dayInfo && dayInfo.eventDetails;
-  
-  // Check if we've tried to load data for this date
-  const isDataAttempted = dayInfo !== undefined;
-  const showLoading = isLoading || (!isDataAttempted && !isDisabled && isCurrentMonth && !initialDataLoaded);
-
-  // For location display, truncate to first 15 chars if needed
-  const getLocationDisplay = () => {
-    if (!hasLocationInfo || !dayInfo?.locationSlots?.length) {
-      return "Ikke tilgjengelig";
-    }
-    
-    // Check if we have multiple locations
-    if (dayInfo.locationSlots.length > 1) {
-      return "Flere steder";
-    }
-    
-    // Use multiple checks to ensure we get something to display
-    const locationData = dayInfo.locationSlots[0];
-    const locationName = locationData?.location?.name;
-    
-    if (locationName) {
-      // We have a proper location name
-      return locationName.length > 15 ? `${locationName.substring(0, 15)}...` : locationName;
-    } else if (locationData?.location) {
-      // Location exists but name is missing
-      return "Tilgjengelig";
-    } else if (locationData) {
-      // We have slot data but location is missing
-      return "Tilgjengelig";
-    } else {
-      // Fallback
-      return "Ikke tilgjengelig";
-    }
-  };
-  
-  return (
-    <div 
-      className={`calendar-day ${!isCurrentMonth ? 'outside-month' : ''} ${isSelected ? 'selected' : ''} ${isToday(date) ? 'today' : ''} ${isDisabled ? 'disabled' : ''} ${isWeekend ? 'weekend' : ''}`}
-      onClick={isDisabled ? undefined : onClick}
-      onMouseEnter={isDisabled ? undefined : onMouseEnter}
-    >
-      <div className="day-header">
-        <span className="day-number">{dayNum}</span>
-      </div>
-      <div className="day-content">
-        {showLoading ? (
-          <div className="day-loading">
-            <div className="mini-spinner"></div>
-          </div>
-        ) : hasLocationInfo ? (
-          <div className="location-info">
-            <span className="location-name">
-              {getLocationDisplay()}
-            </span>
-            <span className="work-hours">
-              {dayInfo?.locationSlots.length > 1 
-                ? "Flere tidspunkter" 
-                : `${dayInfo?.locationSlots[0].workHours.start}-${dayInfo?.locationSlots[0].workHours.end}`
-              }
-            </span>
-          </div>
-        ) : hasEvent ? (
-          <div className="event-info">
-            <span className="event-indicator">📅</span>
-            <span className="event-name">{dayInfo?.eventDetails?.name as string}</span>
-          </div>
-        ) : isCurrentMonth && !isDisabled && isDataAttempted ? (
-          <div className="no-info">
-            {isWeekend ? "Helg - ikke tilgjengelig" : "Ikke tilgjengelig"}
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-};
-
-// Calendar view component
-interface CalendarViewProps {
-  selectedDate: Date | null;
-  onDateSelect: (date: Date) => void;
-  dayInfoCache: DayInfoCache;
-  loadingDate: string | null;
-  onMonthChange: (month: Date) => void;
-  initialDataLoaded: boolean;
-}
-
-const CalendarView: React.FC<CalendarViewProps> = ({
-  selectedDate,
-  onDateSelect,
-  dayInfoCache,
-  loadingDate,
-  onMonthChange,
-  initialDataLoaded
-}) => {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  
-  // Create days array including padding days from previous/next months
-  const monthStart = startOfMonth(currentMonth);
-  const monthEnd = endOfMonth(currentMonth);
-  
-  // Get start of first week (might be in previous month)
-  const startDate = new Date(monthStart);
-  const day = startDate.getDay();
-  // JavaScript days are 0-indexed with Sunday as 0, so adjust for Monday start
-  startDate.setDate(startDate.getDate() - (day === 0 ? 6 : day - 1));
-
-  // Get end of last week (might be in next month)
-  const endDate = new Date(monthEnd);
-  const endDay = endDate.getDay();
-  // Add days to get to end of week (Sunday)
-  endDate.setDate(endDate.getDate() + (endDay === 0 ? 0 : 7 - endDay));
-
-  const daysInMonth = eachDayOfInterval({
-    start: startDate,
-    end: endDate
-  });
-  
-  const goToPreviousMonth = () => {
-    const newMonth = subMonths(currentMonth, 1);
-    setCurrentMonth(newMonth);
-    onMonthChange(newMonth);
-  };
-  
-  const goToNextMonth = () => {
-    const newMonth = addMonths(currentMonth, 1);
-    setCurrentMonth(newMonth);
-    onMonthChange(newMonth);
-  };
-  
-  // Preload data when mouse enters a day
-  const handleDayHover = (date: Date) => {
-    if (date < new Date(new Date().setHours(0, 0, 0, 0))) {
-      return; // Skip past dates
-    }
-    
-    const dateStr = formatDateForAPI(date);
-    if (!dayInfoCache[dateStr] && loadingDate !== dateStr) {
-      onDateSelect(date); // This will trigger data load in the parent
-    }
-  };
-  
-  // Debug log for initialDataLoaded
-  useEffect(() => {
-    console.log('DEBUG: CalendarView initialDataLoaded =', initialDataLoaded);
-    
-    // Add a timeout to auto-close the loading spinner after a few seconds
-    let loadingTimer: number | undefined = undefined;
-    
-    if (!initialDataLoaded) {
-      loadingTimer = window.setTimeout(() => {
-        console.log('DEBUG: Auto-dismissing loading overlay after timeout');
-        onMonthChange(currentMonth); // Force refresh of the current month
-      }, 5000); // 5 seconds timeout
-    }
-    
-    return () => {
-      if (loadingTimer) {
-        window.clearTimeout(loadingTimer);
-      }
-    };
-  }, [initialDataLoaded, currentMonth, onMonthChange]);
-  
-  return (
-    <div className="calendar-container">
-      <div className="calendar-header">
-        <button onClick={goToPreviousMonth} className="month-nav-button">
-          &lt;
-        </button>
-        <h3>{format(currentMonth, 'MMMM yyyy', { locale: nb })}</h3>
-        <button onClick={goToNextMonth} className="month-nav-button">
-          &gt;
-        </button>
-      </div>
-      
-      <div className="weekday-header">
-        {['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn'].map(day => (
-          <div key={day} className="weekday">{day}</div>
-        ))}
-      </div>
-      
-      <div className="days-grid">
-        {daysInMonth.map(day => {
-          const dateStr = formatDateForAPI(day);
-          const isLoading = loadingDate === dateStr;
-          const dayInfo = dayInfoCache[dateStr];
-          
-          return (
-            <CalendarDay
-              key={dateStr}
-              date={day}
-              isCurrentMonth={isSameMonth(day, currentMonth)}
-              isSelected={selectedDate ? isSameDay(day, selectedDate) : false}
-              dayInfo={dayInfo}
-              isLoading={isLoading}
-              onClick={() => onDateSelect(day)}
-              onMouseEnter={() => handleDayHover(day)}
-              initialDataLoaded={initialDataLoaded}
-            />
-          );
-        })}
-      </div>
-      
-      {/* Only show loading overlay if explicitly not loaded */}
-      {!initialDataLoaded && (
-        <div className="calendar-loading-overlay">
-          <div className="spinner"></div>
-          <p>Laster inn tilgjengelighet...</p>
-        </div>
-      )}
-    </div>
-  );
-};
-
 const BookingCalendar: React.FC = () => {
   const navigate = useNavigate();
   // Core booking state
@@ -380,6 +65,8 @@ const BookingCalendar: React.FC = () => {
   const [isPreloadingMonth, setIsPreloadingMonth] = useState(false);
   const [pendingDates, setPendingDates] = useState<Date[]>([]);
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
+  // Add this state to track if user has explicitly selected a date
+  const [dateManuallySelected, setDateManuallySelected] = useState(false);
   // Ref to track dates currently being fetched
   const fetchingDates = useRef<Set<string>>(new Set());
   
@@ -398,7 +85,6 @@ const BookingCalendar: React.FC = () => {
   const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null);
   
   // Form and modal state
-  const [showConfirmation, setShowConfirmation] = useState(false);
   const [showCompletedBooking, setShowCompletedBooking] = useState(false);
   const [completedBookingId, setCompletedBookingId] = useState<string>("");
   const [address, setAddress] = useState<string>("");
@@ -421,93 +107,53 @@ const BookingCalendar: React.FC = () => {
           getLocations()
         ]);
         
-        console.log(`Loaded ${locationsData.length} locations and ${treatmentsData.length} treatments`);
-        
-        // Set state for both data types
+        console.log(`Loaded ${treatmentsData.length} treatments and ${locationsData.length} locations`);
         setTreatments(treatmentsData);
         setLocations(locationsData);
         
-        // Make sure locations are loaded properly
-        if (locationsData.length === 0) {
-          console.warn('No locations loaded, waiting before starting calendar preload');
-          // If no locations, try again after a delay
-          setTimeout(async () => {
-            const retryLocations = await getLocations();
-            if (retryLocations.length > 0) {
-              console.log(`Retry successful, loaded ${retryLocations.length} locations`);
-              setLocations(retryLocations);
-              // Start preloading after successful retry
-              handleMonthChange(new Date());
-            } else {
-              console.error('Failed to load locations after retry');
-              // Force initialDataLoaded to true to prevent infinite loading
-              setInitialDataLoaded(true);
-            }
-          }, 1000);
-        } else {
-          // Start the preloading process since we have locations
-          handleMonthChange(new Date());
-        }
+        // Once the core data is loaded, preload the current month
+        // Use a local date variable for preloading, don't update selectedDate
+        const today = new Date();
+        const dayInfo = await fetchAvailabilityForDate(today);
+        console.log('Preloaded today:', dayInfo);
+        
+        // Start preloading the rest of the month
+        handleMonthChange(today);
+        
       } catch (error) {
-        console.error("Error fetching initial data:", error);
-        // Ensure UI doesn't stay in loading state on error
-        setInitialDataLoaded(true);
+        console.error('Error loading initial data:', error);
       }
     };
     
     fetchInitialData();
   }, []);
 
-  // Function to fetch availability for a specific date
+  // Fetch availability for a specific date
   const fetchAvailabilityForDate = async (date: Date) => {
     const dateStr = formatDateForAPI(date);
+    console.log(`Fetching availability for ${dateStr}`);
     
-    // Skip if we already have data or are loading this date
-    if (dayInfoCache[dateStr] || loadingDate === dateStr) {
-      return dayInfoCache[dateStr] || null;
-    }
-    
-    // Use a ref to track if a fetch for this date is already in progress to avoid duplicate requests
+    // Check if already fetching this date
     if (fetchingDates.current.has(dateStr)) {
+      console.log(`Already fetching data for ${dateStr}, skipping`);
       return null;
     }
-    
     fetchingDates.current.add(dateStr);
-    setLoadingDate(dateStr);
+    
+    // If requesting the current loading date, update the loading state
+    if (dateStr === loadingDate) {
+      setLoadingDate(dateStr);
+    }
     
     try {
-      // Make sure locations are loaded before proceeding
-      if (locations.length === 0) {
-        console.log('No locations loaded, fetching them now...');
-        const locationsData = await getLocations();
-        if (locationsData.length > 0) {
-          console.log(`Fetched ${locationsData.length} locations`);
-          setLocations(locationsData);
-        } else {
-          console.error('Failed to load locations');
-        }
-      }
+      const result = await getAvailableSlotsByDate(dateStr);
       
-      // Determine if this is a high-priority date (first week of month)
-      const today = new Date();
-      const monthStart = startOfMonth(today); 
-      const firstWeekEnd = new Date(monthStart);
-      firstWeekEnd.setDate(monthStart.getDate() + 7);
-      const isFirstWeek = date <= firstWeekEnd;
-      
-      if (isFirstWeek) {
-        console.log(`Prioritizing load for first week date: ${dateStr}`);
-      }
-      
-      const data = await getAvailableSlotsByDate(dateStr);
-      
-      // If data is null or undefined, or we get an empty availabilityByLocation array
-      // This can happen for weekends or when no work hours are set
-      if (!data || !data.availabilityByLocation || data.availabilityByLocation.length === 0) {
-        // Cache empty result
+      if (!result) {
+        console.log(`No result for ${dateStr}`);
+        // Cache negative result so we don't try to fetch it again
         const emptyResult = {
           locationSlots: [],
-          eventDetails: data?.eventDetails || null
+          eventDetails: null
         };
         setDayInfoCache(prev => ({
           ...prev,
@@ -516,40 +162,45 @@ const BookingCalendar: React.FC = () => {
         return emptyResult;
       }
       
-      const slotsWithLocationData = data.availabilityByLocation.map(slot => {
-        // Find the location by ID, using a more robust lookup
-        let matchedLocation = locations.find(loc => loc.id === slot.location);
-        
-        // For first week dates, make an extra attempt to find the location if not found
-        if (!matchedLocation && isFirstWeek && locations.length > 0) {
-          console.warn(`Location not found for ID ${slot.location}, using first available location`);
-          matchedLocation = locations[0]; // Use first location as fallback for UI display
+      console.log(`Got availability for ${dateStr}:`, 
+                 result.availabilityByLocation.length > 0 
+                 ? `${result.availabilityByLocation.length} locations` 
+                 : 'No locations');
+      
+      if (result.eventDetails) {
+        console.log(`Event for ${dateStr}:`, result.eventDetails);
+      }
+
+      // Convert availability data to match our expected interface
+      const convertedLocationSlots: LocationSlots[] = result.availabilityByLocation.map(slot => {
+        // Find the location by ID if it's a string
+        let locationObj: VenueLocation | null = null;
+        if (typeof slot.location === 'string') {
+          locationObj = locations.find(loc => loc.id === slot.location) || null;
+        } else {
+          locationObj = slot.location;
         }
-        
+
         return {
-          location: matchedLocation || null,
+          location: locationObj,
           workHours: {
-            start: slot.workHours.start instanceof Date 
-              ? slot.workHours.start.toTimeString().substring(0, 5)
-              : typeof slot.workHours.start === 'string'
-              ? slot.workHours.start
-              : (slot.workHours.start as Timestamp).toDate().toTimeString().substring(0, 5),
-            end: slot.workHours.end instanceof Date
-              ? slot.workHours.end.toTimeString().substring(0, 5)
-              : typeof slot.workHours.end === 'string'
-              ? slot.workHours.end
-              : (slot.workHours.end as Timestamp).toDate().toTimeString().substring(0, 5)
+            start: typeof slot.workHours.start === 'string' 
+              ? slot.workHours.start 
+              : '00:00',
+            end: typeof slot.workHours.end === 'string' 
+              ? slot.workHours.end 
+              : '00:00'
           },
           availableSlots: slot.availableSlots
         };
       });
       
       const dayInfo = {
-        locationSlots: slotsWithLocationData,
-        eventDetails: data.eventDetails
+        locationSlots: convertedLocationSlots,
+        eventDetails: result.eventDetails
       };
       
-      // Update cache
+      // Cache results for reuse
       setDayInfoCache(prev => ({
         ...prev,
         [dateStr]: dayInfo
@@ -759,96 +410,26 @@ const BookingCalendar: React.FC = () => {
       return dayInfoCache[dateStr] === undefined; // Only load if we haven't tried before
     });
     
-    // Set initialDataLoaded to false while we load new dates
-    setInitialDataLoaded(datesToLoad.length === 0);
+    console.log(`Generated ${datesToLoad.length} dates to preload`);
     
-    if (datesToLoad.length > 0) {
-      // We'll prioritize dates in 3 groups:
-      // 1. First week of visible dates (highest priority)
-      // 2. Weekdays in the rest of the month
-      // 3. Weekends
-      
-      const firstWeekEnd = new Date(monthStart);
-      firstWeekEnd.setDate(firstWeekEnd.getDate() + 7); // First 7 days of month
-      
-      // Sort dates into priority groups
-      const firstWeekDates: Date[] = [];
-      const weekdayDates: Date[] = [];
-      const weekendDates: Date[] = [];
-      
-      datesToLoad.forEach(date => {
-        const dayOfWeek = date.getDay();
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-        const isFirstWeek = date < firstWeekEnd;
-        
-        if (isFirstWeek) {
-          firstWeekDates.push(date);
-        } else if (!isWeekend) {
-          weekdayDates.push(date);
-        } else {
-          weekendDates.push(date);
-        }
-      });
-      
-      // Sort each group by date
-      firstWeekDates.sort((a, b) => a.getTime() - b.getTime());
-      weekdayDates.sort((a, b) => a.getTime() - b.getTime());
-      weekendDates.sort((a, b) => a.getTime() - b.getTime());
-      
-      // Start by immediately fetching the first week of dates
-      if (firstWeekDates.length > 0) {
-        console.log(`Immediately loading first ${firstWeekDates.length} dates of the month`);
-        
-        // First load the first visible dates right away (highest priority)
-        Promise.all(
-          firstWeekDates.map(date => 
-            fetchAvailabilityForDate(date)
-              .catch(err => {
-                console.error(`Error loading date ${formatDateForAPI(date)}:`, err);
-                return null;
-              })
-          )
-        ).then(() => {
-          // After first week loaded, set initialDataLoaded to true
-          setInitialDataLoaded(true);
-          
-          // Then load the rest of the dates in batches
-          const remainingDates = [...weekdayDates, ...weekendDates];
-          if (remainingDates.length > 0) {
-            setPendingDates(remainingDates);
-            setIsPreloadingMonth(true);
-          }
-        }).catch(error => {
-          console.error("Error loading first week:", error);
-          setInitialDataLoaded(true);
-          
-          // Still try to load the rest
-          const remainingDates = [...weekdayDates, ...weekendDates];
-          if (remainingDates.length > 0) {
-            setPendingDates(remainingDates);
-            setIsPreloadingMonth(true);
-          }
-        });
-      } else {
-        // No first week dates, load the rest
-        const allRemainingDates = [...weekdayDates, ...weekendDates];
-        setPendingDates(allRemainingDates);
-        setIsPreloadingMonth(true);
-      }
+    if (datesToLoad.length === 0) {
+      // Nothing to preload, we can just show the data we have
+      setInitialDataLoaded(true);
+      return;
     }
+    
+    // Start the preloading process
+    setPendingDates(datesToLoad);
+    setIsPreloadingMonth(true);
   };
 
-  // Legg til denne logikken for å laste inn kun gjeldende måned ved oppstart
-  useEffect(() => {
-    if (locations.length > 0 && !initialDataLoaded && pendingDates.length === 0 && !isPreloadingMonth) {
-      handleMonthChange(new Date());
-    }
-  }, [locations, initialDataLoaded, pendingDates.length, isPreloadingMonth]);
-
-  // Handle date selection
+  // Handle date selection to fetch slot data
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
     setSelectedTime(null);
+    setSelectedLocation(null);
+    // Set this to true when a date is manually selected
+    setDateManuallySelected(true);
     
     // Scroll to the timeslots section after a short delay to ensure rendering
     setTimeout(() => {
@@ -862,11 +443,21 @@ const BookingCalendar: React.FC = () => {
     }, 300); // Short delay to ensure the section is rendered
   };
 
-  // Handle timeslot click by showing the confirmation modal
+  // Handle timeslot click to select time and location
   const handleSlotClick = (time: string, location: VenueLocation | null) => {
     setSelectedTime(time);
     setSelectedLocation(location);
-    setShowConfirmation(true);
+    
+    // Scroll to booking form after a short delay
+    setTimeout(() => {
+      const bookingForm = document.getElementById('booking-form');
+      if (bookingForm) {
+        bookingForm.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
+      }
+    }, 300);
   };
 
   // Confirm booking by constructing the booking object and calling createBooking
@@ -985,7 +576,6 @@ const BookingCalendar: React.FC = () => {
       const bookingId = await createBooking(bookingData);
       setCompletedBookingId(bookingId);
       setShowCompletedBooking(true);
-      setShowConfirmation(false);
     } catch (error) {
       console.error("Error creating booking:", error);
       alert("Det oppsto en feil ved oppretting av booking, vennligst prøv igjen.");
@@ -1000,21 +590,14 @@ const BookingCalendar: React.FC = () => {
     setSelectedDuration(null);
     setIsGroupBooking(false);
     setGroupSize(1);
+    
+    // Navigate to homepage
+    navigate('/');
   };
 
-  // Format date to Norwegian format
-  const formatDateNorwegian = (date: Date | null): string => {
-    if (!date) return '';
-    return date.toLocaleDateString('nb-NO', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const handleLocationDisplay = (location: VenueLocation | null): string => {
-    return location?.name || "Ukjent lokasjon";
+  const handleCancelBooking = () => {
+    setSelectedTime(null);
+    setSelectedLocation(null);
   };
 
   return (
@@ -1030,283 +613,64 @@ const BookingCalendar: React.FC = () => {
         initialDataLoaded={initialDataLoaded}
       />
 
-      {/* Emergency button to clear the loading overlay */}
-      {!initialDataLoaded && (
-        <button 
-          onClick={() => setInitialDataLoaded(true)}
-          style={{ 
-            padding: '8px 16px', 
-            margin: '10px 0', 
-            background: '#dc3545', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '4px' 
-          }}
-        >
-          Skjul laster-skjerm (manuelt)
-        </button>
+      {selectedDate && dateManuallySelected && (
+        <BookingSlotsPerDay
+          selectedDate={selectedDate}
+          isLoading={isLoading}
+          locationSlots={locationSlots}
+          eventDetails={eventDetails}
+          onSlotClick={handleSlotClick}
+          selectedTime={selectedTime}
+        />
       )}
 
-      {selectedDate && (
-        <>
-          <h3 id="available-timeslots">Tilgjengelige tider for {formatDateNorwegian(selectedDate)}</h3>
-          {eventDetails ? (
-            <p>
-              📅 Helene deltar på <strong>{eventDetails['name'] as string}</strong> på {eventDetails['location'] as string}
-            </p>
-          ) : isLoading ? (
-            <div className="timeslots-loading-container">
-              <LoadingSpinner />
-            </div>
-          ) : locationSlots.length > 0 ? (
-            <div className="locations-grid">
-              {locationSlots.map((locationSlot, index) => (
-                <div key={index} className="location-slots">
-                  <h4>📍 {handleLocationDisplay(locationSlot.location)}</h4>
-                  <p className="work-hours">
-                    Arbeidstid: {locationSlot.workHours.start} - {locationSlot.workHours.end}
-                  </p>
-                  <div className="timeslot-grid">
-                    {locationSlot.availableSlots.map((slot) => (
-                      <button
-                        key={slot}
-                        onClick={() => handleSlotClick(slot, locationSlot.location)}
-                        className="time-slot-button"
-                      >
-                        {slot}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>Ingen tilgjengelige tider denne dagen.</p>
-          )}
-          {selectedTime && <p className="selected-time">Valgt tid: {selectedTime}</p>}
-        </>
-      )}
-
-      {showConfirmation && (
-        <div className="confirmation-modal">
-          <h3>Bekreft din booking</h3>
-          <p>
-            <strong>Dato:</strong> {selectedDate ? formatDateNorwegian(selectedDate) : ''}
-          </p>
-          <p className="start-time">
-            <strong>Starttid:</strong> {selectedTime}
-          </p>
-          
-          <div className="booking-inputs-container">
-            <div>
-              <label>
-                Behandlingstype:
-                <select
-                  value={selectedTreatment ? selectedTreatment.id : ""}
-                  onChange={(e) => {
-                    const behandling = treatments.find((t) => t.id === e.target.value) || null;
-                    setSelectedTreatment(behandling);
-                    setSelectedDuration(null);
-                  }}
-                >
-                  <option value="">Velg behandling</option>
-                  {treatments.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-
-            {selectedTreatment && !isGroupBooking && (
-              <div>
-                <label>
-                  Varighet:
-                  <select
-                    value={selectedDuration || ""}
-                    onChange={(e) => setSelectedDuration(Number(e.target.value))}
-                  >
-                    <option value="">Velg varighet</option>
-                    {selectedTreatment.durations.map((d) => (
-                      <option key={d.duration} value={d.duration}>
-                        {d.duration} minutter
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-            )}
-
-            <div>
-              <label className="checkbox-label">
-                Bookes for en gruppe?
-                <input
-                  type="checkbox"
-                  checked={isGroupBooking}
-                  onChange={(e) => {
-                    setIsGroupBooking(e.target.checked);
-                    setSelectedDuration(null);
-                  }}
-                />
-              </label>
-            </div>
-
-            {isGroupBooking && (
-              <>
-                <div>
-                  <label>
-                    Gruppestørrelse:
-                    <input
-                      type="number"
-                      min="2"
-                      value={groupSize || ''}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        // If empty string, set to undefined, otherwise parse as number
-                        const numValue = value === '' ? 2 : parseInt(value, 10);
-                        setGroupSize(numValue);
-                      }}
-                    />
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    Total varighet:
-                    <select
-                      value={selectedDuration || ""}
-                      onChange={(e) => setSelectedDuration(Number(e.target.value))}
-                    >
-                      <option value="">Velg total varighet</option>
-                      {selectedTreatment?.durations.map((d) => {
-                        const total = d.duration * groupSize;
-                        return (
-                          <option key={d.duration} value={total}>
-                            {total} minutter ({d.duration} min per person)
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </label>
-                </div>
-              </>
-            )}
-
-            <div className="location-display">
-              <label>
-                Knipetak's plassering denne dagen:
-                <p className="location-value">{selectedLocation?.name || "Ikke tilgjengelig"}</p>
-              </label>
-              <p className="location-warning">
-                ⚠️ Merk: Hvis adressen din er for langt unna {selectedLocation?.name}, 
-                kan bookingen måtte kanselleres eller flyttes til en annen dato.
-              </p>
-            </div>
-
-            <div>
-              <label>
-                Din adresse:
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Skriv inn din adresse"
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                By:
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder="Skriv inn by"
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                Postnummer:
-                <input
-                  type="number"
-                  value={postalCode || ''}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    const numValue = value === '' ? 0 : parseInt(value, 10);
-                    setPostalCode(numValue);
-                  }}
-                  placeholder="Skriv inn postnummer"
-                />
-              </label>
-            </div>
-
-            {isGuestBooking && (
-              <div className="guest-info">
-                <h4>Gjesteinformasjon</h4>
-                <div>
-                  <label>
-                    Navn:
-                    <input
-                      type="text"
-                      value={guestName}
-                      onChange={(e) => setGuestName(e.target.value)}
-                      placeholder="Ditt navn"
-                      required
-                    />
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    E-post:
-                    <input
-                      type="email"
-                      value={guestEmail}
-                      onChange={(e) => setGuestEmail(e.target.value)}
-                      placeholder="Din e-post"
-                      required
-                    />
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    Telefon:
-                    <input
-                      type="tel"
-                      value={guestPhone}
-                      onChange={(e) => setGuestPhone(e.target.value)}
-                      placeholder="Ditt telefonnummer"
-                      required
-                    />
-                  </label>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="modal-actions">
-            <button onClick={handleBookingConfirm}>Bekreft booking</button>
-            <button onClick={() => {
-              setShowConfirmation(false);
-              setIsGuestBooking(false);
-            }}>Avbryt</button>
-          </div>
+      {selectedTime && selectedLocation && (
+        <div id="booking-form">
+          <BookingForm
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+            selectedLocation={selectedLocation}
+            treatments={treatments}
+            onConfirm={handleBookingConfirm}
+            isGroupBooking={isGroupBooking}
+            setIsGroupBooking={setIsGroupBooking}
+            groupSize={groupSize}
+            setGroupSize={setGroupSize}
+            selectedTreatment={selectedTreatment}
+            setSelectedTreatment={setSelectedTreatment}
+            selectedDuration={selectedDuration}
+            setSelectedDuration={setSelectedDuration}
+            address={address}
+            setAddress={setAddress}
+            city={city}
+            setCity={setCity}
+            postalCode={postalCode}
+            setPostalCode={setPostalCode}
+            isGuestBooking={isGuestBooking}
+            guestEmail={guestEmail}
+            setGuestEmail={setGuestEmail}
+            guestName={guestName}
+            setGuestName={setGuestName}
+            guestPhone={guestPhone}
+            setGuestPhone={setGuestPhone}
+            onCancel={handleCancelBooking}
+          />
         </div>
       )}
 
-      {showCompletedBooking && selectedDate && selectedTime && selectedTreatment && selectedLocation && (
-        <CompletedBooking
+      {showCompletedBooking && selectedDate && selectedTime && selectedTreatment && (
+        <CompletedBookingComponent
           bookingId={completedBookingId}
           date={selectedDate}
           time={selectedTime}
           treatment={selectedTreatment}
           duration={selectedDuration || 0}
           isGroup={isGroupBooking}
-          groupSize={isGroupBooking ? groupSize : undefined}
+          groupSize={groupSize}
           location={{
             address,
             city,
-            postalCode: Number(postalCode || 0)
+            postalCode: Number(postalCode)
           }}
           onClose={handleCloseCompletedBooking}
         />
