@@ -3,9 +3,9 @@ import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
 import { getAllBookings, updateBooking, cancelBooking } from '../../backend/firebase/services/firebase.bookingservice';
 import { BookingData } from '../../backend/interfaces/BookingData';
-import './AdminCalenderPage.css';
+import './AdminCalendarPage.css';
 
-const AdminCalenderPage: React.FC = () => {
+const AdminCalendarPage: React.FC = () => {
     const [filter, setFilter] = useState('today');
     const [bookings, setBookings] = useState<BookingData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -530,4 +530,4 @@ const AdminCalenderPage: React.FC = () => {
     );
 };
 
-export default AdminCalenderPage;
+export default AdminCalendarPage;
