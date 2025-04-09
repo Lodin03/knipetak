@@ -6,7 +6,7 @@ import ContactPage from "../pages/ContactPage/ContactPage.tsx";
 import LoginPage from "../pages/LoginPage/LoginPage.tsx";
 import ProfilePage from "../pages/ProfilePage/ProfilePage.tsx";
 import AdminHomePage from "../pages/AdminHomePage/AdminHomePage.tsx";
-import AdminCalenderPage from "../pages/AdminCalenderPage/AdminCalenderPage.tsx";
+import AdminCalendarPage from "../pages/AdminCalendarPage/AdminCalendarPage.tsx";
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -18,7 +18,7 @@ const AppRoutes = () => (
       <Route path="/login" element={<LoginPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/admin-home-page" element={<AdminHomePage />} />
-      <Route path="/admin-calendar-page" element={<AdminCalenderPage />} />
+      <Route path="/admin-calendar-page" element={<AdminCalendarPage />} />
     </Routes>
   </BrowserRouter>
 );
