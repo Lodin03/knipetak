@@ -63,6 +63,10 @@ const generateTimeSlots = (
   bookedSlots: string[],
   interval: number = 30
 ): string[] => {
+  if (!start || !end || start === "" || end === "") {
+    return []; // Handle empty strings for start or end
+  }
+
   const slots: string[] = [];
   const startTime = new Date(`1970-01-01T${start}:00`);
   const endTime = new Date(`1970-01-01T${end}:00`);
@@ -142,10 +146,23 @@ export const getAvailableSlotsByDate = async (
       }
     }
 
-    if (!workHours || !workHours.timeSlots.length) {
-      console.error(`🚨 Invalid work hours format for ${dateStr}:`, workHours);
+    // Special handling for empty or missing work hours
+    if (!workHours) {
+      console.log(`⚠️ No work hours found for ${dateStr}`);
       return null;
     }
+
+    // Handle empty timeslots array case (weekends or days off)
+    if (!workHours.timeSlots || workHours.timeSlots.length === 0) {
+      console.log(
+        `⚠️ No time slots available for ${dateStr} (day off or weekend)`
+      );
+      return {
+        availabilityByLocation: [],
+        eventDetails,
+      };
+    }
+
     console.log(`✅ Work hours for ${dateStr}:`, workHours);
 
     // STEP 2: Fetch booked slots for this day.
@@ -193,19 +210,46 @@ export const getAvailableSlotsByDate = async (
 
     // STEP 3: Generate available slots for each work hour time slot
     const availabilityByLocation = workHours.timeSlots
+      .filter((timeSlot) => {
+        // Filter out slots with empty or missing start/end times
+        const start = timeSlot.start;
+        const end = timeSlot.end;
+        return (
+          start &&
+          end &&
+          (typeof start === "string" ? start !== "" : true) &&
+          (typeof end === "string" ? end !== "" : true) &&
+          typeof start !== "undefined" &&
+          typeof end !== "undefined"
+        );
+      })
       .map((timeSlot) => {
-        // Konverter streng til Date-objekt hvis nødvendig
-        const startTime = typeof timeSlot.start === 'string' 
-          ? new Date(`1970-01-01T${timeSlot.start}:00`)
-          : timeSlot.start;
-        
-        const endTime = typeof timeSlot.end === 'string'
-          ? new Date(`1970-01-01T${timeSlot.end}:00`)
-          : timeSlot.end;
+        // Convert string to Date object if necessary
+        const startTime =
+          typeof timeSlot.start === "string"
+            ? timeSlot.start
+            : timeSlot.start.toTimeString?.()
+            ? timeSlot.start.toTimeString().substring(0, 5)
+            : "";
+
+        const endTime =
+          typeof timeSlot.end === "string"
+            ? timeSlot.end
+            : timeSlot.end.toTimeString?.()
+            ? timeSlot.end.toTimeString().substring(0, 5)
+            : "";
+
+        if (!startTime || !endTime || startTime === "" || endTime === "") {
+          return {
+            location: timeSlot.location,
+            availableSlots: [],
+            workHours: timeSlot,
+          };
+        }
 
         const availableSlots = generateTimeSlots(
-          startTime.toTimeString().substring(0, 5),
-          endTime.toTimeString().substring(0, 5),
+          startTime,
+          endTime,
           bookedSlots,
           15 // increment of 15 minutes
         );
@@ -213,7 +257,7 @@ export const getAvailableSlotsByDate = async (
         return {
           location: timeSlot.location,
           availableSlots,
-          workHours: timeSlot
+          workHours: timeSlot,
         };
       })
       .filter((slot) => slot.availableSlots.length > 0);

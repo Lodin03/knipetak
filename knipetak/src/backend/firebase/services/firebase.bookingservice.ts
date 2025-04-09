@@ -64,25 +64,24 @@ export const createBooking = async (
 /**
  * Fetches all bookings for a specific user from Firestore
  */
-export const getUserBookings = async (userId: string): Promise<BookingData[]> => {
+export const getUserBookings = async (
+  userId: string
+): Promise<BookingData[]> => {
   try {
-    console.log('Fetching bookings for user:', userId);
+    console.log("Fetching bookings for user:", userId);
     const bookingsRef = collection(db, "bookings");
-    const q = query(
-      bookingsRef,
-      where("customerId", "==", userId)
-    );
-    
-    console.log('Executing Firestore query...');
+    const q = query(bookingsRef, where("customerId", "==", userId));
+
+    console.log("Executing Firestore query...");
     const querySnapshot = await getDocs(q);
     console.log(`Found ${querySnapshot.size} bookings`);
-    
+
     const bookings: BookingData[] = [];
-    
+
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log('Raw booking data:', data);
-      
+      console.log("Raw booking data:", data);
+
       try {
         // Convert Firestore Timestamps to Dates
         const booking: BookingData = {
@@ -90,20 +89,20 @@ export const getUserBookings = async (userId: string): Promise<BookingData[]> =>
           date: data.date?.toDate?.() || new Date(),
           timeslot: {
             start: data.timeslot?.start?.toDate?.() || new Date(),
-            end: data.timeslot?.end?.toDate?.() || new Date()
-          }
+            end: data.timeslot?.end?.toDate?.() || new Date(),
+          },
         } as BookingData;
-        console.log('Processed booking:', booking);
+        console.log("Processed booking:", booking);
         bookings.push(booking);
       } catch (error) {
-        console.error('Error processing booking:', error, 'Raw data:', data);
+        console.error("Error processing booking:", error, "Raw data:", data);
       }
     });
-    
+
     // Sort bookings by date manually
     bookings.sort((a, b) => b.date.getTime() - a.date.getTime());
-    
-    console.log('Final bookings array:', bookings);
+
+    console.log("Final bookings array:", bookings);
     return bookings;
   } catch (error) {
     console.error("Error fetching user bookings:", error);
@@ -116,49 +115,50 @@ export const getUserBookings = async (userId: string): Promise<BookingData[]> =>
  */
 export const getAllBookings = async (): Promise<BookingData[]> => {
   try {
-    console.log('Fetching all bookings');
+    console.log("Fetching all bookings");
     const bookingsRef = collection(db, "bookings");
     const querySnapshot = await getDocs(bookingsRef);
     console.log(`Found ${querySnapshot.size} bookings`);
-    
+
     const bookings: BookingData[] = [];
-    
+
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log('Raw booking data:', data);
-      
+      console.log("Raw booking data:", data);
+
       try {
         // Convert Firestore Timestamps to Dates
         const booking: BookingData = {
           bookingId: doc.id,
-          customerId: data.customerId || '',
-          customerEmail: data.customerEmail || '',
-          customerName: data.customerName || '',
-          customerPhone: data.customerPhone || '',
+          customerId: data.customerId || "",
+          customerEmail: data.customerEmail || "",
+          customerName: data.customerName || "",
+          customerPhone: data.customerPhone || "",
           date: data.date?.toDate?.() || new Date(),
           duration: data.duration || 0,
-          location: data.location || { address: '', city: '', postalCode: 0 },
-          paymentStatus: data.paymentStatus || 'pending',
+          location: data.location || { address: "", city: "", postalCode: 0 },
+          paymentStatus: data.paymentStatus || "pending",
           price: data.price || 0,
-          status: data.status || 'pending',
+          status: data.status || "pending",
+          customerMessage: data.customerMessage || "",
           timeslot: {
             start: data.timeslot?.start?.toDate?.() || new Date(),
-            end: data.timeslot?.end?.toDate?.() || new Date()
+            end: data.timeslot?.end?.toDate?.() || new Date(),
           },
-          treatmentId: data.treatmentId || '',
-          isGuestBooking: data.isGuestBooking || false
+          treatmentId: data.treatmentId || "",
+          isGuestBooking: data.isGuestBooking || false,
         };
-        console.log('Processed booking:', booking);
+        console.log("Processed booking:", booking);
         bookings.push(booking);
       } catch (error) {
-        console.error('Error processing booking:', error, 'Raw data:', data);
+        console.error("Error processing booking:", error, "Raw data:", data);
       }
     });
-    
+
     // Sort bookings by date manually
     bookings.sort((a, b) => b.date.getTime() - a.date.getTime());
-    
-    console.log('Final bookings array:', bookings);
+
+    console.log("Final bookings array:", bookings);
     return bookings;
   } catch (error) {
     console.error("Error fetching all bookings:", error);
