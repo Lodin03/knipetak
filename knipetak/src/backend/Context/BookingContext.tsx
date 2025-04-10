@@ -77,7 +77,7 @@ interface BookingContextType {
   completedBookingId: string;
   
   // Action handlers
-  handleDateSelect: (date: Date) => void;
+  handleDateSelect: (date: Date, preloadOnly?: boolean) => void;
   handleSlotClick: (time: string, location: VenueLocation | null) => void;
   handleBookingConfirm: () => void;
   handleCancelBooking: () => void;
@@ -488,22 +488,31 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
   };
 
   // Handle date selection to fetch slot data
-  const handleDateSelect = (date: Date) => {
-    setSelectedDate(date);
-    setSelectedTime(null);
-    setSelectedLocation(null);
-    setDateManuallySelected(true);
+  const handleDateSelect = (date: Date, preloadOnly: boolean = false) => {
+    // If we're just preloading data, don't update the selected date or UI
+    if (!preloadOnly) {
+      setSelectedDate(date);
+      setSelectedTime(null);
+      setSelectedLocation(null);
+      setDateManuallySelected(true);
+      
+      // Scroll to the timeslots section after a short delay to ensure rendering
+      setTimeout(() => {
+        const timeslotsSection = document.getElementById('available-timeslots');
+        if (timeslotsSection) {
+          timeslotsSection.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start'
+          });
+        }
+      }, 300); // Short delay to ensure the section is rendered
+    }
     
-    // Scroll to the timeslots section after a short delay to ensure rendering
-    setTimeout(() => {
-      const timeslotsSection = document.getElementById('available-timeslots');
-      if (timeslotsSection) {
-        timeslotsSection.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start'
-        });
-      }
-    }, 300); // Short delay to ensure the section is rendered
+    // Always fetch data for the date if we don't have it yet
+    const dateStr = formatDateForAPI(date);
+    if (!dayInfoCache[dateStr]) {
+      fetchAvailabilityForDate(date);
+    }
   };
 
   // Handle timeslot click to select time and location

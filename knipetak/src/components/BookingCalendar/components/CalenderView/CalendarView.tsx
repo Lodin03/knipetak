@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   format, 
   startOfMonth, 
@@ -50,6 +50,7 @@ interface CalendarDayProps {
   isLoading: boolean;
   onClick: () => void;
   onMouseEnter: () => void;
+  onMouseLeave: () => void;
   initialDataLoaded: boolean;
 }
 
@@ -61,6 +62,7 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
   isLoading,
   onClick,
   onMouseEnter,
+  onMouseLeave,
   initialDataLoaded
 }) => {
   const dayNum = date.getDate();
@@ -109,6 +111,7 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
       className={`calendar-day ${!isCurrentMonth ? 'outside-month' : ''} ${isSelected ? 'selected' : ''} ${isToday(date) ? 'today' : ''} ${isDisabled ? 'disabled' : ''} ${isWeekend ? 'weekend' : ''}`}
       onClick={isDisabled ? undefined : onClick}
       onMouseEnter={isDisabled ? undefined : onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <div className="day-header">
         <span className="day-number">{dayNum}</span>
@@ -148,7 +151,7 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
 // Calendar view component
 interface CalendarViewProps {
   selectedDate: Date | null;
-  onDateSelect: (date: Date) => void;
+  onDateSelect: (date: Date, preloadOnly?: boolean) => void;
   dayInfoCache: DayInfoCache;
   loadingDate: string | null;
   onMonthChange: (month: Date) => void;
@@ -164,6 +167,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   initialDataLoaded
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  // Use a ref to track the hover timeout for debouncing
+  const hoverTimeoutRef = useRef<number | null>(null);
   
   // Create days array including padding days from previous/next months
   const monthStart = startOfMonth(currentMonth);
@@ -198,17 +203,45 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     onMonthChange(newMonth);
   };
   
-  // Preload data when mouse enters a day
+  // Preload data when mouse enters a day, with debounce
   const handleDayHover = (date: Date) => {
-    if (date < new Date(new Date().setHours(0, 0, 0, 0))) {
-      return; // Skip past dates
+    // Skip past dates and dates outside the current month
+    if (date < new Date(new Date().setHours(0, 0, 0, 0)) || !isSameMonth(date, currentMonth)) {
+      return;
     }
     
     const dateStr = formatDateForAPI(date);
     if (!dayInfoCache[dateStr] && loadingDate !== dateStr) {
-      onDateSelect(date); // This will trigger data load in the parent
+      // Clear any existing timeout
+      if (hoverTimeoutRef.current) {
+        window.clearTimeout(hoverTimeoutRef.current);
+      }
+      
+      // Set a new timeout to delay the loading until user hovers for 300ms
+      hoverTimeoutRef.current = window.setTimeout(() => {
+        // Only preload data, don't select the date
+        onDateSelect(date, true);
+        hoverTimeoutRef.current = null;
+      }, 300);
     }
   };
+  
+  // Handle mouse leaving a day - clear any pending hover timeouts
+  const handleDayLeave = () => {
+    if (hoverTimeoutRef.current) {
+      window.clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  };
+  
+  // Cleanup any pending timeouts when component unmounts
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        window.clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
   
   // Call onMonthChange when the component mounts to start loading data for the current month
   useEffect(() => {
@@ -269,8 +302,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               isSelected={selectedDate ? isSameDay(day, selectedDate) : false}
               dayInfo={dayInfo}
               isLoading={isLoading}
-              onClick={() => onDateSelect(day)}
+              onClick={() => onDateSelect(day, false)}
               onMouseEnter={() => handleDayHover(day)}
+              onMouseLeave={() => handleDayLeave()}
               initialDataLoaded={initialDataLoaded}
             />
           );
