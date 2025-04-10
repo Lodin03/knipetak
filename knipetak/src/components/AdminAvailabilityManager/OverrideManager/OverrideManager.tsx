@@ -1,10 +1,10 @@
 import { useState, useCallback } from "react";
-import type { Location } from "../../../backend/interfaces/Location";
-import type { OverrideData } from "../../../backend/interfaces/availabilityInterfaces/OverrideData";
-import type { TimeSlot } from "../../../backend/interfaces/availabilityInterfaces/WorkHours";
-import { setOverrideWorkHours, getOverrideWorkHours } from "../../../backend/firebase/services/firebase.availabilityservice";
+import type { Location } from "@/backend/interfaces/Location";
+import type OverrideData from "@/backend/interfaces/availabilityInterfaces/OverrideData";
+import { setOverrideWorkHours, getOverrideWorkHours } from "@/backend/firebase/services/firebase.availabilityservice";
 import { format, isValid, parseISO } from "date-fns";
 import { nb } from "date-fns/locale";
+import { useTimeSlotsArray, useDefaultLocation } from "@/hooks/useTimeSlotManager";
 import "./OverrideManager.css";
 
 interface OverrideManagerProps {
@@ -20,16 +20,28 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
   const [selectedDate, setSelectedDate] = useState<string>(
     format(new Date(), "yyyy-MM-dd")
   );
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([
-    { start: "09:00", end: "17:00", location: locations[0]?.id || "" },
-  ]);
+  
+  // Get the default location
+  const defaultLocation = useDefaultLocation(locations);
+  
+  // Validation errors state
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
+  
+  // Use our custom hook for time slots management
+  const { 
+    timeSlots, 
+    operations: timeSlotOps 
+  } = useTimeSlotsArray(
+    [{ start: "09:00", end: "17:00", location: defaultLocation }],
+    { onUpdate: () => setValidationErrors([]) }
+  );
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isDayOff, setIsDayOff] = useState(false);
   const [eventTitle, setEventTitle] = useState("");
   const [eventDescription, setEventDescription] = useState("");
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
 
   const validateTimeSlots = useCallback((): ValidationError[] => {
     const errors: ValidationError[] = [];
@@ -64,37 +76,28 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
     return errors;
   }, [timeSlots]);
 
+  // Use our hook operation
   const handleAddTimeSlot = () => {
-    setTimeSlots((prev) => [
-      ...prev,
-      { start: "09:00", end: "17:00", location: locations[0]?.id || "" },
-    ]);
-    setValidationErrors([]);
+    timeSlotOps.add({ location: defaultLocation });
   };
 
+  // Use our hook operation
   const handleRemoveTimeSlot = (index: number) => {
-    setTimeSlots((prev) => prev.filter((_, i) => i !== index));
-    setValidationErrors([]);
+    timeSlotOps.remove(index);
   };
 
+  // Use our hook operation
   const handleTimeChange = (
     index: number,
     field: "start" | "end",
     value: string
   ) => {
-    setTimeSlots((prev) =>
-      prev.map((slot, i) => (i === index ? { ...slot, [field]: value } : slot))
-    );
-    setValidationErrors([]);
+    timeSlotOps.update(index, field, value);
   };
 
+  // Use our hook operation
   const handleLocationChange = (index: number, locationId: string) => {
-    setTimeSlots((prev) =>
-      prev.map((slot, i) =>
-        i === index ? { ...slot, location: locationId } : slot
-      )
-    );
-    setValidationErrors([]);
+    timeSlotOps.update(index, "location", locationId);
   };
 
   const loadOverride = async (date: string) => {
@@ -105,7 +108,16 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
       const override = await getOverrideWorkHours(date);
       
       if (override) {
-        setTimeSlots(override.workhours.timeSlots);
+        // Convert the backend time slots to UI format
+        const uiTimeSlots = override.workhours.timeSlots.map(slot => ({
+          start: slot.start,
+          end: slot.end,
+          location: typeof slot.location === 'string' ? slot.location : slot.location.id
+        }));
+        
+        // Use the replace operation from our hook
+        timeSlotOps.replace(uiTimeSlots);
+        
         setIsDayOff(override.workhours.timeSlots.length === 0);
         if (override.eventId) {
           const [title, description] = override.eventId.split("||");
@@ -124,9 +136,11 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
   };
 
   const resetForm = () => {
-    setTimeSlots([
-      { start: "09:00", end: "17:00", location: locations[0]?.id || "" },
+    // Use the replace operation from our hook
+    timeSlotOps.replace([
+      { start: "09:00", end: "17:00", location: defaultLocation }
     ]);
+    
     setIsDayOff(false);
     setEventTitle("");
     setEventDescription("");
@@ -153,10 +167,17 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
       setSuccess(null);
       setValidationErrors([]);
 
+      // Using the utility function to convert our UI timeSlots to WorkHours format
+      const workHoursFormat = {
+        timeSlots: isDayOff ? [] : timeSlots.map(slot => ({
+          start: slot.start,
+          end: slot.end,
+          location: slot.location
+        }))
+      };
+
       const overrideData: OverrideData = {
-        workhours: {
-          timeSlots: isDayOff ? [] : timeSlots,
-        },
+        workhours: workHoursFormat,
         location: timeSlots[0]?.location || "",
       };
 

@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { Treatment } from '../interfaces/Treatment';
-import { Location as VenueLocation } from '../interfaces/Location';
-import { Location as BookingLocation } from '../interfaces/UserData';
-import EventDetails from '../interfaces/availabilityInterfaces/EventDetails';
-import { getAvailableSlotsByDate } from '../firebase/services/firebase.availabilityservice';
-import { createBooking } from '../firebase/services/firebase.bookingservice';
-import { getTreatments } from '../firebase/services/firebase.treatmentservice';
-import { getLocations } from '../firebase/services/firebase.locationservice';
-import { auth } from '../firebase/services/firebase.authservice';
-import { BookingData } from '../interfaces/BookingData';
+import { Treatment } from '@/backend/interfaces/Treatment';
+import { Location as VenueLocation } from '@/backend/interfaces/Location';
+import { CustomerLocation } from '@/backend/interfaces/Location';
+import EventDetails from '@/backend/interfaces/availabilityInterfaces/EventDetails';
+import { getAvailableSlotsByDate } from '@/backend/firebase/services/firebase.availabilityservice';
+import { createBooking } from '@/backend/firebase/services/firebase.bookingservice';
+import { getTreatments } from '@/backend/firebase/services/firebase.treatmentservice';
+import { getLocations } from '@/backend/firebase/services/firebase.locationservice';
+import { auth } from '@/backend/firebase/services/firebase.authservice';
+import { BookingData } from '@/backend/interfaces/BookingData';
 import { useNavigate } from 'react-router-dom';
 import { 
   startOfMonth, 
@@ -16,7 +16,7 @@ import {
   eachDayOfInterval 
 } from 'date-fns';
 
-// Helper function to format date as YYYY-MM-DD
+// Helper function to format dates as YYYY-MM-DD
 function formatDateForAPI(date: Date): string {
   return date.toLocaleDateString('sv-SE'); // Using Swedish locale which gives us YYYY-MM-DD format
 }
@@ -82,6 +82,7 @@ interface BookingContextType {
   handleBookingConfirm: () => void;
   handleCancelBooking: () => void;
   handleCloseCompletedBooking: () => void;
+  handleMonthChange: (month: Date) => void;
   
   // State setters
   setIsGroupBooking: (isGroup: boolean) => void;
@@ -438,6 +439,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     setPendingDates([]);
     setIsPreloadingMonth(false);
     
+    // Set initialDataLoaded to false to show the loading spinner
+    setInitialDataLoaded(false);
+    
+    console.log(`Changing month to ${month.toLocaleDateString()}, starting data loading...`);
+    
     // Create array of dates for current month
     const monthStart = startOfMonth(month);
     const monthEnd = endOfMonth(month);
@@ -448,6 +454,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     
     if (startDate > monthEnd) {
       // Month is in the past, nothing to preload
+      console.log("Month is in the past, nothing to preload");
       setInitialDataLoaded(true);
       return;
     }
@@ -466,10 +473,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     setDayInfoCache(newCache);
     
     // All dates need to be loaded since we cleared the cache
-    console.log(`Generated ${datesInMonth.length} dates to preload`);
+    console.log(`Generated ${datesInMonth.length} dates to preload for ${month.toLocaleDateString('nb-NO', { month: 'long', year: 'numeric' })}`);
     
     if (datesInMonth.length === 0) {
       // Nothing to preload, we can just show the data we have
+      console.log("No dates to preload, setting initialDataLoaded to true");
       setInitialDataLoaded(true);
       return;
     }
@@ -605,7 +613,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     console.log(`⏱️ Total duration: ${duration} minutes`);
 
     // Create a booking location using the BookingLocation interface
-    const bookingLocation: BookingLocation = {
+    const bookingLocation: CustomerLocation = {
       address,
       city,
       postalCode: Number(postalCode)
@@ -789,6 +797,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     handleBookingConfirm,
     handleCancelBooking,
     handleCloseCompletedBooking,
+    handleMonthChange,
     
     // State setters
     setIsGroupBooking,

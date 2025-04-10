@@ -51,6 +51,7 @@ const BookingCalendarContent: React.FC = () => {
     handleBookingConfirm,
     handleCancelBooking,
     handleCloseCompletedBooking,
+    handleMonthChange,
     
     // State setters
     setIsGroupBooking,
@@ -74,9 +75,7 @@ const BookingCalendarContent: React.FC = () => {
         onDateSelect={handleDateSelect}
         dayInfoCache={dayInfoCache}
         loadingDate={loadingDate}
-        onMonthChange={() => {
-          // This is now handled in the context
-        }}
+        onMonthChange={handleMonthChange}
         initialDataLoaded={initialDataLoaded}
       />
 

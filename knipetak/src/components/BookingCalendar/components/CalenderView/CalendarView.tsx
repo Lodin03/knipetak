@@ -281,7 +281,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       {!initialDataLoaded && (
         <div className="calendar-loading-overlay">
           <div className="spinner"></div>
-          <p>Laster inn tilgjengelighet...</p>
+          <p>Laster inn tilgjengelighet for {format(currentMonth, 'MMMM yyyy', { locale: nb })}...</p>
+          <small>Dette kan ta noen sekunder.</small>
         </div>
       )}
     </div>

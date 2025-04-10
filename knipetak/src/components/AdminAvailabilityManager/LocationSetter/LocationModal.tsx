@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { createLocation } from "../../../backend/firebase/services/firebase.locationservice";
-import type { Location, LocationFormData } from "../../../backend/interfaces/Location";
+import { createLocation } from "@/backend/firebase/services/firebase.locationservice";
+import type { Location, LocationFormData } from "@/backend/interfaces/Location";
 import "./LocationModal.css";
 
 const initialLocationForm: LocationFormData = {

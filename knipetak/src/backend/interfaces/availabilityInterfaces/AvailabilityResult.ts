@@ -1,5 +1,5 @@
 import EventDetails from "./EventDetails";
-import TimeSlot from "../TimeSlot";
+import { TimeSlot } from "@/backend/interfaces/TimeSlot";
 
 // This is what we return when asking for available time slots on a specific day
 
