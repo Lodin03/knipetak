@@ -43,49 +43,82 @@ const AdminGoogleCalendar: React.FC<Props> = ({
     onSyncStatusChange?.(syncStatus);
   }, [syncStatus, onSyncStatusChange]);
 
-  const initializeCalendar = async () => {
-    setIsLoading(true);
-    setError(null);
-    setSyncStatus({ status: 'syncing', message: 'Initialiserer kalender...' });
-    
-    try {
-      const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-      
-      if (!apiKey || !clientId) {
-        throw new Error('Google Calendar credentials missing');
-      }
-
-      const service = GoogleCalendarService.getInstance(apiKey, clientId);
-      await service.initialize();
-      
-      // Bruk 'full' scope for å sikre at vi har tilgang til å opprette events
-      const authorized = await service.authorize('full');
-      
-      if (authorized) {
-        // Hent tilgjengelige kalendere
-        const calendars = await service.getAvailableCalendars();
-        setAvailableCalendars(calendars);
+  // Load token and initialize calendar on mount
+  useEffect(() => {
+    const initializeWithToken = async () => {
+      try {
+        const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+        const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
         
-        // Velg første kalender som standard hvis ingen er valgt
-        if (!selectedCalendarId && calendars.length > 0) {
-          setSelectedCalendarId(calendars[0].id);
+        if (!apiKey || !clientId) {
+          throw new Error('Google Calendar credentials missing');
+        }
+
+        const service = GoogleCalendarService.getInstance(apiKey, clientId);
+        await service.initialize();
+        
+        // Check if we have a valid token in localStorage
+        const savedToken = localStorage.getItem("google_calendar_permanent_token");
+        if (savedToken) {
+          try {
+            const tokenData = JSON.parse(savedToken);
+            if (tokenData.expires_at > Date.now()) {
+              // Token is valid, set it and mark as authorized
+              if (window.gapi?.client) {
+                window.gapi.client.setToken({ access_token: tokenData.access_token });
+              }
+              setIsAuthorized(true);
+              setSyncStatus({ status: 'success', message: 'Kalender initialisert' });
+              
+              // Load available calendars
+              const calendars = await service.getAvailableCalendars();
+              setAvailableCalendars(calendars);
+              
+              if (calendars.length > 0 && !selectedCalendarId) {
+                setSelectedCalendarId(calendars[0].id);
+              }
+              return;
+            } else {
+              // Token expired, remove it
+              localStorage.removeItem("google_calendar_permanent_token");
+              // Try to refresh the token
+              const authorized = await service.authorize('full');
+              if (authorized) {
+                setIsAuthorized(true);
+                setSyncStatus({ status: 'success', message: 'Kalender initialisert' });
+                const calendars = await service.getAvailableCalendars();
+                setAvailableCalendars(calendars);
+                return;
+              }
+              throw new Error('Token expired');
+            }
+          } catch (error) {
+            console.warn("Error with saved token:", error);
+            // Try to get a new token
+            const authorized = await service.authorize('full');
+            if (authorized) {
+              setIsAuthorized(true);
+              setSyncStatus({ status: 'success', message: 'Kalender initialisert' });
+              const calendars = await service.getAvailableCalendars();
+              setAvailableCalendars(calendars);
+              return;
+            }
+            throw new Error('Invalid token');
+          }
         }
         
-        setIsAuthorized(true);
-        setSyncStatus({ status: 'success', message: 'Kalender initialisert' });
-      } else {
-        throw new Error('Kunne ikke autorisere Google Calendar');
+        // If no valid token, we'll wait for manual authorization
+        setSyncStatus({ status: 'idle', message: 'Vennligst koble til Google Kalender' });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to initialize calendar';
+        setError(errorMessage);
+        setSyncStatus({ status: 'error', message: errorMessage });
+        console.error('Calendar initialization error:', error);
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize calendar';
-      setError(errorMessage);
-      setSyncStatus({ status: 'error', message: errorMessage });
-      console.error('Calendar initialization error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+
+    initializeWithToken();
+  }, []);
 
   const handleSyncGoogleCalendar = async () => {
     setIsLoading(true);
@@ -104,13 +137,41 @@ const AdminGoogleCalendar: React.FC<Props> = ({
       const service = GoogleCalendarService.getInstance(apiKey, clientId);
       await service.initialize();
       
-      // Sjekk at vi har full tilgang
-      const authorized = await service.authorize('full');
-      if (!authorized) {
-        throw new Error('Mangler nødvendig tilgang til Google Calendar');
+      // Check if we have a valid token
+      const savedToken = localStorage.getItem("google_calendar_permanent_token");
+      if (savedToken) {
+        try {
+          const tokenData = JSON.parse(savedToken);
+          if (tokenData.expires_at > Date.now()) {
+            // Token is valid, use it
+            if (window.gapi?.client) {
+              window.gapi.client.setToken({ access_token: tokenData.access_token });
+            }
+            setIsAuthorized(true);
+          } else {
+            // Token expired, get a new one
+            const authorized = await service.authorize('full');
+            if (!authorized) {
+              throw new Error('Failed to refresh token');
+            }
+          }
+        } catch (error) {
+          // Invalid token, get a new one
+          console.warn("Error with token:", error);
+          const authorized = await service.authorize('full');
+          if (!authorized) {
+            throw new Error('Failed to get new token');
+          }
+        }
+      } else {
+        // No token, get a new one
+        const authorized = await service.authorize('full');
+        if (!authorized) {
+          throw new Error('Failed to get new token');
+        }
       }
       
-      // Bruk valgt kalender
+      // Use selected calendar
       const result = await service.syncExistingBookings(selectedCalendarId);
       setSyncDetails(result.details);
       
@@ -126,7 +187,7 @@ const AdminGoogleCalendar: React.FC<Props> = ({
         message: message
       });
       
-      // Oppdater refresh key for å tvinge iframe til å laste på nytt
+      // Update refresh key to force iframe reload
       setRefreshKey(prev => prev + 1);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to sync with Google Calendar';
@@ -143,7 +204,7 @@ const AdminGoogleCalendar: React.FC<Props> = ({
       <div className="admin-calendar-controls">
         {!isAuthorized ? (
           <button
-            onClick={initializeCalendar}
+            onClick={handleSyncGoogleCalendar}
             disabled={isLoading}
             className="btn-primary"
           >
