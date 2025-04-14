@@ -4,6 +4,8 @@ import Footer from '../../components/Footer/Footer';
 import { getAllBookings, updateBooking, cancelBooking } from '../../backend/firebase/services/firebase.bookingservice';
 import { BookingData } from '../../backend/interfaces/BookingData';
 import './AdminCalendarPage.css';
+import AdminGoogleCalendar from '../../components/AdminGoogleCalendar/AdminGoogleCalendar';
+import './AdminCalendarPage.css';
 
 const AdminCalendarPage: React.FC = () => {
     const [filter, setFilter] = useState('today');
@@ -525,6 +527,10 @@ const AdminCalendarPage: React.FC = () => {
                     </div>
                 )}
             </div>
+                            {/* Google Calendar Section */}
+                <div className="calendar-section">
+                    <AdminGoogleCalendar />
+                </div>
             <Footer />
         </>
     );
