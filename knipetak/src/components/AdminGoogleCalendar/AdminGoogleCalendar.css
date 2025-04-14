@@ -1,40 +1,230 @@
 .admin-calendar-container {
-  @apply w-full max-w-7xl mx-auto p-4;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .admin-calendar-controls {
-  @apply flex flex-col gap-4 items-start mb-6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.calendar-selector {
+  width: 100%;
+  max-width: 400px;
+}
+
+.calendar-selector label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-selector select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+.calendar-selector select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
 .btn-primary {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 
-         transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 0.5rem;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .error-message {
-  @apply text-red-500 text-sm mt-2;
+  padding: 1rem;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-top: 1rem;
 }
 
 .calendar-iframe-container {
-  @apply w-full rounded-lg shadow-lg overflow-hidden;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 2rem;
+  border: 2px solid #eee;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-iframe-container iframe {
-  @apply w-full h-[600px] border-0;
+  width: 100%;
+  height: 600px;
+  border: none;
 }
 
 .sync-status {
-  @apply text-sm mt-2;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 1rem;
 }
 
 .sync-status.success {
-  @apply text-green-500;
+  color: #28a745;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
 }
 
 .sync-status.error {
-  @apply text-red-500;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
 }
 
 .sync-status.syncing {
-  @apply text-blue-500;
+  color: #007bff;
+  background-color: #cce5ff;
+  border: 1px solid #b8daff;
+}
+
+.sync-details {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  border: 1px solid #e9ecef;
+}
+
+.sync-details-section {
+  margin-bottom: 1rem;
+}
+
+.sync-details-section:last-child {
+  margin-bottom: 0;
+}
+
+.sync-details-section h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: #495057;
+}
+
+.sync-details-section ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sync-details-section li {
+  padding: 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sync-details-section li:last-child {
+  margin-bottom: 0;
+}
+
+.booking-summary {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #212529;
+}
+
+.booking-time {
+  font-size: 0.875rem;
+  color: #495057;
+  line-height: 1.4;
+}
+
+.time-label {
+  font-weight: 500;
+  color: #6c757d;
+  margin-right: 0.5rem;
+}
+
+.cancelled-section {
+  border-left: 4px solid #dc3545;
+}
+
+.cancelled-section h3 {
+  color: #dc3545;
+}
+
+.cancelled-section li {
+  background-color: #fff5f5;
+  border-color: #ffe3e3;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .admin-calendar-container {
+    padding: 1rem;
+  }
+
+  .calendar-selector {
+    max-width: 100%;
+  }
+
+  .btn-primary {
+    width: 100%;
+  }
+}
+
+.toggle-details-btn {
+  margin-left: 1rem;
+  padding: 0.25rem 0.5rem;
+  background-color: transparent;
+  border: 1px solid #6c757d;
+  border-radius: 0.25rem;
+  color: #6c757d;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-details-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #495057;
+  color: #495057;
 }
