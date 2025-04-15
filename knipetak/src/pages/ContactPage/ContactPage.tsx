@@ -1,33 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
 import emailjs from '@emailjs/browser';
 import './ContactPage.css';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 
 function ContactPage() {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (user?.email) {
+        setEmail(user.email); // Automatically fill email field
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup listener
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setError('');
     setSuccess('');
 
-    switch (id) {
-      case 'name':
-        setName(value);
-        break;
-      case 'email':
-        setEmail(value);
-        break;
-      case 'message':
-        setMessage(value);
-        break;
-    }
+    if (id === 'message') setMessage(value);
+    if (id === 'email' && !currentUser) setEmail(value); // Only update if not logged in
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,23 +39,20 @@ function ContactPage() {
     setIsLoading(true);
 
     const templateParams = {
-      from_name: name,
       from_email: email,
       message,
     };
 
     emailjs
       .send(
-        'service_qwdromj', // From EmailJS dashboard
-        'template_lvwabq4', // From EmailJS template
+        'service_b9we3th',
+        'template_lvwabq4',
         templateParams,
-        'm7Ls2T8S_jvw9YWD6' // From EmailJS account
+        'm7Ls2T8S_jvw9YWD6'
       )
       .then((response) => {
         console.log('SUCCESS!', response.status, response.text);
         setSuccess('Meldingen din har blitt sendt!');
-        setName('');
-        setEmail('');
         setMessage('');
       })
       .catch((err) => {
@@ -79,32 +80,17 @@ function ContactPage() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="name">Navn</label>
-                <textarea
-                  id="name"
-                  value={name}
-                  onChange={handleInputChange}
-                  className="form-input form-input--short"
-                  placeholder="Skriv navnet ditt"
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="email">E-post</label>
-                <textarea
-                  id="email"
-                  value={email}
-                  onChange={handleInputChange}
-                  className="form-input form-input--short"
-                  placeholder="Skriv e-postadressen din"
-                  required
-                  disabled={isLoading}
-                />
-              </div>
+            <div className="form-group">
+              <label htmlFor="email">E-post</label>
+              <textarea
+                id="email"
+                value={email}
+                onChange={handleInputChange}
+                className="form-input form-input--short"
+                placeholder="Skriv e-postadressen din"
+                required
+                disabled={!!currentUser || isLoading} // disables only if logged in or loading
+              />
             </div>
 
             <div className="form-group">
