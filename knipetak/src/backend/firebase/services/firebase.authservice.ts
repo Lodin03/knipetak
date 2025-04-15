@@ -1,7 +1,17 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider, UserCredential } from 'firebase/auth';
-import app from '../firebase.ts';
-import { createUserDocument } from './firebase.userservice';
-import { UserType, UserData } from '../../interfaces/UserData';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  onAuthStateChanged,
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
+  UserCredential,
+} from "firebase/auth";
+import app from "../firebase.ts";
+import { createUserDocument } from "./firebase.userservice";
+import { UserType, UserData } from "../../interfaces/UserData";
 
 export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
@@ -13,7 +23,9 @@ export const signInWithGoogle = async () => {
     const user = result.user;
 
     // Check if the user already exists in Firestore, if not, create a new document
-    const userCredential = result as UserCredential & { additionalUserInfo?: { isNewUser?: boolean } };
+    const userCredential = result as UserCredential & {
+      additionalUserInfo?: { isNewUser?: boolean };
+    };
     if (userCredential.additionalUserInfo?.isNewUser) {
       const newUserData: UserData = {
         uid: user.uid,
@@ -27,17 +39,17 @@ export const signInWithGoogle = async () => {
         location: {
           address: "",
           city: "",
-          postalCode: 0
+          postalCode: 0,
         },
-        phoneNumber: ""
+        phoneNumber: "",
       };
       await createUserDocument(user.uid, newUserData);
     }
 
-    console.log('User signed in with Google: ', user);
+    console.log("User signed in with Google: ", user);
     return user;
   } catch (error) {
-    console.error('Error signing in with Google: ', error);
+    console.error("Error signing in with Google: ", error);
     throw error;
   }
 };
@@ -46,11 +58,19 @@ export const signInWithGoogle = async () => {
 export { onAuthStateChanged };
 
 // Function to sign up a user
-export const signUp = async (email: string, password: string, username: string) => {
+export const signUp = async (
+  email: string,
+  password: string,
+  username: string
+) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     const user = userCredential.user;
-    
+
     // Update the user's display name
     await updateProfile(user, { displayName: username });
 
@@ -66,16 +86,16 @@ export const signUp = async (email: string, password: string, username: string) 
       location: {
         address: "",
         city: "",
-        postalCode: 0
+        postalCode: 0,
       },
-      phoneNumber: ""
+      phoneNumber: "",
     };
     await createUserDocument(user.uid, newUserData);
 
-    console.log('User signed up: ', user);
+    console.log("User signed up: ", user);
     return user;
   } catch (error) {
-    console.error('Error signing up: ', error);
+    console.error("Error signing up: ", error);
     throw error;
   }
 };
@@ -83,12 +103,16 @@ export const signUp = async (email: string, password: string, username: string) 
 // Function to sign in a user
 export const signIn = async (email: string, password: string) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     const user = userCredential.user;
-    console.log('User signed in: ', user);
+    console.log("User signed in: ", user);
     return user;
   } catch (error) {
-    console.error('Error signing in: ', error);
+    console.error("Error signing in: ", error);
     throw error;
   }
 };
@@ -97,9 +121,9 @@ export const signIn = async (email: string, password: string) => {
 export const logOut = async () => {
   try {
     await signOut(auth);
-    console.log('User signed out');
+    console.log("User signed out");
   } catch (error) {
-    console.error('Error signing out: ', error);
+    console.error("Error signing out: ", error);
     throw error;
   }
 };

@@ -1,4 +1,4 @@
-import { Location } from "./UserData.ts"; // Importing the Location interface from UserData.ts
+import { CustomerLocation } from "./Location"; // Importing the Location interface from UserData.ts
 
 export interface BookingData {
   bookingId?: string; // ID of the booking document
@@ -8,7 +8,7 @@ export interface BookingData {
   customerPhone: string; // Phone number (required for guest bookings)
   date: Date; // Appointment date
   duration: number; // Total booking duration (in minutes)
-  location: Location; // Contains "address", "city", "postalCode"
+  location: CustomerLocation; // Contains "address", "city", "postalCode"
   paymentStatus: false; // e.g. "pending" or "paid"
   price: number; // e.g. 1550
   status: string; // e.g. "pending"
