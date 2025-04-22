@@ -141,3 +141,14 @@
   border-radius: 50%;
   border-top-color: white;
 }
+
+@media screen and (max-width: 430px) {
+
+  .form-input {
+    font-size: 0.75rem
+  }
+  .contact-container {
+    min-height: 85vh;
+  }
+
+}

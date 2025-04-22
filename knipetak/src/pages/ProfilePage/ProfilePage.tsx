@@ -86,8 +86,8 @@ const Profile: React.FC = () => {
                     <p>Health Issues</p>
                 </div>
             </div>
-            <div>
-                <h2>Behandlingshistorikk</h2>
+            <div className='orders'>
+                <h2 className='textProfile'>Behandlinger</h2>
                 <p>Behandling 1, Dato, Pris</p>
                 <p>Behandling 2, Dato, Pris</p>
                 <p>Behandling 3, Dato, Pris</p>

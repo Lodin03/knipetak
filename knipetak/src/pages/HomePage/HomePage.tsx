@@ -29,12 +29,14 @@ const HomePage: React.FC = () => {
   const nextSlides = () => {
     if (currentSlide < slides.length - 1) {
     setCurrentSlide((prev => (prev + 1 ) % slides.length))
+    setProgress(0)
     }
   }
 
   const prevSlides = () => {
     if (currentSlide > 0) {
     setCurrentSlide((prev) => (prev - 1 + slides.length ) % slides.length)
+    setProgress(0)
   }
 }
 

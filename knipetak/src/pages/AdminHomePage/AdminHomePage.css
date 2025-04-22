@@ -106,3 +106,22 @@
 .logout-button:hover {
   background-color: #c9302c;
 }
+
+@media screen and (max-width: 430px) {
+  .navBar {
+    display: flex;
+    max-width: 430px;
+    padding: 1rem;
+    justify-content: center;
+}
+.navLinks  {
+  display: flex;
+  gap: 1rem; 
+  
+}
+
+.navLinks a {
+  font-size: 1.0rem;
+}
+
+}

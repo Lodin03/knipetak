@@ -24,6 +24,11 @@ function TreatmentsPage() {
         <section className="treatments__overview">
           
           <div className="treatments__header">
+          <img 
+              className="treatments__image" 
+              src="/src/assets/images/MassasjeBåt.jpg" 
+              alt="Massasje behandling"
+            />
           <div className="ContainerTreatmentPage">
         <div className="TextContainerTreatment">
         <h3 className="text"> Massasje kan ha ein rekke positive virkninger på fysisk og mental helse. Gjennom gjennomførte bevegelser som er målrettet mot slitne, skadet eller stresset led og muskulatur kan føre til redusering av smerte, samt bidra mentalt med å lindre angst og kanskje til og med depresjon.
@@ -34,11 +39,7 @@ function TreatmentsPage() {
               </h3>
           </div>
         </div>
-            <img 
-              className="treatments__image" 
-              src="/src/assets/images/MassasjeBåt.jpg" 
-              alt="Massasje behandling"
-            />
+          
           </div>
       
 

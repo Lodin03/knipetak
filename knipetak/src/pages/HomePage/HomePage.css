@@ -1,11 +1,7 @@
 
 
 
-@media screen and (max-width: 430px) {
-  html,body {
-    overflow-x: hidden;
-  }
-}
+
 
 
 /* Style for the navbar */
@@ -27,6 +23,7 @@
   cursor: pointer;   
   font-size: 1.2rem;     
 }
+
   
 /* Style for the logo */
 .logo {
@@ -120,8 +117,6 @@
   background-color: #c9302c;
 }
 
-
-  
 .ContainerHomePage{
   display: flex;
   justify-content: center;
@@ -130,52 +125,6 @@
  
  
 }
-
-@media screen and (max-width: 430px) {
-  .ContainerHomePage,
-  .ContainerHomePage2,
-  .TextContainer,
-  .text2,
-  .TextContainer2,
-  .Reviews {
-    flex-direction: column;
-    align-items: center;
-    padding: 0 10px;
-  }
-  .ImageContainer2 {
-    display: flex;
-    grid-template-rows: row;
- 
-  }
- 
-  .TextContainer,
-  .TextContainer2 {
-    flex-direction: row;
-  }
-  .ImageContainer,
- 
-  .slide,
-  .ImageSlideShow,
-  .SlideShowButtons,
-  
-  .Review {
-    width: 90%;
-  }
-  .ContainerHomePage2 {
-    height: 750px;
-    font-size: 11px;
-  }
-  .TextContainer2 {
-   
-
-  }
-
-  
-}
-
-
-
-
 
 .TextContainer {
   display: block;
@@ -193,19 +142,12 @@
     width: 230px;
     gap: 20px;
   
-    
-   
-    
   }
-  .ImageRow {
-    display: grid;
-    grid-template-rows: repeat();
-  }
-
   .text {
     padding: 25px 10px;
     color: white;
   }
+
 
 .ticker-wrapper {
   overflow: hidden;
@@ -279,6 +221,8 @@ flex-direction: row-reverse;
 
 }
 
+
+
 .text2 {
   padding: 25px 10px;
   color: white;
@@ -309,6 +253,8 @@ flex-direction: row-reverse;
   border-radius: 10px;
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
+
+
 
 .SlideShowImage {
   position: relative;
@@ -419,4 +365,93 @@ align-items: center;
 
 .Feedback {
   width: 90%;
+}
+
+@media screen and (max-width: 430px) {
+  html,body {
+    overflow-x: hidden;
+  }
+.mainContentHomepage {
+  min-height: 150vh; 
+}
+  .slide {
+    max-width: 430px;
+  }
+  .ImageContainer {
+   max-width: 430px;
+  }
+  .ImageSlideShow {
+    max-width: 430px;
+  }
+  .SlideShowButtons {
+    max-width: 430px;
+  }
+  .slide.active {
+    width: 300px;
+  }
+  .ContainerHomePage {
+    max-width: 430px;
+    display: flex;
+    flex-direction: column;
+  }
+  .TextContainer {
+     
+    width: 90%;
+    max-width: 100%;
+  }
+  .ImageContainer {
+    
+  }
+  .text2 {
+    max-width: 430px;
+  }
+    .text {
+      font-size: 18px;
+    }
+  .ImageContainer2 {
+    display: flex;
+    grid-template-rows: row;
+ 
+  }
+  .TextContainer2 {
+    
+    width: 90%;
+    max-width: 100%;
+  
+  }
+  .Reviews {
+    flex-direction: column;
+    align-items: center;
+    padding: 0 10px;
+  }
+  .ContainerHomePage2 {
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+  }
+  .ImageContainer2 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .Review {
+    width: 90%;
+  }
+  .text {
+    padding: 15px 10px;
+    }
+  
+  .ImageRow {
+    display: grid;
+    grid-template-rows: repeat();
+  }
+  
+  .navLinks  {
+    display: flex;
+    gap: 10px;
+  
+    
+  }
+
+  
 }

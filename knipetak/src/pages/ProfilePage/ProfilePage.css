@@ -1,6 +1,7 @@
 
 
 .profile {
+    min-height: 85vh;
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 20px;
@@ -86,8 +87,30 @@
 }
 
 .profile input {
-    padding: 0.5rem;
+    padding-left: 0.75rem;
     width: 100%;
     margin-bottom: 1rem;
 }
+.profileInfo {
+padding-left: 10px;
+}
 
+@media screen and (max-width: 430px) {
+.textProfile {
+    font-size: 20px;
+}
+
+.profile {
+    max-width: 430px;
+}
+.profile > div:nth-child(2) {
+    max-width: 170px;
+}
+.orders  {
+max-width: 430px;
+font-size: 15px;
+}
+.profileInfo {
+padding-left: 10px;
+}
+}
