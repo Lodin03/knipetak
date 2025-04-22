@@ -145,6 +145,7 @@ export class GoogleCalendarService {
               apiKey: this.apiKey,
               discoveryDocs: [
                 "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
+                "https://www.googleapis.com/discovery/v1/apis/calendar/v3/calendarList"
               ],
             });
             resolve();
@@ -179,9 +180,7 @@ export class GoogleCalendarService {
           console.log("Token is valid, setting it...");
           this.accessToken = tokenData.access_token;
           if (window.gapi?.client) {
-            window.gapi.client.setToken({
-              access_token: tokenData.access_token,
-            });
+            window.gapi.client.setToken(tokenData.access_token);
           }
         } else {
           console.log("Token expired, removing from storage");
@@ -215,7 +214,7 @@ export class GoogleCalendarService {
       this.accessToken = token;
 
       if (window.gapi?.client) {
-        window.gapi.client.setToken({ access_token: token });
+        window.gapi.client.setToken(token);
       }
       console.log("Token saved successfully");
     } catch (error) {
@@ -289,9 +288,7 @@ export class GoogleCalendarService {
               console.log("Using existing valid token");
               this.accessToken = tokenData.access_token;
               if (window.gapi?.client) {
-                window.gapi.client.setToken({
-                  access_token: tokenData.access_token,
-                });
+                window.gapi.client.setToken(tokenData.access_token);
               }
               resolve(true);
               return;
@@ -362,7 +359,6 @@ export class GoogleCalendarService {
 
         // Validate token by making a minimal API call
         await window.gapi.client.calendar.calendarList.list({
-          maxResults: 1,
           fields: "items(id)",
         });
       } catch (error) {

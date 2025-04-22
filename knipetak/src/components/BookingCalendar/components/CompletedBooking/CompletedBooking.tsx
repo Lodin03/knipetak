@@ -1,6 +1,6 @@
 import React from "react";
 import { Treatment } from "../../../../backend/interfaces/Treatment";
-import { Location as BookingLocation } from "../../../../backend/interfaces/UserData";
+import { Location as BookingLocation } from "../../../../backend/interfaces/Location";
 import "./CompletedBooking.css";
 
 interface CompletedBookingProps {

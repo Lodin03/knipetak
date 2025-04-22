@@ -134,6 +134,8 @@ const BookingCalendarContent: React.FC = () => {
           isGroup={isGroupBooking}
           groupSize={groupSize}
           location={{
+            id: "default-id", // Replace with the actual id
+            name: "default-name", // Replace with the actual name
             address,
             city,
             postalCode: Number(postalCode)

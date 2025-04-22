@@ -15,7 +15,7 @@ import { Gender, UserData } from '../../backend/interfaces/UserData';
 const Profile: React.FC = () => {
     const [profileImage, setProfileImage] = useState("src/assets/images/defaultProfileIcon.png");
     const [user, setUser] = useState<User | null>(null);
-    const [userData, setUserData] = useState<Partial<UserData> | null>(null);
+    const [, setUserData] = useState<Partial<UserData> | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [bookings, setBookings] = useState<BookingData[]>([]);
     const [treatments, setTreatments] = useState<Treatment[]>([]);
@@ -175,6 +175,8 @@ const Profile: React.FC = () => {
                 healthIssues: healthIssues || undefined,
                 phoneNumber: phoneNumber || undefined,
                 location: address ? {
+                    id: "default-id", // Replace with a proper id if available
+                    name: "default-name", // Replace with a proper name if available
                     address,
                     city,
                     postalCode: postalCode || 0

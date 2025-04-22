@@ -1,7 +1,7 @@
 // New file: src/backend/utils/timeSlotUtils.ts
 import { format, parse } from "date-fns";
 import { Timestamp } from "firebase/firestore";
-import type { TimeSlot } from "@/backend/interfaces/TimeSlot";
+import type { TimeSlot } from "@/backend/interfaces/timeSlot";
 import type WorkHours from "@/backend/interfaces/availabilityInterfaces/WorkHours";
 
 // UI representation with string times

@@ -17,7 +17,11 @@ function NavigationBar() {
             if (currentUser) {
                 try {
                     const userData = await getUserData(currentUser.uid); // Fetch user type
-                    setUserType(userData.userType);
+                    if (userData) {
+                        setUserType(userData.userType);
+                    } else {
+                        console.error("User data is null");
+                    }
                 } catch (error) {
                     console.error("Error fetching user data:", error);
                 }

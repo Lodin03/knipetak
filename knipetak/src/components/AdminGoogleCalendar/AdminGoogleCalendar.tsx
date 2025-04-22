@@ -65,7 +65,7 @@ const AdminGoogleCalendar: React.FC<Props> = ({
             if (tokenData.expires_at > Date.now()) {
               // Token is valid, set it and mark as authorized
               if (window.gapi?.client) {
-                window.gapi.client.setToken({ access_token: tokenData.access_token });
+                window.gapi.client.setToken(tokenData.access_token);
               }
               setIsAuthorized(true);
               setSyncStatus({ status: 'success', message: 'Kalender initialisert' });
@@ -145,7 +145,7 @@ const AdminGoogleCalendar: React.FC<Props> = ({
           if (tokenData.expires_at > Date.now()) {
             // Token is valid, use it
             if (window.gapi?.client) {
-              window.gapi.client.setToken({ access_token: tokenData.access_token });
+              window.gapi.client.setToken(tokenData.access_token);
             }
             setIsAuthorized(true);
           } else {

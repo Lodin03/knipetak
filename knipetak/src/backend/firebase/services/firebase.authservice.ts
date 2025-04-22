@@ -37,6 +37,8 @@ export const signInWithGoogle = async () => {
         age: 0,
         healthIssues: "",
         location: {
+          id: "",
+          name: "",
           address: "",
           city: "",
           postalCode: 0,
@@ -84,6 +86,8 @@ export const signUp = async (
       age: 0,
       healthIssues: "",
       location: {
+        id: "",
+        name: "",
         address: "",
         city: "",
         postalCode: 0,

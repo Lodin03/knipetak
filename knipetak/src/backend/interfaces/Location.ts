@@ -2,7 +2,7 @@ export interface Location {
   id: string;
   name: string;
   address?: string;
-  postalCode: string;
+  postalCode: number;
   city?: string;
   area?: string;
 }
@@ -14,6 +14,7 @@ export interface CustomerLocation {
   postalCode: number;
 }
 
-export interface LocationFormData extends Omit<Location, "id"> {
+export interface LocationFormData extends Omit<Location, "id" | "postalCode"> {
   id?: string;
+  postalCode?: number;
 }
