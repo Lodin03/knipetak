@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getDefaultWorkHours, setDefaultWorkHours } from "../../../backend/firebase/services/firebase.availabilityservice";
 import type { Location } from "../../../backend/interfaces/Location";
 import type WeeklySchedule from "../../../backend/interfaces/availabilityInterfaces/WeeklySchedule";
+import { TimeSlotUI } from "@/utils/TimeSlotUtils";
+import { useWeeklyTimeSlots, useDefaultLocation } from "@/hooks/useTimeSlotManager";
 import "./WorkhoursManager.css";
 import { LocationModal } from "../LocationSetter/LocationModal";
 
@@ -32,17 +34,30 @@ interface WorkHoursManagerProps {
 }
 
 export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursManagerProps) {
-  const [schedule, setSchedule] = useState<WeeklySchedule>(() => {
-    return DAYS.reduce<WeeklySchedule>((acc, norwegianDay) => {
-      const englishDay = DAY_MAPPING[norwegianDay];
-      acc[englishDay] = {
-        workhours: {
-          timeSlots: []
-        }
-      };
-      return acc;
-    }, {});
+  // Get the default location ID
+  const defaultLocation = useDefaultLocation(locations);
+  
+  // Setup initial empty schedule
+  const initialSchedule = DAYS.reduce((acc, norwegianDay) => {
+    const englishDay = DAY_MAPPING[norwegianDay];
+    acc[englishDay] = {
+      workhours: {
+        timeSlots: []
+      }
+    };
+    return acc;
+  }, {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>);
+
+  // Use our custom hook for managing the weekly schedule
+  const { 
+    schedule, 
+    setSchedule, 
+    operations: scheduleOps 
+  } = useWeeklyTimeSlots(initialSchedule, {
+    dayMapping: DAY_MAPPING,
+    defaultLocation
   });
+  
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -54,21 +69,32 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
       try {
         const defaultHours = await getDefaultWorkHours();
         
-        const initialSchedule = DAYS.reduce<WeeklySchedule>((acc, norwegianDay) => {
-          const englishDay = DAY_MAPPING[norwegianDay];
-          acc[englishDay] = defaultHours?.[englishDay] || {
-            workhours: {
-              timeSlots: [{
-                start: "09:00",
-                end: "17:00",
-                location: locations[0]?.id || "",
-              }]
-            }
-          };
-          return acc;
-        }, {});
-
-        setSchedule(initialSchedule);
+        if (defaultHours) {
+          // Transform API data to our UI format
+          const uiSchedule = DAYS.reduce((acc, norwegianDay) => {
+            const englishDay = DAY_MAPPING[norwegianDay];
+            
+            // Map the API response to our UI format
+            const timeSlots = defaultHours?.[englishDay]?.workhours?.timeSlots || [];
+            
+            acc[englishDay] = {
+              workhours: {
+                timeSlots: timeSlots.length > 0 ? 
+                  timeSlots.map(slot => ({
+                    start: typeof slot.start === 'string' ? slot.start : "09:00",
+                    end: typeof slot.end === 'string' ? slot.end : "17:00",
+                    location: typeof slot.location === 'string' ? 
+                      slot.location : 
+                      (slot.location?.id || locations[0]?.id || "")
+                  })) : 
+                  []
+              }
+            };
+            return acc;
+          }, {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>);
+          
+          setSchedule(uiSchedule);
+        }
       } catch (error) {
         setError("Kunne ikke laste data. Prøv igjen senere.");
         console.error("Failed to load data:", error);
@@ -77,35 +103,16 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
       }
     }
     loadData();
-  }, [locations]);
+  }, [locations, setSchedule]);
 
+  // Use the operation from our hook
   const handleAddTimeSlot = (norwegianDay: string) => {
-    const englishDay = DAY_MAPPING[norwegianDay];
-    setSchedule((prev) => ({
-      ...prev,
-      [englishDay]: {
-        ...prev[englishDay],
-        workhours: {
-          timeSlots: [
-            ...prev[englishDay].workhours.timeSlots,
-            { start: "09:00", end: "17:00", location: locations[0]?.id || "" }
-          ]
-        }
-      }
-    }));
+    scheduleOps.addTimeSlot(norwegianDay, { location: defaultLocation });
   };
 
+  // Use the operation from our hook
   const handleRemoveTimeSlot = (norwegianDay: string, index: number) => {
-    const englishDay = DAY_MAPPING[norwegianDay];
-    setSchedule((prev) => ({
-      ...prev,
-      [englishDay]: {
-        ...prev[englishDay],
-        workhours: {
-          timeSlots: prev[englishDay].workhours.timeSlots.filter((_, i) => i !== index),
-        },
-      },
-    }));
+    scheduleOps.removeTimeSlot(norwegianDay, index);
   };
 
   const handleTimeChange = (
@@ -114,71 +121,43 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
     field: "start" | "end",
     value: string
   ) => {
-    const englishDay = DAY_MAPPING[norwegianDay];
-    setSchedule((prev) => ({
-      ...prev,
-      [englishDay]: {
-        ...prev[englishDay],
-        workhours: {
-          timeSlots: prev[englishDay].workhours.timeSlots.map((slot, i) =>
-            i === index ? { ...slot, [field]: value } : slot
-          ),
-        },
-      },
-    }));
+    scheduleOps.updateTimeSlot(norwegianDay, index, field, value);
   };
 
   const handleLocationChange = (norwegianDay: string, index: number, locationId: string) => {
-    const englishDay = DAY_MAPPING[norwegianDay];
     if (locationId === "new") {
-      setActiveDay(englishDay);
+      setActiveDay(DAY_MAPPING[norwegianDay]);
       setIsLocationModalOpen(true);
       return;
     }
 
-    setSchedule((prev) => ({
-      ...prev,
-      [englishDay]: {
-        ...prev[englishDay],
-        workhours: {
-          timeSlots: prev[englishDay].workhours.timeSlots.map((slot, i) =>
-            i === index ? { ...slot, location: locationId } : slot
-          )
-        }
-      }
-    }));
+    scheduleOps.updateTimeSlot(norwegianDay, index, "location", locationId);
   };
 
   const handleDayOffToggle = (norwegianDay: string, isDayOff: boolean) => {
-    const englishDay = DAY_MAPPING[norwegianDay];
-    setSchedule((prev) => ({
-      ...prev,
-      [englishDay]: {
-        workhours: {
-          timeSlots: isDayOff ? [] : [{
-            start: "09:00",
-            end: "17:00",
-            location: locations[0]?.id || ""
-          }]
-        }
-      }
-    }));
+    scheduleOps.toggleDayOff(norwegianDay, isDayOff, defaultLocation);
   };
 
   const handleNewLocation = (newLocation: Location) => {
     if (activeDay) {
-      setSchedule(prev => ({
-        ...prev,
-        [activeDay]: {
-          ...prev[activeDay],
-          workhours: {
-            timeSlots: prev[activeDay].workhours.timeSlots.map(slot => ({
-              ...slot,
-              location: slot.location === "" ? newLocation.id : slot.location
-            }))
+      // Update all empty locations with the new one
+      const daySchedule = schedule[activeDay];
+      if (daySchedule) {
+        const updatedTimeSlots = daySchedule.workhours.timeSlots.map(slot => ({
+          ...slot,
+          location: slot.location === "" ? newLocation.id : slot.location
+        }));
+        
+        setSchedule(prev => ({
+          ...prev,
+          [activeDay]: {
+            ...prev[activeDay],
+            workhours: {
+              timeSlots: updatedTimeSlots
+            }
           }
-        }
-      }));
+        }));
+      }
     }
     onLocationCreated(newLocation);
   };
@@ -189,7 +168,21 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
       setSuccess(null);
       setIsLoading(true);
       
-      await setDefaultWorkHours(schedule);
+      // Transform UI timeslots to API format before submitting
+      const apiSchedule = Object.entries(schedule).reduce<WeeklySchedule>((acc, [day, daySchedule]) => {
+        acc[day] = {
+          workhours: {
+            timeSlots: daySchedule.workhours.timeSlots.map(slot => ({
+              start: slot.start,
+              end: slot.end,
+              location: slot.location
+            }))
+          }
+        };
+        return acc;
+      }, {} as WeeklySchedule);
+      
+      await setDefaultWorkHours(apiSchedule);
       setSuccess("Arbeidstimer ble oppdatert!");
     } catch (error) {
       setError("Kunne ikke oppdatere arbeidstimer. Prøv igjen senere.");

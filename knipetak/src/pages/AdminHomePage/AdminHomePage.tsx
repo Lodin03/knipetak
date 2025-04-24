@@ -4,7 +4,8 @@ import { UserData } from "../../backend/interfaces/UserData";
 import { onAuthStateChanged, auth } from "../../backend/firebase/services/firebase.authservice";
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
-import './AdminHomePage.css';
+import './AdminHomePage.css'; 
+import { AdminAvailabilityManager } from "../../components/AdminAvailabilityManager/AdminAvailabilityManager";
 
 function AdminHomePage() {
   const [data, setData] = useState<UserData[]>([]);
@@ -47,25 +48,7 @@ function AdminHomePage() {
       <NavigationBar />
       <div className="admin-content">
         <h1 className="admin-title">Admin Dashboard</h1>
-        <div className="admin-info">
-          <h2>Brukerinformasjon</h2>
-          <p>Innlogget som: {currentUser?.displayName || 'Ikke innlogget'}</p>
-          <p>E-post: {currentUser?.email || 'Ingen e-post'}</p>
-          
-          {currentUser?.bookings && currentUser.bookings.length > 0 && (
-            <div className="bookings-section">
-              <h3>Bokinger</h3>
-              {currentUser.bookings.map((booking) => (
-                <div key={booking.bookingId} className="booking-item">
-                  <p>Tjeneste: {booking.service}</p>
-                  <p>Dato: {new Date(booking.date).toLocaleDateString('nb-NO')}</p>
-                  <p>Status: {booking.status || 'Ikke definert'}</p>
-                  {booking.price && <p>Pris: {booking.price} kr</p>}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <AdminAvailabilityManager />
       </div>
       <Footer />
     </>
