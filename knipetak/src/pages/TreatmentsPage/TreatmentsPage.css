@@ -32,12 +32,58 @@
   margin-bottom: 3rem;
 }
 
+
+.treatments__header {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  height: 500px; /* or adjust according to your design */
+  overflow: hidden;
+}
+
+
 .treatments__image {
-  height: 400px;
-  width: 270px;
+  height: auto;
+  width: auto;
   object-fit: cover;
-  border-radius: 8px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.treatments__ticker-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  height: auto;
+}
+
+/* Makes the background for the ticker slightly darker */
+.treatments__ticker-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+.treatments__ticker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.treatments__ticker-image {
+  height: 25rem;
+  object-fit: cover;
+  width: auto;
+  flex-shrink: 0;
+  margin-right: 5rem;
+  -webkit-user-drag: none;
 }
 
 .treatments__section-title {
@@ -54,6 +100,20 @@
   margin-bottom: 2rem;
 }
 
+/* Container for smooth height animation */
+.treatments__grid-container {
+  overflow: hidden;
+  will-change: height, opacity;
+}
+
+.treatments__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+/* Button styles */
 .treatments__toggle-button {
   height: 2.5rem;
   min-width: 150px;
@@ -65,6 +125,7 @@
   font-size: 1.125rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .treatments__toggle-button:hover {
@@ -72,20 +133,20 @@
   background-color: #5da1ac;
 }
 
-.treatments__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem 0;
+/* Active button state */
+.treatments__toggle-button--active {
+  background-color: #5da1ac !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Card hover effect */
 .treatments__card {
   background-color: #6fb5c0;
   padding: 1.5rem;
   border-radius: 8px;
   color: white;
   height: 100%;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .treatments__card:hover {
