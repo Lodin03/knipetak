@@ -141,3 +141,9 @@
   border-radius: 50%;
   border-top-color: white;
 }
+
+textarea[disabled] {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  color: #555;
+}
