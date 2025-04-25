@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { fetchUsers } from "../../backend/firebase/services/firebase.userservice";
 import { UserData } from "../../backend/interfaces/UserData";
 import { onAuthStateChanged, auth } from "../../backend/firebase/services/firebase.authservice";
-import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import Footer from '../../components/Footer/Footer';
 import './AdminHomePage.css'; 
 import { AdminAvailabilityManager } from "../../components/AdminAvailabilityManager/AdminAvailabilityManager";
 
@@ -45,12 +43,10 @@ function AdminHomePage() {
 
   return (
     <>
-      <NavigationBar />
       <div className="admin-content">
         <h1 className="admin-title">Admin Dashboard</h1>
         <AdminAvailabilityManager />
       </div>
-      <Footer />
     </>
   );
 }

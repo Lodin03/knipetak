@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
-import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import Footer from '../../components/Footer/Footer';
+import { useState, useEffect } from 'react';;
 import emailjs from '@emailjs/browser';
 import './ContactPage.css';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
@@ -66,7 +64,6 @@ function ContactPage() {
 
   return (
     <>
-      <NavigationBar />
       <div className="contact-container">
         <div className="contact-box">
           <h1>Kontakt Oss</h1>
@@ -112,7 +109,6 @@ function ContactPage() {
           </form>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

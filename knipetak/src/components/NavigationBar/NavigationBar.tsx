@@ -35,17 +35,24 @@ function NavigationBar() {
 
     return (
         <div className="navBar">
+          <Link className='button-logo' to={userType === UserType.ADMIN ?  "/admin-home-page" : "/"}>
             <img src={logo} alt="LOGO" className="logo" />
-            <div className="navLinks">
-                <Link to={userType === UserType.ADMIN ? "/admin-home-page" : "/"}>{userType === UserType.ADMIN ? "Admin Hjem" : "Hjem"}</Link>
-                <Link to={userType === UserType.ADMIN ? "/admin-calendar-page" : "/book"}>{userType === UserType.ADMIN ? "Admin Kalender" : "Book Time"}</Link>
-                <Link to="/behandlinger">Behandlinger</Link>
-                <Link to="/kontakt">Kontakt</Link>
-                {user && <Link to="/profile">Profil</Link>} 
-                {!user && <Link to="/login">Logg inn</Link>}
-            </div>
+          </Link>
+      
+          <div className="navLinks">
+            <Link to={userType === UserType.ADMIN ? "/admin-home-page" : "/"}>
+              {userType === UserType.ADMIN ? "Admin Hjem" : "Hjem"}
+            </Link>
+            <Link to={userType === UserType.ADMIN ? "/admin-calendar-page" : "/book"}>
+              {userType === UserType.ADMIN ? "Admin Kalender" : "Book Time"}
+            </Link>
+            <Link to="/behandlinger">Behandlinger</Link>
+            <Link to="/kontakt">Kontakt</Link>
+            {user && <Link to="/profile">Profil</Link>}
+            {!user && <Link to="/login">Logg inn</Link>}
+          </div>
         </div>
-    );
-}
+      );
+    }   
 
 export default NavigationBar;

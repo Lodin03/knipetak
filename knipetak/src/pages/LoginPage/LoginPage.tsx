@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signIn, signUp, signInWithGoogle } from '../../backend/firebase/services/firebase.authservice';
-import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import Footer from '../../components/Footer/Footer';
 import { validateUsername, validatePassword, calculatePasswordStrength } from '../../utils/contentValidation';
 import './LoginPage.css';
 
@@ -134,7 +132,6 @@ function LoginPage() {
 
   return (
     <>
-      <NavigationBar />
       <div className="login-container">
         <div className="login-box">
           <h1>{isRegistering ? 'Registrer deg' : 'Logg Inn'}</h1>
@@ -279,7 +276,6 @@ function LoginPage() {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

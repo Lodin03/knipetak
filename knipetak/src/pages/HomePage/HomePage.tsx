@@ -1,6 +1,4 @@
 import React from 'react';
-import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import Footer from '../../components/Footer/Footer';
 import "../HomePage/HomePage.css"
 import { useEffect, useState } from 'react';
 
@@ -26,8 +24,6 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      <NavigationBar />
-      
       <div className="mainContentHomepage">
         <h1 className="title">Knipetak - En muskelterapaut på hjul!</h1>
         <br></br>
@@ -96,8 +92,6 @@ const HomePage: React.FC = () => {
         
         <script src='SlideShow.js'></script>
       </div>
-  
-      <Footer />
     </>
   );
 };
