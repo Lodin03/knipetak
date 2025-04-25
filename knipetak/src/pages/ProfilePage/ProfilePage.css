@@ -95,7 +95,7 @@
 padding-left: 10px;
 }
 
-@media screen and (max-width: 430px) {
+@media screen and (max-width: 769px) {
 .textProfile {
     font-size: 20px;
 }

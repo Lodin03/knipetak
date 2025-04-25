@@ -60,11 +60,11 @@ const HomePage: React.FC = () => {
               I tillegg møter jeg opp på ulike eventer. Massasje kan være et annerledes og unikt innslag på et event. Jeg kan derfor bookes inn til utdrikningslag og bursdager.</h3>
           </div>
           <div className="ImageContainer">
-            <img className="Image" src='/src/assets/images/KnipetakBil.jpg' alt="massasjebilde" height="175px" width= "230px" ></img>
-            <img className="Image" src="/src/assets/images/KnipetakMassasje.jpg" alt="massasjebilde" height="155px" width="230px"></img>
+            <img className="Image" src='/src/assets/images/KnipetakBil.jpg' alt="massasjebilde" ></img>
+            <img className="Image1" src="/src/assets/images/KnipetakMassasje.jpg" alt="massasjebilde"></img>
             </div>
             <div className="ImageRow">
-            <img className="Image" src="/src/assets/images/KnipetakBilde.jpg" alt="massasjebilde" height="350px" width="240px"></img>
+            <img className="Image2" src="/src/assets/images/KnipetakBilde.jpg" alt="massasjebilde" height="350px" width="240px"></img>
             </div>
         </div>
 <br></br>
@@ -127,8 +127,8 @@ Massasje på benk – utføres med olje /flytende voks (bievoks) direkte på hud
           </div>
           <div className="ImageWrap">
           <div className="ImageContainer2">
-            <img className="Image2" src="/src/assets/images/BildeMassasje.jpg" alt="massasjebilde" height="350px" width="240px"></img>
-            <img className="Image2" src="/src/assets/images/Massasje2.jpg" alt="massasjebilde" height="350px" width="240px"></img>
+            <img className="Image3" src="/src/assets/images/BildeMassasje.jpg" alt="massasjebilde" height="350px" width="240px"></img>
+            <img className="Image3" src="/src/assets/images/Massasje2.jpg" alt="massasjebilde" height="350px" width="240px"></img>
           </div>
           
           </div> 

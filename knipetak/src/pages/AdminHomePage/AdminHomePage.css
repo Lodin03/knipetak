@@ -106,22 +106,64 @@
 .logout-button:hover {
   background-color: #c9302c;
 }
-
-@media screen and (max-width: 430px) {
+@media screen and (min-width: 100px) and (max-width: 398px) {
   .navBar {
     display: flex;
-    max-width: 430px;
+    max-width: 100%;
     padding: 1rem;
     justify-content: center;
 }
 .navLinks  {
   display: flex;
   gap: 1rem; 
+  flex-wrap: nowrap;
+  
+}
+
+.navLinks a {
+  font-size: 0.7rem;
+}
+
+}
+
+
+@media screen and (min-width: 399px) and (max-width: 470px) {
+  .navBar {
+    display: flex;
+    max-width: 100%;
+    padding: 1rem;
+    justify-content: center;
+}
+.navLinks  {
+  display: flex;
+  gap: 1rem; 
+  flex-wrap: nowrap;
   
 }
 
 .navLinks a {
   font-size: 1.0rem;
+}
+
+}
+
+
+@media screen and (min-width: 471px) and (max-width: 950px) {
+  .navBar {
+    display: flex;
+    max-width: 950px;
+    padding: 1rem;
+    justify-content: center;
+}
+.navLinks  {
+  display: flex;
+  gap: 1rem; 
+  flex-wrap: nowrap;
+  
+}
+
+.navLinks a {
+  font-size: 1.2rem;
 }
 
 }
