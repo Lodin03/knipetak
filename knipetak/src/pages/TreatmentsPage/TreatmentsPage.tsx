@@ -18,7 +18,6 @@ function TreatmentsPage() {
   const isActive = activeSection !== null;
   const currentContent = activeSection ? treatmentData[activeSection] : null;
 
-  // Update height dynamically
   useEffect(() => {
     if (contentRef.current) {
       setHeight(contentRef.current.scrollHeight);
@@ -27,6 +26,8 @@ function TreatmentsPage() {
 
   return (
     <>
+    <div className="treatments-page">
+      <NavigationBar />
       <main className="treatments">
         <div className="treatments__hero">
           <h1 className="treatments__title">Behandlinger</h1>
@@ -34,7 +35,6 @@ function TreatmentsPage() {
         </div>
   
         <section className="treatments__overview">
-          {/* Ticker Parallax Band */}
           <div className="treatments__ticker-wrapper">
             <motion.div
               className="treatments__ticker"
@@ -137,6 +137,8 @@ function TreatmentsPage() {
           </motion.div>
         </section>
       </main>
+      <Footer />
+    </div>
     </>
   );
 }  
