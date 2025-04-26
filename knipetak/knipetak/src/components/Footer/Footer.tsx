@@ -1,3 +1,4 @@
+import React from "react";
 import "./Footer.css";
 import logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,7 +16,7 @@ function Footer() {
         {/* Logo Section */}
         <div className="footer-section">
           <img src={logo} alt="Knipetak Logo" className="footer-logo" />
-          <p>Bergens lokale muskelterapaut på hjul</p>
+          <p>Din lokale muskelterapaut på hjul</p>
         </div>
 
         {/* Contact Section */}
@@ -34,7 +35,7 @@ function Footer() {
           <h4>Følg Oss</h4>
           <div className="social-links">
             <a
-              href="https://www.facebook.com/profile.php?id=61553937311909"
+              href="https://facebook.com/knipetak"
               target="_blank"
               rel="noopener noreferrer"
               className="social-link"
@@ -43,7 +44,7 @@ function Footer() {
               <FontAwesomeIcon icon={faSquareFacebook} />
             </a>
             <a
-              href="https://www.instagram.com/knipetak.no/"
+              href="https://instagram.com/knipetak"
               target="_blank"
               rel="noopener noreferrer"
               className="social-link"
