@@ -65,6 +65,15 @@ function TreatmentsPage() {
               />
             </motion.div>
           </div>
+          <div className="TextContainerTreatment">
+        <h3 className="text"> Massasje gjøres ofte med eit skikkelig "knipetak" for å gi best mulig behandling. Her vil massasjen påføres med stramme, men også trygge grep, og massasjen vil være tilpasset toleransenivå, slik at hver person får en god og behagelig opplevelse over utført massasje.
+              </h3>
+          </div>
+        </div>
+          
+          </div>
+      
+
 
           <h3 className="treatments__section-title">
             Massasje kan benyttes ved følgende tilstander:
