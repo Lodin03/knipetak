@@ -8,9 +8,19 @@
 }
 
 .logo {
-    height: 50px;
+    height: 6rem;
     width: auto;
     object-fit: contain;
+}
+
+.button-logo {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    height: 6rem;
+    width: auto;
 }
 
 .navLinks {

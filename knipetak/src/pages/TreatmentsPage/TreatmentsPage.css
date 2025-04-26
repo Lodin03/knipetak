@@ -106,10 +106,20 @@
 }
 
 /* Container for smooth height animation */
+/* Fade transition */
 .treatments__grid-container {
-  overflow: hidden;
-  will-change: height, opacity;
+  transition: opacity 0.5s ease, height 0.5s ease;
+  opacity: 1;
+  height: auto;
 }
+
+/* When hidden */
+.treatments__grid-container--hidden {
+  opacity: 0;
+  height: 0;
+  pointer-events: none;
+}
+
 
 .treatments__grid {
   display: grid;

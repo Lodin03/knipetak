@@ -51,6 +51,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
     cursor: pointer;
     transition: transform 0.2s;
 }
@@ -66,6 +67,8 @@
 .image-upload-icon {
     color: white;
     font-size: 1.2rem;
+    height: 85%;
+    width: 100%;
 }
 
 .profile-name {

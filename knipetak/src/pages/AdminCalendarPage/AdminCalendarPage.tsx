@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import Footer from '../../components/Footer/Footer';
 import { getAllBookings, updateBooking, cancelBooking } from '../../backend/firebase/services/firebase.bookingservice';
 import { BookingData } from '../../backend/interfaces/BookingData';
 import './AdminCalendarPage.css';
@@ -264,7 +262,6 @@ const AdminCalendarPage: React.FC = () => {
 
     return (
         <>
-            <NavigationBar />
             <div className="calendar-container">
                 <h1 className="calendar-title">Admin Kalender</h1>
                 
@@ -531,7 +528,6 @@ const AdminCalendarPage: React.FC = () => {
                 <div className="calendar-section">
                     <AdminGoogleCalendar />
                 </div>
-            <Footer />
         </>
     );
 };

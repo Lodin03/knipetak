@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import Footer from '../../components/Footer/Footer';
 import { TreatmentType } from '../../interfaces/treatment.interface';
 import { treatmentData } from '../../data/treatmentData';
 import './TreatmentsPage.css';
+import { AnimatePresence } from "framer-motion";
+
 
 function TreatmentsPage() {
   const [activeSection, setActiveSection] = useState<TreatmentType | null>(null);
@@ -25,6 +25,7 @@ function TreatmentsPage() {
   }, [currentContent]);
 
   return (
+    <>
     <div className="treatments-page">
       <NavigationBar />
       <main className="treatments">
@@ -32,7 +33,7 @@ function TreatmentsPage() {
           <h1 className="treatments__title">Behandlinger</h1>
           <h2 className="treatments__subtitle">Knipetak - En muskelterapaut på hjul!</h2>
         </div>
-
+  
         <section className="treatments__overview">
           <div className="treatments__ticker-wrapper">
             <motion.div
@@ -46,28 +47,28 @@ function TreatmentsPage() {
                 repeat: Infinity,
               }}
             >
-              <img 
-                className="treatments__ticker-image" 
-                src="/src/assets/images/MassasjeBåt.jpg" 
+              <img
+                className="treatments__ticker-image"
+                src="/src/assets/images/MassasjeBåt.jpg"
                 alt="Massasje behandling"
               />
-              <img 
-                className="treatments__ticker-image" 
-                src="/src/assets/images/Massasje2.jpg" 
+              <img
+                className="treatments__ticker-image"
+                src="/src/assets/images/Massasje2.jpg"
                 alt="Massasje behandling"
               />
-              <img 
-                className="treatments__ticker-image" 
-                src="/src/assets/images/KnipetakMassasje.jpg" 
+              <img
+                className="treatments__ticker-image"
+                src="/src/assets/images/KnipetakMassasje.jpg"
                 alt="Massasje behandling"
               />
             </motion.div>
           </div>
-
+  
           <h3 className="treatments__section-title">
             Massasje kan benyttes ved følgende tilstander:
           </h3>
-
+  
           <div className="treatments__buttons">
             {Object.entries(treatmentData).map(([key, section]) => (
               <motion.button
@@ -87,8 +88,8 @@ function TreatmentsPage() {
               </motion.button>
             ))}
           </div>
-
-          <motion.div 
+  
+          <motion.div
             className="treatments__grid-container"
             animate={{
               height: isActive ? height : 0,
@@ -102,40 +103,45 @@ function TreatmentsPage() {
             style={{ overflow: "hidden" }}
           >
             <div ref={contentRef}>
-              <motion.div
-                className="treatments__grid"
-                key={activeSection}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{
-                  duration: 0.2,
-                  ease: "easeOut",
-                }}
-              >
-                {currentContent && currentContent.content.map((item, index) => (
-                  <motion.article
-                    key={index}
-                    className="treatments__card"
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.05 }}
+              <AnimatePresence mode="wait">
+                {isActive && (
+                  <motion.div
+                    className="treatments__grid"
+                    key={activeSection}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{
+                      duration: 0.3,
+                      ease: "easeInOut",
+                    }}
                   >
-                    <h3 className="treatments__card-title">{item.heading}</h3>
-                    <p className="treatments__card-text">{item.description}</p>
-                  </motion.article>
-                ))}
-              </motion.div>
+                    {currentContent?.content.map((item, index) => (
+                      <motion.article
+                        key={item.heading}
+                        className="treatments__card"
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                      >
+                        <h3 className="treatments__card-title">{item.heading}</h3>
+                        <p className="treatments__card-text">{item.description}</p>
+                      </motion.article>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </section>
       </main>
       <Footer />
     </div>
+    </>
   );
-}
+}  
 
 export default TreatmentsPage;
 
