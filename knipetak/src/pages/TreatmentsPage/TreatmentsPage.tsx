@@ -18,7 +18,6 @@ function TreatmentsPage() {
   const isActive = activeSection !== null;
   const currentContent = activeSection ? treatmentData[activeSection] : null;
 
-  // Update height dynamically
   useEffect(() => {
     if (contentRef.current) {
       setHeight(contentRef.current.scrollHeight);
@@ -26,7 +25,7 @@ function TreatmentsPage() {
   }, [currentContent]);
 
   return (
-    <>
+    <div className="treatments-page">
       <NavigationBar />
       <main className="treatments">
         <div className="treatments__hero">
@@ -35,17 +34,16 @@ function TreatmentsPage() {
         </div>
 
         <section className="treatments__overview">
-          {/* Ticker Parallax Band */}
           <div className="treatments__ticker-wrapper">
             <motion.div
               className="treatments__ticker"
               animate={{
-                x: ["100%", "-100%"], // Move from right to left
+                x: ["100%", "-100%"],
               }}
               transition={{
-                duration: 30, // Speed of the scroll
+                duration: 30,
                 ease: "linear",
-                repeat: Infinity, // Looping
+                repeat: Infinity,
               }}
             >
               <img 
@@ -65,15 +63,6 @@ function TreatmentsPage() {
               />
             </motion.div>
           </div>
-          <div className="TextContainerTreatment">
-        <h3 className="text"> Massasje gjøres ofte med eit skikkelig "knipetak" for å gi best mulig behandling. Her vil massasjen påføres med stramme, men også trygge grep, og massasjen vil være tilpasset toleransenivå, slik at hver person får en god og behagelig opplevelse over utført massasje.
-              </h3>
-          </div>
-        </div>
-          
-          </div>
-      
-
 
           <h3 className="treatments__section-title">
             Massasje kan benyttes ved følgende tilstander:
@@ -144,7 +133,7 @@ function TreatmentsPage() {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
 
