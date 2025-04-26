@@ -85,6 +85,9 @@
 }
 
 .expanded-section {
+  max-width: 100%;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
   background-color: #fff;
   border: 1px solid #e9ecef;
   border-radius: 8px;
@@ -101,6 +104,18 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .expanded-section {
+    max-width: 800px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .expanded-section {
+    max-width: 1000px;
   }
 }
 

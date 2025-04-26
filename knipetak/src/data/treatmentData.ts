@@ -1,6 +1,6 @@
 import { TreatmentSections } from '../interfaces/treatment.interface';
 
-export const treatmentSections: TreatmentSections = {
+export const treatmentData: TreatmentSections = {
     smerter: {
         title: 'Smerter',
         content: [

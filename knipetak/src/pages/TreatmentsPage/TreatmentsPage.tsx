@@ -1,16 +1,29 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import Footer from '../../components/Footer/Footer';
 import { TreatmentType } from '../../interfaces/treatment.interface';
-import { treatmentSections } from '../../data/treatmentData';
+import { treatmentData } from '../../data/treatmentData';
 import './TreatmentsPage.css';
 
 function TreatmentsPage() {
   const [activeSection, setActiveSection] = useState<TreatmentType | null>(null);
+  const [height, setHeight] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const toggleSection = (section: TreatmentType) => {
     setActiveSection(activeSection === section ? null : section);
   };
+
+  const isActive = activeSection !== null;
+  const currentContent = activeSection ? treatmentData[activeSection] : null;
+
+  // Update height dynamically
+  useEffect(() => {
+    if (contentRef.current) {
+      setHeight(contentRef.current.scrollHeight);
+    }
+  }, [currentContent]);
 
   return (
     <>
@@ -22,17 +35,35 @@ function TreatmentsPage() {
         </div>
 
         <section className="treatments__overview">
-          
-          <div className="treatments__header">
-          <img 
-              className="treatments__image" 
-              src="/src/assets/images/MassasjeBåt.jpg" 
-              alt="Massasje behandling"
-            />
-          <div className="ContainerTreatmentPage">
-        <div className="TextContainerTreatment">
-        <h3 className="text"> Massasje kan ha ein rekke positive virkninger på fysisk og mental helse. Gjennom gjennomførte bevegelser som er målrettet mot slitne, skadet eller stresset led og muskulatur kan føre til redusering av smerte, samt bidra mentalt med å lindre angst og kanskje til og med depresjon.
-              </h3>
+          {/* Ticker Parallax Band */}
+          <div className="treatments__ticker-wrapper">
+            <motion.div
+              className="treatments__ticker"
+              animate={{
+                x: ["100%", "-100%"], // Move from right to left
+              }}
+              transition={{
+                duration: 30, // Speed of the scroll
+                ease: "linear",
+                repeat: Infinity, // Looping
+              }}
+            >
+              <img 
+                className="treatments__ticker-image" 
+                src="/src/assets/images/MassasjeBåt.jpg" 
+                alt="Massasje behandling"
+              />
+              <img 
+                className="treatments__ticker-image" 
+                src="/src/assets/images/Massasje2.jpg" 
+                alt="Massasje behandling"
+              />
+              <img 
+                className="treatments__ticker-image" 
+                src="/src/assets/images/KnipetakMassasje.jpg" 
+                alt="Massasje behandling"
+              />
+            </motion.div>
           </div>
           <div className="TextContainerTreatment">
         <h3 className="text"> Massasje gjøres ofte med eit skikkelig "knipetak" for å gi best mulig behandling. Her vil massasjen påføres med stramme, men også trygge grep, og massasjen vil være tilpasset toleransenivå, slik at hver person får en god og behagelig opplevelse over utført massasje.
@@ -45,31 +76,71 @@ function TreatmentsPage() {
 
 
           <h3 className="treatments__section-title">
-            Massasje kan benyttes ved følgene tilstander:
+            Massasje kan benyttes ved følgende tilstander:
           </h3>
 
           <div className="treatments__buttons">
-            {Object.entries(treatmentSections).map(([key, section]) => (
-              <button
+            {Object.entries(treatmentData).map(([key, section]) => (
+              <motion.button
                 key={key}
-                className="treatments__toggle-button"
+                className={`treatments__toggle-button ${
+                  activeSection === key ? "treatments__toggle-button--active" : ""
+                }`}
                 onClick={() => toggleSection(key as TreatmentType)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                animate={{
+                  backgroundColor: activeSection === key ? "#5da1ac" : "#6fb5c0",
+                }}
+                transition={{ duration: 0.2 }}
               >
                 {activeSection === key ? `▼ ${section.title}` : `▶ ${section.title}`}
-              </button>
+              </motion.button>
             ))}
           </div>
 
-          {activeSection && (
-            <div className="treatments__grid">
-              {treatmentSections[activeSection].content.map((item, index) => (
-                <article key={index} className="treatments__card">
-                  <h3 className="treatments__card-title">{item.heading}</h3>
-                  <p className="treatments__card-text">{item.description}</p>
-                </article>
-              ))}
+          <motion.div 
+            className="treatments__grid-container"
+            animate={{
+              height: isActive ? height : 0,
+              opacity: isActive ? 1 : 0,
+            }}
+            initial={false}
+            transition={{
+              height: { duration: 0.5, ease: "easeInOut" },
+              opacity: { duration: 0.4, ease: "easeInOut" },
+            }}
+            style={{ overflow: "hidden" }}
+          >
+            <div ref={contentRef}>
+              <motion.div
+                className="treatments__grid"
+                key={activeSection}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{
+                  duration: 0.2,
+                  ease: "easeOut",
+                }}
+              >
+                {currentContent && currentContent.content.map((item, index) => (
+                  <motion.article
+                    key={index}
+                    className="treatments__card"
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.05 }}
+                  >
+                    <h3 className="treatments__card-title">{item.heading}</h3>
+                    <p className="treatments__card-text">{item.description}</p>
+                  </motion.article>
+                ))}
+              </motion.div>
             </div>
-          )}
+          </motion.div>
         </section>
       </main>
       <Footer />
@@ -78,3 +149,4 @@ function TreatmentsPage() {
 }
 
 export default TreatmentsPage;
+

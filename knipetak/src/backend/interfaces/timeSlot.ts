@@ -1,6 +1,6 @@
-interface TimeSlot {
-  start: string;
-  end: string;
+// src/backend/interfaces/TimeSlot.ts - Base interface
+export interface TimeSlot {
+  start: Date;
+  end: Date;
+  location: string; // Just the ID
 }
-
-export default TimeSlot;

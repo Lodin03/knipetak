@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { createLocation } from "../../../backend/firebase/services/firebase.locationservice";
-import type { Location, LocationFormData } from "../../../backend/interfaces/Location";
+import { createLocation } from "@/backend/firebase/services/firebase.locationservice";
+import type { Location, LocationFormData } from "@/backend/interfaces/Location";
 import "./LocationModal.css";
 
 const initialLocationForm: LocationFormData = {
   name: "",
   address: "",
-  postalCode: "",
+  postalCode: 0,
   city: "",
   area: "",
 };
@@ -36,7 +36,7 @@ export function LocationModal({ isOpen, onClose, onLocationCreated }: LocationMo
       setError(null);
       setIsSubmitting(true);
       const locationId = await createLocation(locationForm);
-      const newLocation = { ...locationForm, id: locationId };
+      const newLocation = { ...locationForm, id: locationId, postalCode: locationForm.postalCode ?? 0 };
       onLocationCreated(newLocation);
       setLocationForm(initialLocationForm);
       onClose();

@@ -17,7 +17,11 @@ function NavigationBar() {
             if (currentUser) {
                 try {
                     const userData = await getUserData(currentUser.uid); // Fetch user type
-                    setUserType(userData.userType);
+                    if (userData) {
+                        setUserType(userData.userType);
+                    } else {
+                        console.error("User data is null");
+                    }
                 } catch (error) {
                     console.error("Error fetching user data:", error);
                 }
@@ -33,8 +37,8 @@ function NavigationBar() {
         <div className="navBar">
             <img src={logo} alt="LOGO" className="logo" />
             <div className="navLinks">
-                <Link to={userType === UserType.ADMIN ? "/AdminHomePage" : "/"}>{userType === UserType.ADMIN ? "Admin Hjem" : "Hjem"}</Link>
-                <Link to={userType === UserType.ADMIN ? "/AdminCalenderPage" : "/book"}>{userType === UserType.ADMIN ? "Admin Kalender" : "Book Time"}</Link>
+                <Link to={userType === UserType.ADMIN ? "/admin-home-page" : "/"}>{userType === UserType.ADMIN ? "Admin Hjem" : "Hjem"}</Link>
+                <Link to={userType === UserType.ADMIN ? "/admin-calendar-page" : "/book"}>{userType === UserType.ADMIN ? "Admin Kalender" : "Book Time"}</Link>
                 <Link to="/behandlinger">Behandlinger</Link>
                 <Link to="/kontakt">Kontakt</Link>
                 {user && <Link to="/profile">Profil</Link>} 

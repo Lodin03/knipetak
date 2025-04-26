@@ -1,4 +1,255 @@
+/* Passer på at skjermen "fill ut" hele siden */
+.main-container {
+  min-height: 77.5vh;
+}
 
+.profile-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.profile-sidebar {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    height: fit-content;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.profile-image-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1rem;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #6FB5C0;
+}
+
+.image-upload-label {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #6FB5C0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.image-upload-label:hover {
+    transform: scale(1.1);
+}
+
+.image-upload-input {
+    display: none;
+}
+
+.image-upload-icon {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+    color: #333;
+}
+
+.profile-email {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.action-button {
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: #6FB5C0;
+    color: white;
+}
+
+.action-button:hover {
+    background: #5da1ac;
+}
+
+.action-button.active {
+    background: #d32f2f;
+    color: white;
+}
+
+.action-button.active:hover {
+    background: #b71c1c;
+}
+
+.action-button.delete {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.action-button.delete:hover {
+    background: #ffcdd2;
+}
+
+.action-button.logout {
+    background: #f5f5f5;
+    color: #666;
+}
+
+.action-button.save {
+    background: #6FB5C0;
+    color: white;
+    margin-top: 1rem;
+}
+
+.action-button.save:hover {
+    background: #5da1ac;
+}
+
+.action-button.save:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.profile-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.profile-section {
+    margin-bottom: 2rem;
+}
+
+.profile-section h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.info-item {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.info-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-item label {
+    display: block;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.info-item p {
+    margin: 0;
+    color: #333;
+}
+
+.info-item input,
+.info-item textarea,
+.info-item select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.info-item textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.treatment-history {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.treatment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.treatment-info h4 {
+    margin: 0;
+    color: #333;
+}
+
+.treatment-info p {
+    margin: 0.5rem 0 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.treatment-price p {
+    margin: 0;
+    color: #6FB5C0;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-sidebar {
+        margin-bottom: 2rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-item.full-width {
+        grid-column: auto;
+    }
+}
 
 .profile {
     min-height: 85vh;
@@ -31,8 +282,6 @@
     align-items: center;
     border: solid 1px #ccc;
 }
-
-
 
 .profile img {
     width: 100px;
@@ -100,17 +349,40 @@ padding-left: 10px;
     font-size: 20px;
 }
 
-.profile {
-    max-width: 430px;
+.save-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    width: 100%;
 }
-.profile > div:nth-child(2) {
-    max-width: 170px;
+
+.form-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
 }
-.orders  {
-max-width: 430px;
-font-size: 15px;
+
+.input-with-error {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
 }
-.profileInfo {
-padding-left: 10px;
+
+.error-message {
+    color: #d32f2f;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
 }
+
+.info-item input.error,
+.info-item textarea.error {
+    border-color: #d32f2f;
 }
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
