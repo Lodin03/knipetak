@@ -51,6 +51,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
     cursor: pointer;
     transition: transform 0.2s;
 }
@@ -66,6 +67,8 @@
 .image-upload-icon {
     color: white;
     font-size: 1.2rem;
+    height: 85%;
+    width: 100%;
 }
 
 .profile-name {
@@ -252,6 +255,7 @@
 }
 
 .profile {
+    min-height: 85vh;
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 20px;
@@ -335,9 +339,17 @@
 }
 
 .profile input {
-    padding: 0.5rem;
+    padding-left: 0.75rem;
     width: 100%;
     margin-bottom: 1rem;
+}
+.profileInfo {
+padding-left: 10px;
+}
+
+@media screen and (max-width: 769px) {
+.textProfile {
+    font-size: 20px;
 }
 
 .save-button-container {

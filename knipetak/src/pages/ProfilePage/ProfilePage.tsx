@@ -1,8 +1,6 @@
 import './ProfilePage.css';
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import Footer from '../../components/Footer/Footer';
 import { logOut } from '../../backend/firebase/services/firebase.authservice';
 import { getUserData, updateUserProfile } from '../../backend/firebase/services/firebase.userservice';
 import { useNavigate } from 'react-router-dom';
@@ -196,7 +194,6 @@ const Profile: React.FC = () => {
 
     return (
         <>
-            <NavigationBar />
             <div className="main-container">
                 <div className="profile-container">
                     <div className="profile-sidebar">
@@ -404,7 +401,6 @@ const Profile: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
         </>
     );
 };

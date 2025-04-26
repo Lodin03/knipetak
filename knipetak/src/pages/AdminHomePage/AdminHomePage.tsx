@@ -56,7 +56,6 @@ function AdminHomePage() {
 
   return (
     <>
-      <NavigationBar />
       <div className="admin-content">
         <h1 className="admin-title">Admin Dashboard</h1>
         <div className="admin-sections">
@@ -111,7 +110,6 @@ function AdminHomePage() {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

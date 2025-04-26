@@ -1,3 +1,5 @@
+
+
 .navBar {
     display: flex;
     justify-content: space-between;
@@ -6,9 +8,19 @@
 }
 
 .logo {
-    height: 50px;
+    height: 6rem;
     width: auto;
     object-fit: contain;
+}
+
+.button-logo {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    height: 6rem;
+    width: auto;
 }
 
 .navLinks {
@@ -45,3 +57,11 @@
 .navLinks a:hover::after {
     width: 100%;
 } 
+
+@media screen and (max-width: 950px) {
+   
+
+    .logo {
+        display: none;
+    }
+}
