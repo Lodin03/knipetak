@@ -107,22 +107,24 @@
   background-color: #c9302c;
 }
 
+/* Mobile Responsive Styles */
 @media screen and (min-width: 100px) and (max-width: 398px) {
   .navBar {
     display: flex;
     max-width: 100%;
     padding: 1rem;
     justify-content: center;
-}
-.navLinks  {
-  display: flex;
-  gap: 1rem; 
-  flex-wrap: nowrap;
-  
-}
+  }
 
-.navLinks a {
-  font-size: 0.7rem;
+  .navLinks {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: nowrap;
+  }
+
+  .navLinks a {
+    font-size: 0.7rem;
+  }
 }
 
 @media screen and (min-width: 399px) and (max-width: 470px) {
@@ -131,18 +133,18 @@
     max-width: 100%;
     padding: 1rem;
     justify-content: center;
-}
-.navLinks  {
-  display: flex;
-  gap: 1rem; 
-  flex-wrap: nowrap;
-  
-}
+  }
 
-.navLinks a {
-  font-size: 1.0rem;
-}
+  .navLinks {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: nowrap;
+  }
 
+  .navLinks a {
+    font-size: 1rem;
+  }
+}
 
 @media screen and (min-width: 471px) and (max-width: 950px) {
   .navBar {
@@ -150,18 +152,20 @@
     max-width: 950px;
     padding: 1rem;
     justify-content: center;
-}
-.navLinks  {
-  display: flex;
-  gap: 1rem; 
-  flex-wrap: nowrap;
-  
+  }
+
+  .navLinks {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: nowrap;
+  }
+
+  .navLinks a {
+    font-size: 1.2rem;
+  }
 }
 
-.navLinks a {
-  font-size: 1.2rem;
-}
-
+/* Admin Styles */
 .admin-content {
   padding: 2rem;
   min-height: calc(100vh - 200px);
@@ -285,7 +289,7 @@
   }
 }
 
-/* Responsive design for larger screens */
+/* Desktop Responsive */
 @media (min-width: 1200px) {
   .admin-sections {
     grid-template-columns: 1fr;

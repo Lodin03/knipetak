@@ -6,6 +6,7 @@ import HandleBookings from "../../components/AdminBookingInterface/HandleBooking
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { UserType } from "../../backend/interfaces/UserData";
+import "./AdminHomePage.css";
 
 type AdminSection = "availability" | "bookings" | null;
 
