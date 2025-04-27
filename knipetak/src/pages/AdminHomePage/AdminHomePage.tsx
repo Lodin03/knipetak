@@ -1,58 +1,72 @@
 import { useEffect, useState } from "react";
 import { fetchUsers } from "../../backend/firebase/services/firebase.userservice";
-import { UserData } from "../../backend/interfaces/UserData";
-import {
-  onAuthStateChanged,
-  auth,
-} from "../../backend/firebase/services/firebase.authservice";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import Footer from "../../components/Footer/Footer";
 import "./AdminHomePage.css";
 import { AdminAvailabilityManager } from "../../components/AdminAvailabilityManager/AdminAvailabilityManager";
 import HandleBookings from "../../components/AdminBookingInterface/HandleBookings";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { UserType } from "../../backend/interfaces/UserData";
 
 type AdminSection = "availability" | "bookings" | null;
 
 function AdminHomePage() {
-  const [data, setData] = useState<UserData[]>([]);
+  const { user, userType, isLoading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<UserData | null>(null);
   const [expandedSection, setExpandedSection] = useState<AdminSection>(null);
 
+  // Redirect hvis ikke admin
+  useEffect(() => {
+    if (!authLoading && (!user || userType !== UserType.ADMIN)) {
+      navigate("/");
+    }
+  }, [user, userType, authLoading, navigate]);
+
+  // Hent brukerdata kun én gang ved innlasting
   useEffect(() => {
     const getData = async () => {
       try {
-        const users = await fetchUsers();
-        setData(users);
-      } catch (err) {
+        await fetchUsers(); // We still fetch users but don't store them since they're not used
+      } catch (error: unknown) {
+        console.error("Error fetching users:", error);
         setError("Kunne ikke laste data. Vennligst prøv igjen.");
       } finally {
         setLoading(false);
       }
     };
     getData();
-  }, [currentUser]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userData = data.find((u) => u.uid === user.uid) || null;
-        setCurrentUser(userData);
-      } else {
-        setCurrentUser(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [data]);
+  }, []);
 
   const handleSectionToggle = (section: AdminSection) => {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
-  if (loading) return <div className="loading">Laster...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (authLoading || loading) {
+    return (
+      <>
+        <NavigationBar />
+        <div className="admin-content">
+          <div className="loading">Laster...</div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <NavigationBar />
+        <div className="admin-content">
+          <div className="error">{error}</div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>

@@ -1,35 +1,32 @@
-import { useState, useEffect } from 'react';;
-import emailjs from '@emailjs/browser';
-import './ContactPage.css';
-import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { useState, useEffect } from "react";
+import NavigationBar from "../../components/NavigationBar/NavigationBar";
+import Footer from "../../components/Footer/Footer";
+import emailjs from "@emailjs/browser";
+import "./ContactPage.css";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 
 function ContactPage() {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const { user } = useAuth();
+  const [email, setEmail] = useState(user?.email || "");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
+  // Update email when user changes (e.g., after login)
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      if (user?.email) {
-        setEmail(user.email); // Automatically fill email field
-      }
-    });
-
-    return () => unsubscribe(); // Cleanup listener
-  }, []);
+    if (user?.email) {
+      setEmail(user.email);
+    }
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { id, value } = e.target;
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
-    if (id === 'message') setMessage(value);
-    if (id === 'email' && !currentUser) setEmail(value); // Only update if not logged in
+    if (id === "message") setMessage(value);
+    if (id === "email" && !user) setEmail(value); // Only update if not logged in
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,19 +40,19 @@ function ContactPage() {
 
     emailjs
       .send(
-        'service_b9we3th',
-        'template_lvwabq4',
+        "service_b9we3th",
+        "template_lvwabq4",
         templateParams,
-        'm7Ls2T8S_jvw9YWD6'
+        "m7Ls2T8S_jvw9YWD6"
       )
       .then((response) => {
-        console.log('SUCCESS!', response.status, response.text);
-        setSuccess('Meldingen din har blitt sendt!');
-        setMessage('');
+        console.log("SUCCESS!", response.status, response.text);
+        setSuccess("Meldingen din har blitt sendt!");
+        setMessage("");
       })
       .catch((err) => {
-        console.error('FAILED...', err);
-        setError('Kunne ikke sende meldingen. Vennligst prøv igjen.');
+        console.error("FAILED...", err);
+        setError("Kunne ikke sende meldingen. Vennligst prøv igjen.");
       })
       .finally(() => {
         setIsLoading(false);
@@ -86,7 +83,7 @@ function ContactPage() {
                 className="form-input form-input--short"
                 placeholder="Skriv e-postadressen din"
                 required
-                disabled={!!currentUser || isLoading} // disables only if logged in or loading
+                disabled={!!user || isLoading} // disables only if logged in or loading
               />
             </div>
 
@@ -103,8 +100,16 @@ function ContactPage() {
               />
             </div>
 
-            <button type="submit" className="submit-button" disabled={isLoading}>
-              {isLoading ? <span className="loading-spinner"></span> : 'Send Beskjed'}
+            <button
+              type="submit"
+              className="submit-button"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="loading-spinner"></span>
+              ) : (
+                "Send Beskjed"
+              )}
             </button>
           </form>
         </div>
