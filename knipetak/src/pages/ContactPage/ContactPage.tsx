@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import NavigationBar from "../../components/NavigationBar/NavigationBar";
-import Footer from "../../components/Footer/Footer";
 import emailjs from "@emailjs/browser";
 import "./ContactPage.css";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { useAuth } from "@/context/AuthContext";
 
 function ContactPage() {
   const { user } = useAuth();

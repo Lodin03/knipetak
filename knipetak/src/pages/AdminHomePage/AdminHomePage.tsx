@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { fetchUsers } from "../../backend/firebase/services/firebase.userservice";
-import NavigationBar from "../../components/NavigationBar/NavigationBar";
-import Footer from "../../components/Footer/Footer";
 import "./AdminHomePage.css";
 import { AdminAvailabilityManager } from "../../components/AdminAvailabilityManager/AdminAvailabilityManager";
 import HandleBookings from "../../components/AdminBookingInterface/HandleBookings";
@@ -47,11 +45,9 @@ function AdminHomePage() {
   if (authLoading || loading) {
     return (
       <>
-        <NavigationBar />
         <div className="admin-content">
           <div className="loading">Laster...</div>
         </div>
-        <Footer />
       </>
     );
   }
@@ -59,11 +55,9 @@ function AdminHomePage() {
   if (error) {
     return (
       <>
-        <NavigationBar />
         <div className="admin-content">
           <div className="error">{error}</div>
         </div>
-        <Footer />
       </>
     );
   }

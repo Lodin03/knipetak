@@ -1,17 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  signIn,
-  signUp,
-  signInWithGoogle,
-} from "../../backend/firebase/services/firebase.authservice";
-import NavigationBar from "../../components/NavigationBar/NavigationBar";
-import Footer from "../../components/Footer/Footer";
+import { useAuth } from "../../context/AuthContext";
 import {
   validateUsername,
   validatePassword,
   calculatePasswordStrength,
 } from "../../utils/contentValidation";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
+  getAuth,
+  UserCredential,
+  AuthError,
+} from "firebase/auth";
+import { createUserDocument } from "../../backend/firebase/services/firebase.userservice";
+import { UserType } from "../../backend/interfaces/UserData";
 import "./LoginPage.css";
 
 function LoginPage() {
@@ -31,57 +37,64 @@ function LoginPage() {
   const [showPasswordRequirements, setShowPasswordRequirements] =
     useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
   const auth = getAuth();
+
+  if (user) {
+    navigate("/");
+    return null;
+  }
 
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
+      setError("");
+
       const provider = new GoogleAuthProvider();
-      const result = (await signInWithPopup(
-        auth,
-        provider
-      )) as GoogleSignInResult;
+      const result = await signInWithPopup(auth, provider);
 
-      // Create user document if it's a new user
-      const isNewUser = result.additionalUserInfo?.isNewUser;
-      if (isNewUser && result.user) {
-        await createUserDocument(result.user.uid, {
-          uid: result.user.uid,
-          displayName: result.user.displayName || "",
-          email: result.user.email || "",
-          userType: UserType.CUSTOMER,
-          createdAt: new Date(),
-          age: 0,
-          healthIssues: "",
-          location: {
-            id: "",
-            name: "",
-            address: "",
-            city: "",
-            postalCode: 0,
-          },
-          phoneNumber: "",
-        });
+      if (result.user) {
+        const credential = result as UserCredential & {
+          additionalUserInfo?: { isNewUser?: boolean };
+        };
+        const isNewUser = credential.additionalUserInfo?.isNewUser;
+
+        if (isNewUser) {
+          await createUserDocument(result.user.uid, {
+            uid: result.user.uid,
+            displayName: result.user.displayName || "",
+            email: result.user.email || "",
+            userType: UserType.CUSTOMER,
+            createdAt: new Date(),
+            age: 0,
+            healthIssues: "",
+            location: {
+              id: "",
+              name: "",
+              address: "",
+              city: "",
+              postalCode: 0,
+            },
+            phoneNumber: "",
+          });
+        }
+
+        navigate("/");
       }
-
-      navigate("/");
     } catch (error) {
       console.error("Google sign-in error:", error);
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case "auth/popup-closed-by-user":
-            setError("Pålogging avbrutt. Vennligst prøv igjen.");
-            break;
-          case "auth/popup-blocked":
-            setError(
-              "Popup ble blokkert. Vennligst tillat popups for denne nettsiden."
-            );
-            break;
-          default:
-            setError("Kunne ikke logge inn med Google. Prøv igjen.");
-        }
-      } else {
-        setError("En uventet feil oppstod. Vennligst prøv igjen.");
+      const authError = error as AuthError;
+      switch (authError.code) {
+        case "auth/popup-closed-by-user":
+          setError("Pålogging avbrutt. Vennligst prøv igjen.");
+          break;
+        case "auth/popup-blocked":
+          setError(
+            "Popup ble blokkert. Vennligst tillat popups for denne nettsiden."
+          );
+          break;
+        default:
+          setError("Kunne ikke logge inn med Google. Prøv igjen.");
       }
     } finally {
       setIsLoading(false);
@@ -98,7 +111,7 @@ function LoginPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setError(""); // Clear error when user types
+    setError("");
 
     switch (id) {
       case "email":
@@ -122,31 +135,30 @@ function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
     } catch (error) {
       console.error("Login error:", error);
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case "auth/invalid-email":
-            setError("Ugyldig e-postadresse.");
-            break;
-          case "auth/user-disabled":
-            setError("Denne kontoen er deaktivert.");
-            break;
-          case "auth/user-not-found":
-          case "auth/wrong-password":
-            setError("Feil e-post eller passord.");
-            break;
-          case "auth/too-many-requests":
-            setError("For mange mislykkede forsøk. Prøv igjen senere.");
-            break;
-          default:
-            setError("Kunne ikke logge inn. Vennligst prøv igjen.");
-        }
-      } else {
-        setError("En uventet feil oppstod. Vennligst prøv igjen.");
+      const authError = error as AuthError;
+      switch (authError.code) {
+        case "auth/invalid-email":
+          setError("Ugyldig e-postadresse.");
+          break;
+        case "auth/user-disabled":
+          setError("Denne kontoen er deaktivert.");
+          break;
+        case "auth/user-not-found":
+        case "auth/wrong-password":
+          setError("Feil e-post eller passord.");
+          break;
+        case "auth/too-many-requests":
+          setError("For mange mislykkede forsøk. Prøv igjen senere.");
+          break;
+        default:
+          setError("Kunne ikke logge inn. Vennligst prøv igjen.");
       }
     } finally {
       setIsLoading(false);
@@ -156,29 +168,27 @@ function LoginPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate username
     const usernameValidation = validateUsername(username);
     if (!usernameValidation.valid) {
       setError(usernameValidation.reason || "Ugyldig brukernavn");
       return;
     }
 
-    // Validate password
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.valid) {
       setError(passwordValidation.reason || "Ugyldig passord");
       return;
     }
 
-    // Check if passwords match
     if (password !== confirmPassword) {
       setError("Passordene er ikke like");
       return;
     }
 
     setIsLoading(true);
+    setError("");
+
     try {
-      // Create the user account
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -186,10 +196,8 @@ function LoginPage() {
       );
       const user = userCredential.user;
 
-      // Update the user's display name
       await updateProfile(user, { displayName: username });
 
-      // Create user document in Firestore
       await createUserDocument(user.uid, {
         uid: user.uid,
         displayName: username,
@@ -211,31 +219,22 @@ function LoginPage() {
       navigate("/");
     } catch (error) {
       console.error("Registration error:", error);
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case "auth/email-already-in-use":
-            setError("En konto med denne e-postadressen eksisterer allerede.");
-            break;
-          case "auth/invalid-email":
-            setError("Vennligst oppgi en gyldig e-postadresse.");
-            break;
-          case "auth/operation-not-allowed":
-            setError("Registrering med e-post og passord er ikke aktivert.");
-            break;
-          case "auth/weak-password":
-            setError("Passordet er for svakt. Det må være minst 6 tegn langt.");
-            break;
-          case "auth/too-many-requests":
-            setError("For mange mislykkede forsøk. Prøv igjen senere.");
-            break;
-          case "auth/network-request-failed":
-            setError("Nettverksfeil. Sjekk internettforbindelsen din.");
-            break;
-          default:
-            setError("Kunne ikke opprette konto. Vennligst prøv igjen.");
-        }
-      } else {
-        setError("En uventet feil oppstod. Vennligst prøv igjen.");
+      const authError = error as AuthError;
+      switch (authError.code) {
+        case "auth/email-already-in-use":
+          setError("En konto med denne e-postadressen eksisterer allerede.");
+          break;
+        case "auth/invalid-email":
+          setError("Vennligst oppgi en gyldig e-postadresse.");
+          break;
+        case "auth/operation-not-allowed":
+          setError("Registrering med e-post og passord er ikke aktivert.");
+          break;
+        case "auth/weak-password":
+          setError("Passordet er for svakt. Det må være minst 6 tegn langt.");
+          break;
+        default:
+          setError("Kunne ikke opprette konto. Vennligst prøv igjen.");
       }
     } finally {
       setIsLoading(false);

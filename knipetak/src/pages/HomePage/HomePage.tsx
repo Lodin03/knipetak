@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import NavigationBar from "../../components/NavigationBar/NavigationBar";
-import Footer from "../../components/Footer/Footer";
 import HeroHomePage from "../../components/HeroHomePage/HeroHomePage";
 import "../HomePage/HomePage.css";
 
@@ -10,14 +8,14 @@ const HomePage: React.FC = () => {
   const slides = [
     "/src/assets/images/BildeMassasje.jpg",
     "/src/assets/images/Massasje2.jpg",
-    "/src/assets/images/KnipetakBilde.jpg"
+    "/src/assets/images/KnipetakBilde.jpg",
   ];
 
   useEffect(() => {
     const slideInterval = setInterval(() => {
-      setProgress(prev => {
+      setProgress((prev) => {
         if (prev >= 100) {
-          setCurrentSlide(prevSlides => (prevSlides + 1) % slides.length);
+          setCurrentSlide((prevSlides) => (prevSlides + 1) % slides.length);
           return 0;
         }
         return prev + 1;
@@ -28,21 +26,20 @@ const HomePage: React.FC = () => {
 
   const nextSlides = () => {
     if (currentSlide < slides.length - 1) {
-      setCurrentSlide(prev => (prev + 1) % slides.length);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
       setProgress(0);
     }
   };
 
   const prevSlides = () => {
     if (currentSlide > 0) {
-      setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length);
+      setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
       setProgress(0);
     }
   };
 
   return (
     <>
-      <NavigationBar />
       <HeroHomePage />
       <div className="mainContentHomepage">
         <div className="title">Knipetak - En muskelterapeut på hjul!</div>
@@ -54,9 +51,9 @@ const HomePage: React.FC = () => {
               deres bedrift eller deres hjem. Jeg har både benk og stol med meg.
               Muskelterapi hjemme er perfekt for de som blant annet har
               utfordringer med å komme seg ut, og som sliter med diverse
-              muskelproblemer. I tillegg møter jeg opp på ulike eventer. Massasje
-              kan være et annerledes og unikt innslag på et event. Jeg kan derfor
-              bookes inn til utdrikningslag og bursdager.
+              muskelproblemer. I tillegg møter jeg opp på ulike eventer.
+              Massasje kan være et annerledes og unikt innslag på et event. Jeg
+              kan derfor bookes inn til utdrikningslag og bursdager.
             </h3>
           </div>
           <div className="ImageContainer">
@@ -125,7 +122,9 @@ const HomePage: React.FC = () => {
             {slides.map((src, index) => (
               <img
                 key={index}
-                className={`slide ${currentSlide === index ? "active" : "hidden"}`}
+                className={`slide ${
+                  currentSlide === index ? "active" : "hidden"
+                }`}
                 src={src}
                 alt="massasjebilde"
                 height="550px"
@@ -179,8 +178,6 @@ const HomePage: React.FC = () => {
           ))}
         </div>
       </div>
-
-      <Footer />
     </>
   );
 };

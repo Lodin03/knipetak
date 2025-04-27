@@ -1,11 +1,17 @@
+import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./router";
 import { AuthProvider } from "./context/AuthContext";
+import Layout from "@/layout";
 import "./App.css";
 
 function App() {
   return (
     <AuthProvider>
-      <AppRoutes />
+      <BrowserRouter>
+        <Layout>
+          <AppRoutes />
+        </Layout>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

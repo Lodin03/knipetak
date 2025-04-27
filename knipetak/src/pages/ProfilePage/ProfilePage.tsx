@@ -1,9 +1,5 @@
 import "./ProfilePage.css";
 import React, { useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
-import NavigationBar from "../../components/NavigationBar/NavigationBar";
-import Footer from "../../components/Footer/Footer";
-import { logOut } from "../../backend/firebase/services/firebase.authservice";
 import {
   getUserData,
   updateUserProfile,
@@ -14,6 +10,7 @@ import { BookingData } from "../../backend/interfaces/BookingData";
 import { getTreatments } from "../../backend/firebase/services/firebase.treatmentservice";
 import { Treatment } from "../../backend/interfaces/Treatment";
 import { Gender, UserData } from "../../backend/interfaces/UserData";
+import { useAuth } from "@/context/AuthContext";
 
 const Profile: React.FC = () => {
   // Use AuthContext instead of managing our own user state
@@ -211,7 +208,6 @@ const Profile: React.FC = () => {
 
   return (
     <>
-      <NavigationBar />
       <div className="main-container">
         <div className="profile-container">
           <div className="profile-sidebar">
@@ -445,7 +441,6 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };
