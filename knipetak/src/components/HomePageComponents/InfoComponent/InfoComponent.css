@@ -1,0 +1,565 @@
+.ContainerHomePage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.TextContainer {
+  display: block;
+  border-radius: 5%;
+  height: 350px;
+  width: 450px;
+  background-color: #6fb5c0;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.ImageContainer {
+  display: flex;
+  flex-direction: column;
+  width: 230px;
+  gap: 20px;
+}
+
+.text {
+  padding: 25px 10px;
+  color: white;
+}
+
+.Image {
+  height: 175px;
+  width: 230px;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.Image1 {
+  height: 155px;
+  width: 230px;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.ContainerHomePage2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+  top: 30px;
+  flex-direction: row-reverse;
+}
+
+.text2 {
+  padding: 25px 10px;
+  color: white;
+}
+
+.TextContainer2 {
+  display: block;
+  border-radius: 5%;
+  height: 350px;
+  width: 450px;
+  background-color: #6fb5c0;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.ImageContainer2 {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.Image2 {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (min-width: 610px) and (max-width: 990px) {
+  .ContainerHomePage {
+    display: flex;
+    flex-direction: column;
+  }
+  .text {
+    font-size: 1.3rem;
+  }
+  .text2 {
+    font-size: 1.3rem;
+  }
+  .ImageContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .TextContainer {
+    width: 450px;
+    height: 400px;
+    border-radius: 10px;
+    max-width: 100%;
+  }
+  .TextContainer2 {
+    width: 450px;
+    height: 400px;
+    border-radius: 10px;
+    max-width: 100%;
+  }
+
+  .ContainerHomePage2 {
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+  }
+  .ImageContainer2 {
+    display: flex;
+    flex-direction: column;
+  }
+  .Image {
+    height: auto;
+    width: 450px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .Image1 {
+    height: auto;
+    width: 450px;
+    display: flex;
+    justify-content: center;
+  }
+  .Image2 {
+    height: auto;
+    width: 450px;
+    display: flex;
+    justify-content: center;
+  }
+  .Image3 {
+    height: auto;
+    width: 450px;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 611px) {
+  .ContainerHomePage {
+    display: flex;
+    flex-direction: column;
+  }
+  .TextContainer {
+    max-width: 80%;
+  }
+  .Image {
+    height: auto;
+    width: 300px;
+    display: flex;
+    justify-content: center;
+  }
+  .Image1 {
+    height: auto;
+    width: 300px;
+    display: flex;
+    justify-content: center;
+  }
+  .Image2 {
+    height: auto;
+    width: 300px;
+    display: flex;
+    justify-content: center;
+  }
+  .Image3 {
+    height: auto;
+    width: 300px;
+    display: flex;
+    justify-content: center;
+  }
+  .ImageContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .text2 {
+    max-width: 430px;
+  }
+  .text {
+    font-size: 1rem;
+  }
+  .ImageContainer2 {
+    display: flex;
+    grid-template-rows: row;
+  }
+  .TextContainer2 {
+    max-width: 90%;
+  }
+
+  .ContainerHomePage2 {
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+  }
+  .ImageContainer2 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ImageRow {
+    display: grid;
+    grid-template-rows: repeat();
+  }
+}
+
+.info-page {
+  width: 100%;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Introduction Section */
+.intro-section {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 3rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  /* Single wave at the bottom */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 20px),
+    85% 100%,
+    65% calc(100% - 10px),
+    35% calc(100% - 10px),
+    15% 100%,
+    0 calc(100% - 20px)
+  );
+}
+
+.intro-content {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding-bottom: 20px;
+}
+
+.intro-text {
+  flex: 1;
+  color: #333;
+}
+
+/* Animations for text reveal */
+.greeting {
+  color: #6fb5c0;
+  font-size: 2.5rem;
+  margin: 0 0 1rem 0;
+  opacity: 0;
+  animation: fadeSlideUp 0.5s ease forwards;
+}
+
+.name-intro {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+  opacity: 0;
+  animation: fadeSlideUp 0.5s ease forwards 0.5s;
+}
+
+.additional-intro {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin: 0;
+  opacity: 0;
+  animation: fadeSlideUp 0.5s ease forwards 1.5s;
+}
+
+.intro-image {
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #6fb5c0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards 1s;
+}
+
+.intro-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  transform: scale(1.1);
+}
+
+/* Animation Keyframes */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Update responsive styles */
+@media screen and (max-width: 768px) {
+  .intro-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .greeting {
+    font-size: 2rem;
+  }
+
+  .intro-image {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .greeting {
+    font-size: 1.8rem;
+  }
+
+  .name-intro,
+  .additional-intro {
+    font-size: 1rem;
+  }
+
+  .intro-image {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Benefits Section */
+.benefits-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+/* Full width section */
+.full-width-section {
+  background-color: #6fb5c0;
+  width: 100%;
+  position: relative;
+  padding: 4rem 0 2rem;
+  /* Add a wave effect to the top */
+  clip-path: polygon(
+    0 30px,
+    3% 0,
+    10% 20px,
+    20% 0,
+    30% 25px,
+    40% 0,
+    50% 28px,
+    60% 0,
+    70% 22px,
+    80% 0,
+    90% 25px,
+    97% 0,
+    100% 30px,
+    100% 100%,
+    0 100%
+  );
+}
+
+.full-width-section .content-wrapper {
+  padding-top: 2rem;
+}
+
+.benefit-box {
+  background-color: #f5f5f5;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  position: relative;
+  /* Single wave at the bottom */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 15px),
+    75% 100%,
+    25% 100%,
+    0 calc(100% - 15px)
+  );
+  text-align: center;
+}
+
+.benefit-icon {
+  font-size: 2.5rem;
+  color: #6fb5c0;
+  margin-bottom: 1rem;
+  /* Add a subtle animation on hover */
+  transition: transform 0.3s ease;
+}
+
+.benefit-box:hover .benefit-icon {
+  transform: scale(1.1) translateY(-5px);
+}
+
+.benefit-box h3 {
+  color: #6fb5c0;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.benefit-box p {
+  color: #333;
+  line-height: 1.5;
+  padding-bottom: 15px;
+}
+
+/* Arrow connectors between benefit boxes */
+.benefit-box:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -2rem;
+  top: 50%;
+  width: 2rem;
+  height: 2px;
+  background: #6fb5c0;
+  z-index: 1;
+}
+
+.benefit-box:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  right: -2rem;
+  top: calc(50% - 5px);
+  width: 0;
+  height: 0;
+  border-left: 10px solid #6fb5c0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  z-index: 2;
+}
+
+.benefit-box:hover {
+  transform: translateY(-5px);
+}
+
+/* Remove the entire decorative line connecting benefits to additional info */
+/* Decorative line connecting benefits to additional info */
+.benefits-container::after {
+  display: none; /* Hide the connecting line */
+}
+
+/* Additional Info Section - now inside full-width */
+.additional-info {
+  color: white;
+}
+
+.additional-info p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.treatment-types {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  position: relative;
+}
+
+.treatment-type {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 8px;
+  position: relative;
+}
+
+.treatment-type h4 {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.treatment-type p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .content-wrapper {
+    padding: 1rem;
+  }
+
+  .benefits-container {
+    grid-template-columns: 1fr;
+  }
+
+  .treatment-types {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width-section {
+    padding: 3rem 0;
+  }
+
+  /* Adjust arrows for mobile */
+  .benefit-box:not(:last-child)::after,
+  .benefit-box:not(:last-child)::before {
+    display: none;
+  }
+
+  .benefits-container::after {
+    height: 1rem;
+    bottom: -1rem;
+  }
+
+  .benefit-icon {
+    font-size: 2rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .intro-content p {
+    font-size: 1rem;
+  }
+
+  .benefit-box h3 {
+    font-size: 1.2rem;
+  }
+
+  .treatment-type h4 {
+    font-size: 1.1rem;
+  }
+
+  .benefit-icon {
+    font-size: 1.8rem;
+  }
+}
+
+/* Adjust margin for CTA container if it exists */
+.cta-container {
+  margin: 2rem 0 0;
+}
