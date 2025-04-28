@@ -109,8 +109,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Bookings list */
@@ -230,7 +234,8 @@
   border-top: 1px solid var(--background-color);
 }
 
-.edit-button, .cancel-button {
+.edit-button,
+.cancel-button {
   padding: 0.5rem 1rem;
   border-radius: var(--border-radius);
   font-size: 0.9rem;
@@ -258,7 +263,8 @@
   background-color: #c0392b;
 }
 
-.edit-button:disabled, .cancel-button:disabled {
+.edit-button:disabled,
+.cancel-button:disabled {
   background-color: #95a5a6;
   cursor: not-allowed;
 }
@@ -326,7 +332,8 @@
   margin-top: 2rem;
 }
 
-.save-button, .confirm-cancel-button {
+.save-button,
+.confirm-cancel-button {
   padding: 0.75rem 1.5rem;
   border-radius: var(--border-radius);
   font-size: 1rem;
@@ -354,7 +361,8 @@
   background-color: #c0392b;
 }
 
-.save-button:disabled, .confirm-cancel-button:disabled {
+.save-button:disabled,
+.confirm-cancel-button:disabled {
   background-color: #95a5a6;
   cursor: not-allowed;
 }
