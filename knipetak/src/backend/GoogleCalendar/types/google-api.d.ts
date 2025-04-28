@@ -39,9 +39,19 @@ interface TokenResponse {
   scope?: string;
 }
 
+// Define interface for token client config
+interface TokenClientConfig {
+  client_id: string;
+  scope: string;
+  callback: (response: TokenResponse) => void;
+  prompt?: "consent" | "select_account" | "none";
+}
+
 // Define interface for token client
 interface TokenClient {
-  requestAccessToken: (options: { prompt?: string }) => void;
+  requestAccessToken: (options?: {
+    prompt?: "consent" | "select_account" | "none";
+  }) => void;
 }
 
 interface Window {
@@ -50,7 +60,7 @@ interface Window {
     client: {
       init: (config: GapiInitOptions) => Promise<void>;
       getToken: () => { access_token: string } | null;
-      setToken: (token: string | null) => void;
+      setToken: (token: { access_token: string }) => void;
       calendar: {
         events: {
           list: (
@@ -70,14 +80,10 @@ interface Window {
   google: {
     accounts: {
       oauth2: {
-        initTokenClient: (config: {
-          client_id: string;
-          scope: string;
-          callback: (response: TokenResponse) => void;
-        }) => TokenClient;
+        initTokenClient: (config: TokenClientConfig) => TokenClient;
         revoke: (token: string, callback?: () => void) => void;
       };
     };
   };
-  tokenClient: TokenClient;
+  tokenClient?: TokenClient;
 }

@@ -145,16 +145,17 @@ export class GoogleCalendarService {
               apiKey: this.apiKey,
               discoveryDocs: [
                 "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
-                "https://www.googleapis.com/discovery/v1/apis/calendar/v3/calendarList"
               ],
             });
             resolve();
           } catch (error) {
+            console.error("GAPI client init error:", error);
             reject(error);
           }
         });
       });
     } catch (error) {
+      console.error("GAPI initialization error:", error);
       throw new GoogleCalendarError(
         `Failed to initialize Google API client: ${error}`
       );
@@ -206,16 +207,11 @@ export class GoogleCalendarService {
         access_token: token,
         expires_at: Date.now() + expiresIn * 1000, // Convert seconds to milliseconds
       };
-      console.log("Token data to save:", tokenData);
       localStorage.setItem(
         GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY,
         JSON.stringify(tokenData)
       );
       this.accessToken = token;
-
-      if (window.gapi?.client) {
-        window.gapi.client.setToken(token);
-      }
       console.log("Token saved successfully");
     } catch (error) {
       console.warn("Error saving token:", error);
@@ -239,9 +235,10 @@ export class GoogleCalendarService {
       console.log("Requesting authorization with scope:", scopes[scope]);
 
       return new Promise((resolve) => {
-        window.tokenClient = window.google.accounts.oauth2.initTokenClient({
+        const tokenClient = window.google.accounts.oauth2.initTokenClient({
           client_id: this.clientId,
           scope: scopes[scope],
+          prompt: "consent",
           callback: (response: {
             error?: string;
             access_token?: string;
@@ -259,49 +256,27 @@ export class GoogleCalendarService {
               console.log("Successfully authorized with access token");
               this.accessToken = response.access_token;
 
-              // Save token with expiration if we have expires_in
-              if (response.expires_in) {
-                console.log(
-                  "Saving token with expiration:",
-                  response.expires_in
-                );
-                this.saveToken(response.access_token, response.expires_in);
-              } else {
-                // If no expiration provided, use a default of 1 hour
-                console.log("No expiration provided, using default 1 hour");
-                this.saveToken(response.access_token, 3600);
-              }
-            }
+              // Save token with expiration
+              const expiresIn = response.expires_in || 3600; // Default to 1 hour if not provided
+              this.saveToken(response.access_token, expiresIn);
 
-            resolve(true);
-          },
-        });
-
-        // Check if we have a valid token before requesting access
-        const savedToken = localStorage.getItem(
-          GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY
-        );
-        if (savedToken) {
-          try {
-            const tokenData = JSON.parse(savedToken);
-            if (tokenData.expires_at > Date.now()) {
-              console.log("Using existing valid token");
-              this.accessToken = tokenData.access_token;
+              // Set the token for GAPI client
               if (window.gapi?.client) {
-                window.gapi.client.setToken(tokenData.access_token);
+                window.gapi.client.setToken({
+                  access_token: response.access_token,
+                });
               }
+
               resolve(true);
               return;
             }
-          } catch (error) {
-            console.warn("Error parsing saved token:", error);
-          }
-        }
 
-        // Only request consent if we don't have a valid token
-        const prompt = savedToken ? "none" : "consent";
-        console.log("Requesting access token with prompt:", prompt);
-        window.tokenClient.requestAccessToken({ prompt });
+            resolve(false);
+          },
+        });
+
+        // Request the token
+        tokenClient.requestAccessToken();
       });
     } catch (error) {
       console.error("Authorization error:", error);
