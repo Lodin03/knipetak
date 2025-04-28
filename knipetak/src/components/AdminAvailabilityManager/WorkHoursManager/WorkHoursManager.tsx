@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import { getDefaultWorkHours, setDefaultWorkHours } from "../../../backend/firebase/services/firebase.availabilityservice";
+import {
+  getDefaultWorkHours,
+  setDefaultWorkHours,
+} from "../../../backend/firebase/services/firebase.availabilityservice";
 import type { Location } from "../../../backend/interfaces/Location";
 import type WeeklySchedule from "../../../backend/interfaces/availabilityInterfaces/WeeklySchedule";
 import { TimeSlotUI } from "@/utils/TimeSlotUtils";
-import { useWeeklyTimeSlots, useDefaultLocation } from "@/hooks/useTimeSlotManager";
+import {
+  useWeeklyTimeSlots,
+  useDefaultLocation,
+} from "@/hooks/useTimeSlotManager";
 import "./WorkhoursManager.css";
 import { LocationModal } from "../LocationSetter/LocationModal";
 
@@ -19,13 +25,13 @@ const DAYS = [
 
 // Mapping between Norwegian display names and database keys
 const DAY_MAPPING: Record<string, string> = {
-  "mandag": "monday",
-  "tirsdag": "tuesday",
-  "onsdag": "wednesday",
-  "torsdag": "thursday",
-  "fredag": "friday",
-  "lørdag": "saturday",
-  "søndag": "sunday",
+  mandag: "monday",
+  tirsdag: "tuesday",
+  onsdag: "wednesday",
+  torsdag: "thursday",
+  fredag: "friday",
+  lørdag: "saturday",
+  søndag: "sunday",
 };
 
 interface WorkHoursManagerProps {
@@ -33,31 +39,34 @@ interface WorkHoursManagerProps {
   onLocationCreated: (newLocation: Location) => void;
 }
 
-export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursManagerProps) {
+export function WorkHoursManager({
+  locations,
+  onLocationCreated,
+}: WorkHoursManagerProps) {
   // Get the default location ID
   const defaultLocation = useDefaultLocation(locations);
-  
+
   // Setup initial empty schedule
   const initialSchedule = DAYS.reduce((acc, norwegianDay) => {
     const englishDay = DAY_MAPPING[norwegianDay];
     acc[englishDay] = {
       workhours: {
-        timeSlots: []
-      }
+        timeSlots: [],
+      },
     };
     return acc;
   }, {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>);
 
   // Use our custom hook for managing the weekly schedule
-  const { 
-    schedule, 
-    setSchedule, 
-    operations: scheduleOps 
+  const {
+    schedule,
+    setSchedule,
+    operations: scheduleOps,
   } = useWeeklyTimeSlots(initialSchedule, {
     dayMapping: DAY_MAPPING,
-    defaultLocation
+    defaultLocation,
   });
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -68,31 +77,35 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
     async function loadData() {
       try {
         const defaultHours = await getDefaultWorkHours();
-        
+
         if (defaultHours) {
           // Transform API data to our UI format
           const uiSchedule = DAYS.reduce((acc, norwegianDay) => {
             const englishDay = DAY_MAPPING[norwegianDay];
-            
+
             // Map the API response to our UI format
-            const timeSlots = defaultHours?.[englishDay]?.workhours?.timeSlots || [];
-            
+            const timeSlots =
+              defaultHours?.[englishDay]?.workhours?.timeSlots || [];
+
             acc[englishDay] = {
               workhours: {
-                timeSlots: timeSlots.length > 0 ? 
-                  timeSlots.map(slot => ({
-                    start: typeof slot.start === 'string' ? slot.start : "09:00",
-                    end: typeof slot.end === 'string' ? slot.end : "17:00",
-                    location: typeof slot.location === 'string' ? 
-                      slot.location : 
-                      (slot.location?.id || locations[0]?.id || "")
-                  })) : 
-                  []
-              }
+                timeSlots:
+                  timeSlots.length > 0
+                    ? timeSlots.map((slot) => ({
+                        start:
+                          typeof slot.start === "string" ? slot.start : "09:00",
+                        end: typeof slot.end === "string" ? slot.end : "17:00",
+                        location:
+                          typeof slot.location === "string"
+                            ? slot.location
+                            : slot.location?.id || locations[0]?.id || "",
+                      }))
+                    : [],
+              },
             };
             return acc;
           }, {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>);
-          
+
           setSchedule(uiSchedule);
         }
       } catch (error) {
@@ -124,7 +137,11 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
     scheduleOps.updateTimeSlot(norwegianDay, index, field, value);
   };
 
-  const handleLocationChange = (norwegianDay: string, index: number, locationId: string) => {
+  const handleLocationChange = (
+    norwegianDay: string,
+    index: number,
+    locationId: string
+  ) => {
     if (locationId === "new") {
       setActiveDay(DAY_MAPPING[norwegianDay]);
       setIsLocationModalOpen(true);
@@ -143,19 +160,21 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
       // Update all empty locations with the new one
       const daySchedule = schedule[activeDay];
       if (daySchedule) {
-        const updatedTimeSlots = daySchedule.workhours.timeSlots.map(slot => ({
-          ...slot,
-          location: slot.location === "" ? newLocation.id : slot.location
-        }));
-        
-        setSchedule(prev => ({
+        const updatedTimeSlots = daySchedule.workhours.timeSlots.map(
+          (slot) => ({
+            ...slot,
+            location: slot.location === "" ? newLocation.id : slot.location,
+          })
+        );
+
+        setSchedule((prev) => ({
           ...prev,
           [activeDay]: {
             ...prev[activeDay],
             workhours: {
-              timeSlots: updatedTimeSlots
-            }
-          }
+              timeSlots: updatedTimeSlots,
+            },
+          },
         }));
       }
     }
@@ -167,21 +186,24 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
       setError(null);
       setSuccess(null);
       setIsLoading(true);
-      
+
       // Transform UI timeslots to API format before submitting
-      const apiSchedule = Object.entries(schedule).reduce<WeeklySchedule>((acc, [day, daySchedule]) => {
-        acc[day] = {
-          workhours: {
-            timeSlots: daySchedule.workhours.timeSlots.map(slot => ({
-              start: slot.start,
-              end: slot.end,
-              location: slot.location
-            }))
-          }
-        };
-        return acc;
-      }, {} as WeeklySchedule);
-      
+      const apiSchedule = Object.entries(schedule).reduce<WeeklySchedule>(
+        (acc, [day, daySchedule]) => {
+          acc[day] = {
+            workhours: {
+              timeSlots: daySchedule.workhours.timeSlots.map((slot) => ({
+                start: slot.start,
+                end: slot.end,
+                location: slot.location,
+              })),
+            },
+          };
+          return acc;
+        },
+        {} as WeeklySchedule
+      );
+
       await setDefaultWorkHours(apiSchedule);
       setSuccess("Arbeidstimer ble oppdatert!");
     } catch (error) {
@@ -201,7 +223,8 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
       <div className="work-hours-header">
         <h2 className="work-hours-title">Standard Arbeidstimer</h2>
         <p className="work-hours-description">
-          Her kan du sette dine standard arbeidstimer for hver ukedag. Du kan legge til flere tidsperioder per dag med forskjellige lokasjoner.
+          Her kan du sette dine standard arbeidstimer for hver ukedag. Du kan
+          legge til flere tidsperioder per dag med forskjellige lokasjoner.
         </p>
       </div>
 
@@ -209,97 +232,143 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
       {success && <div className="success-message">{success}</div>}
 
       <div className="work-hours-schedule">
-        {DAYS.map((norwegianDay) => {
-          const englishDay = DAY_MAPPING[norwegianDay];
-          const isDayOff = !schedule[englishDay]?.workhours?.timeSlots?.length;
-          
-          return (
-            <div key={norwegianDay} className="day-schedule">
-              <div className="day-header">
-                <h3 className="day-title">{norwegianDay}</h3>
-                <label className="day-off-toggle">
-                  <input
-                    type="checkbox"
-                    checked={isDayOff}
-                    onChange={(e) => handleDayOffToggle(norwegianDay, e.target.checked)}
-                    className="day-off-checkbox"
-                  />
-                  <span className="day-off-label">Fri</span>
-                </label>
+        <div className="days-grid">
+          {DAYS.map((norwegianDay) => {
+            const englishDay = DAY_MAPPING[norwegianDay];
+            const isDayOff =
+              !schedule[englishDay]?.workhours?.timeSlots?.length;
+
+            return (
+              <div key={norwegianDay} className="day-schedule">
+                <div className="day-header">
+                  <h3 className="day-title">{norwegianDay}</h3>
+                  <label className="day-off-toggle">
+                    <input
+                      type="checkbox"
+                      checked={isDayOff}
+                      onChange={(e) =>
+                        handleDayOffToggle(norwegianDay, e.target.checked)
+                      }
+                      className="day-off-checkbox"
+                    />
+                    <span className="day-off-label">Fri</span>
+                  </label>
+                </div>
+
+                <div className={`schedule-grid ${isDayOff ? "disabled" : ""}`}>
+                  {!isDayOff &&
+                    schedule[englishDay]?.workhours.timeSlots.map(
+                      (timeSlot, index) => (
+                        <div key={index} className="time-slot">
+                          <div className="time-slot-header">
+                            <span className="time-slot-title">
+                              Tidsperiode {index + 1}
+                            </span>
+                            {index > 0 && (
+                              <button
+                                onClick={() =>
+                                  handleRemoveTimeSlot(norwegianDay, index)
+                                }
+                                className="remove-slot-button"
+                              >
+                                Fjern
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="form-group">
+                            <label
+                              className="form-label"
+                              htmlFor={`${norwegianDay}-${index}-start`}
+                            >
+                              Start
+                            </label>
+                            <input
+                              id={`${norwegianDay}-${index}-start`}
+                              type="time"
+                              value={timeSlot.start || ""}
+                              onChange={(e) =>
+                                handleTimeChange(
+                                  norwegianDay,
+                                  index,
+                                  "start",
+                                  e.target.value
+                                )
+                              }
+                              className="form-input"
+                            />
+                          </div>
+
+                          <div className="form-group">
+                            <label
+                              className="form-label"
+                              htmlFor={`${norwegianDay}-${index}-end`}
+                            >
+                              Slutt
+                            </label>
+                            <input
+                              id={`${norwegianDay}-${index}-end`}
+                              type="time"
+                              value={timeSlot.end || ""}
+                              onChange={(e) =>
+                                handleTimeChange(
+                                  norwegianDay,
+                                  index,
+                                  "end",
+                                  e.target.value
+                                )
+                              }
+                              className="form-input"
+                            />
+                          </div>
+
+                          <div className="form-group">
+                            <label
+                              className="form-label"
+                              htmlFor={`${norwegianDay}-${index}-location`}
+                            >
+                              Lokasjon
+                            </label>
+                            <select
+                              id={`${norwegianDay}-${index}-location`}
+                              value={timeSlot.location || ""}
+                              onChange={(e) =>
+                                handleLocationChange(
+                                  norwegianDay,
+                                  index,
+                                  e.target.value
+                                )
+                              }
+                              className="form-input"
+                            >
+                              <option value="">Velg lokasjon</option>
+                              {locations.map((location) => (
+                                <option key={location.id} value={location.id}>
+                                  {location.name}
+                                </option>
+                              ))}
+                              <option value="new">
+                                + Legg til ny lokasjon
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                      )
+                    )}
+
+                  {!isDayOff && (
+                    <button
+                      onClick={() => handleAddTimeSlot(norwegianDay)}
+                      className="add-slot-button"
+                    >
+                      + Legg til tidsperiode
+                    </button>
+                  )}
+                </div>
               </div>
-              
-              <div className={`schedule-grid ${isDayOff ? 'disabled' : ''}`}>
-                {!isDayOff && schedule[englishDay]?.workhours.timeSlots.map((timeSlot, index) => (
-                  <div key={index} className="time-slot">
-                    <div className="time-slot-header">
-                      <span className="time-slot-title">Tidsperiode {index + 1}</span>
-                      {index > 0 && (
-                        <button
-                          onClick={() => handleRemoveTimeSlot(norwegianDay, index)}
-                          className="remove-slot-button"
-                        >
-                          Fjern
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label" htmlFor={`${norwegianDay}-${index}-start`}>Start</label>
-                      <input
-                        id={`${norwegianDay}-${index}-start`}
-                        type="time"
-                        value={timeSlot.start || ""}
-                        onChange={(e) => handleTimeChange(norwegianDay, index, "start", e.target.value)}
-                        className="form-input"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-label" htmlFor={`${norwegianDay}-${index}-end`}>Slutt</label>
-                      <input
-                        id={`${norwegianDay}-${index}-end`}
-                        type="time"
-                        value={timeSlot.end || ""}
-                        onChange={(e) => handleTimeChange(norwegianDay, index, "end", e.target.value)}
-                        className="form-input"
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label" htmlFor={`${norwegianDay}-${index}-location`}>Lokasjon</label>
-                      <select
-                        id={`${norwegianDay}-${index}-location`}
-                        value={timeSlot.location || ""}
-                        onChange={(e) => handleLocationChange(norwegianDay, index, e.target.value)}
-                        className="form-input"
-                      >
-                        <option value="">Velg lokasjon</option>
-                        {locations.map((location) => (
-                          <option 
-                            key={location.id} 
-                            value={location.id}
-                          >
-                            {location.name}
-                          </option>
-                        ))}
-                        <option value="new">+ Legg til ny lokasjon</option>
-                      </select>
-                    </div>
-                  </div>
-                ))}
-
-                {!isDayOff && (
-                  <button
-                    onClick={() => handleAddTimeSlot(norwegianDay)}
-                    className="add-slot-button"
-                  >
-                    + Legg til tidsperiode
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
 
         <LocationModal
           isOpen={isLocationModalOpen}
@@ -310,7 +379,7 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
           onLocationCreated={handleNewLocation}
         />
 
-        <button 
+        <button
           onClick={handleSubmit}
           disabled={isLoading}
           className="submit-button"
@@ -320,4 +389,4 @@ export function WorkHoursManager({ locations, onLocationCreated }: WorkHoursMana
       </div>
     </div>
   );
-} 
+}
