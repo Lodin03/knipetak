@@ -90,8 +90,8 @@ const HomeScreenSlider: React.FC = () => {
             className={`slide ${currentSlide === index ? "active" : "hidden"}`}
             src={slide.src}
             alt={slide.alt}
-            height={550}
-            width={350}
+            height={400}
+            width={300}
             loading="lazy"
           />
         ))}

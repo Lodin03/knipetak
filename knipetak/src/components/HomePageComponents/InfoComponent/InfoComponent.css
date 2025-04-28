@@ -368,7 +368,7 @@
   background-color: #6fb5c0;
   width: 100%;
   position: relative;
-  padding: 4rem 0 2rem;
+  padding: 4rem 0 0rem;
   /* Add a wave effect to the top */
   clip-path: polygon(
     0 30px,
