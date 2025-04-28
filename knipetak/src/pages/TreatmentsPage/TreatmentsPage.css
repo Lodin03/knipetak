@@ -1,231 +1,367 @@
-.treatments {
-  background-color: #f5f5f5;
+.treatments-page {
+  background-color: #f8f9fa;
   min-height: 100vh;
   width: 100%;
-  padding: 2rem;
+  color: #2c3e50;
 }
 
+/* Hero Section */
 .treatments__hero {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.treatments__title {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.treatments__subtitle {
-  font-size: 1.8rem;
-  
-}
-
-.treatments__overview {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.treatments__header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 3rem;
-}
-
-
-.treatments__header {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #6fb5c0 0%, #5da1ac 100%);
+  color: white;
   position: relative;
-  height: 500px; /* or adjust according to your design */
   overflow: hidden;
+  min-height: 60vh;
+  border-top: 2px solid rgba(255, 255, 255, 0.75);
 }
 
-
-.treatments__image {
-  height: auto;
-  width: auto;
-  object-fit: cover;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: ease-in-out 0.3s;
-}
-
-.treatments__image:hover {
-  transform: scale(102%);
-}
-
-.treatments__ticker-wrapper {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  height: auto;
-}
-
-/* Makes the background for the ticker slightly darker */
-.treatments__ticker-wrapper::before {
+.treatments__hero::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+  background: url('/src/assets/images/pattern.png');
+  opacity: 0.1;
+  z-index: 1;
 }
 
-.treatments__ticker {
+.treatments__hero-content {
+  position: relative;
+  z-index: 2;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 2rem;
 }
 
-.treatments__ticker-image {
-  height: 25rem;
+.treatments__title {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.treatments__subtitle {
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.treatments__hero-description {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.treatments__hero-description p {
+  margin-bottom: 1rem;
+}
+
+.treatments__hero-image {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.treatments__hero-image img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  width: auto;
-  flex-shrink: 0;
-  margin-right: 5rem;
-  -webkit-user-drag: none;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.treatments__hero-image:hover img {
+  transform: scale(1.02);
+}
+
+/* Gallery Section */
+.treatments__gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  padding: 4rem 2rem;
+  background-color: white;
+}
+
+.treatments__gallery-item {
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+}
+
+.treatments__gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.treatments__gallery-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  color: white;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.treatments__gallery-item:hover img {
+  transform: scale(1.1);
+}
+
+.treatments__gallery-item:hover .treatments__gallery-overlay {
+  transform: translateY(0);
+}
+
+/* Content Section */
+.treatments__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
 }
 
 .treatments__section-title {
   text-align: center;
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: #2c3e50;
 }
 
-.treatments__buttons {
+.treatments__categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.treatments__category {
+  position: relative;
+}
+
+.treatments__toggle-button {
+  width: 100%;
+  padding: 1.5rem;
+  background-color: white;
+  border: 2px solid #6fb5c0;
+  border-radius: 12px;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
-  justify-content: center;
-  gap: 1.25rem;
-  margin-bottom: 2rem;
+  align-items: center;
+  gap: 1rem;
 }
 
-/* Container for smooth height animation */
-/* Fade transition */
-.treatments__grid-container {
-  transition: opacity 0.5s ease, height 0.5s ease;
-  opacity: 1;
-  height: auto;
+.treatments__toggle-button:hover {
+  background-color: #6fb5c0;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(111, 181, 192, 0.2);
 }
 
-/* When hidden */
-.treatments__grid-container--hidden {
+.treatments__toggle-button--active {
+  background-color: #6fb5c0;
+  color: white;
+}
+
+.treatments__button-icon {
+  font-size: 1.5rem;
+}
+
+.treatments__category-preview {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  z-index: 10;
   opacity: 0;
-  height: 0;
-  pointer-events: none;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
 }
 
+.treatments__category:hover .treatments__category-preview {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Grid Section */
+.treatments__grid-container {
+  transition: all 0.5s ease;
+  overflow: hidden;
+}
 
 .treatments__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem 0;
+  gap: 2rem;
+  padding: 2rem 0;
 }
 
-/* Button styles */
-.treatments__toggle-button {
-  height: 2.5rem;
-  min-width: 150px;
-  padding: 0 1.25rem;
-  background-color: #6fb5c0;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1.125rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.treatments__toggle-button:hover {
-  transform: scale(1.05);
-  background-color: #5da1ac;
-}
-
-/* Active button state */
-.treatments__toggle-button--active {
-  background-color: #5da1ac !important;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Card hover effect */
 .treatments__card {
-  background-color: #6fb5c0;
-  padding: 1.5rem;
-  border-radius: 8px;
-  color: white;
-  height: 100%;
-  transition: transform 0.2s ease;
+  background-color: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .treatments__card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.treatments__card-content {
+  padding: 2rem;
 }
 
 .treatments__card-title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
   margin-bottom: 1rem;
-  font-weight: 600;
+  color: #2c3e50;
 }
 
 .treatments__card-text {
-  font-size: 1rem;
+  font-size: 1.1rem;
   line-height: 1.6;
+  color: #666;
 }
 
-.treatments__header {
-  display: flex;
-  gap: 20px;
-
-}
-.ContainerTreatmentPage {
-display: flex;
-flex-direction: column;
-gap: 10px;
-
+.treatments__card-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #6fb5c0, #5da1ac);
 }
 
-.TextContainerTreatment {
-  display: block;
-  border-radius: 1%;
-  height: 175px;
-  width: 450px;
-  background-color: #6FB5C0;
-  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
-  transition: ease-in-out 0.3s;
+/* CTA Section */
+.treatments__cta {
+  background: linear-gradient(135deg, #6fb5c0 0%, #5da1ac 100%);
+  padding: 6rem 2rem;
+  text-align: center;
+  color: white;
 }
 
-.TextContainerTreatment:hover {
-  transform: scale(102%);
+.treatments__cta-content {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-@media screen and (max-width: 750px) {
-  .treatments__header {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+.treatments__cta-content h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.treatments__cta-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.treatments__cta-button {
+  padding: 1rem 3rem;
+  background-color: white;
+  color: #6fb5c0;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.treatments__cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1024px) {
+  .treatments__hero {
+    grid-template-columns: 1fr;
+    text-align: center;
   }
-.TextContainerTreatment {
-  width: 100%;
-  height: 110%;
-}
-.treatments__image {
-  
-  width: 100%;
-  object-fit: cover;
- 
-}
-.treatments__toggle-button {
- min-width: 110px;
- font-size: 15px;
- padding: 0;
+
+  .treatments__hero-content {
+    padding-right: 0;
+  }
+
+  .treatments__title {
+    font-size: 3rem;
+  }
+
+  .treatments__subtitle {
+    font-size: 1.8rem;
+  }
 }
 
+@media screen and (max-width: 768px) {
+  .treatments__gallery {
+    grid-template-columns: 1fr;
+  }
 
+  .treatments__categories {
+    grid-template-columns: 1fr;
+  }
 
+  .treatments__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .treatments__title {
+    font-size: 2.5rem;
+  }
+
+  .treatments__subtitle {
+    font-size: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .treatments__hero {
+    padding: 3rem 1rem;
+  }
+
+  .treatments__title {
+    font-size: 2rem;
+  }
+
+  .treatments__subtitle {
+    font-size: 1.2rem;
+  }
+
+  .treatments__hero-description {
+    font-size: 1rem;
+  }
+
+  .treatments__cta-content h2 {
+    font-size: 2rem;
+  }
+}

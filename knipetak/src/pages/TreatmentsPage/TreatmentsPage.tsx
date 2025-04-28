@@ -1,19 +1,21 @@
 import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
 import { TreatmentType } from "../../interfaces/treatment.interface";
 import { treatmentData } from "../../data/treatmentData";
+import { useNavigate } from "react-router-dom";
 import "./TreatmentsPage.css";
-import { AnimatePresence } from "framer-motion";
 
 function TreatmentsPage() {
-  const [activeSection, setActiveSection] = useState<TreatmentType | null>(
-    null
-  );
-  const [height, setHeight] = useState(0);
+  const [activeSection, setActiveSection] = useState<TreatmentType | null>(null);
+  const [isHovered, setIsHovered] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const toggleSection = (section: TreatmentType) => {
     setActiveSection(activeSection === section ? null : section);
+  };
+
+  const handleBookClick = () => {
+    navigate("/book");
   };
 
   const isActive = activeSection !== null;
@@ -21,135 +23,107 @@ function TreatmentsPage() {
 
   useEffect(() => {
     if (contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
+      contentRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [currentContent]);
 
   return (
-    <>
-      <div className="treatments-page">
-        <main className="treatments">
-          <div className="treatments__hero">
-            <h1 className="treatments__title">Behandlinger</h1>
-            <h2 className="treatments__subtitle">
-              Knipetak - En muskelterapaut på hjul!
-            </h2>
+    <div className="treatments-page">
+      <div className="treatments__hero">
+        <div className="treatments__hero-content">
+          <h1 className="treatments__title">Behandlinger</h1>
+          <h2 className="treatments__subtitle">Knipetak - En muskelterapaut på hjul!</h2>
+          <div className="treatments__hero-description">
+            <p>Opplev profesjonell massasje og behandling i komforten av ditt eget hjem.</p>
+            <p>Vi tilbyr skreddersydde behandlinger for dine spesifikke behov.</p>
+          </div>
+        </div>
+        <div className="treatments__hero-image">
+          <img src="/src/assets/images/massasje_stol.jpg" alt="Massasje behandling" />
+        </div>
+      </div>
+
+      <section className="treatments__overview">
+        <div className="treatments__gallery">
+          <div className="treatments__gallery-item">
+            <img src="/src/assets/images/MassasjeBat.png" alt="Massasje behandling" />
+            <div className="treatments__gallery-overlay">
+              <h3>Profesjonell Massasje</h3>
+              <p>Skreddersydd for dine behov</p>
+            </div>
+          </div>
+          <div className="treatments__gallery-item">
+            <img src="/src/assets/images/knipetak_behandling.jpg" alt="Massasje behandling" />
+            <div className="treatments__gallery-overlay">
+              <h3>Muskelterapi</h3>
+              <p>Lindring og gjenoppbygging</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="treatments__content">
+          <h3 className="treatments__section-title">Massasje kan benyttes ved følgende tilstander:</h3>
+
+          <div className="treatments__categories">
+            {Object.entries(treatmentData).map(([key, section]) => (
+              <div
+                key={key}
+                className={`treatments__category ${activeSection === key ? "treatments__category--active" : ""}`}
+                onMouseEnter={() => setIsHovered(key)}
+                onMouseLeave={() => setIsHovered(null)}
+              >
+                <button
+                  className={`treatments__toggle-button ${activeSection === key ? "treatments__toggle-button--active" : ""}`}
+                  onClick={() => toggleSection(key as TreatmentType)}
+                >
+                  <span className="treatments__button-icon">
+                    {activeSection === key ? "▼" : "▶"}
+                  </span>
+                  <span className="treatments__button-text">{section.title}</span>
+                </button>
+                {isHovered === key && !isActive && (
+                  <div className="treatments__category-preview">
+                    <p>{section.content[0].description}</p>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
-          <section className="treatments__overview">
-            <div className="treatments__ticker-wrapper">
-              <motion.div
-                className="treatments__ticker"
-                animate={{
-                  x: ["100%", "-100%"],
-                }}
-                transition={{
-                  duration: 30,
-                  ease: "linear",
-                  repeat: Infinity,
-                }}
-              >
-                <img
-                  className="treatments__ticker-image"
-                  src="/src/assets/images/MassasjeBåt.jpg"
-                  alt="Massasje behandling"
-                />
-                <img
-                  className="treatments__ticker-image"
-                  src="/src/assets/images/Massasje2.jpg"
-                  alt="Massasje behandling"
-                />
-                <img
-                  className="treatments__ticker-image"
-                  src="/src/assets/images/KnipetakMassasje.jpg"
-                  alt="Massasje behandling"
-                />
-              </motion.div>
+          <div 
+            className="treatments__grid-container" 
+            style={{ 
+              height: isActive ? "auto" : "0", 
+              opacity: isActive ? 1 : 0 
+            }}
+          >
+            <div ref={contentRef}>
+              {isActive && (
+                <div className="treatments__grid">
+                  {currentContent?.content.map((item) => (
+                    <article key={item.heading} className="treatments__card">
+                      <div className="treatments__card-content">
+                        <h3 className="treatments__card-title">{item.heading}</h3>
+                        <p className="treatments__card-text">{item.description}</p>
+                      </div>
+                      <div className="treatments__card-decoration"></div>
+                    </article>
+                  ))}
+                </div>
+              )}
             </div>
+          </div>
+        </div>
+      </section>
 
-            <h3 className="treatments__section-title">
-              Massasje kan benyttes ved følgende tilstander:
-            </h3>
-
-            <div className="treatments__buttons">
-              {Object.entries(treatmentData).map(([key, section]) => (
-                <motion.button
-                  key={key}
-                  className={`treatments__toggle-button ${
-                    activeSection === key
-                      ? "treatments__toggle-button--active"
-                      : ""
-                  }`}
-                  onClick={() => toggleSection(key as TreatmentType)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  animate={{
-                    backgroundColor:
-                      activeSection === key ? "#5da1ac" : "#6fb5c0",
-                  }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {activeSection === key
-                    ? `▼ ${section.title}`
-                    : `▶ ${section.title}`}
-                </motion.button>
-              ))}
-            </div>
-
-            <motion.div
-              className="treatments__grid-container"
-              animate={{
-                height: isActive ? height : 0,
-                opacity: isActive ? 1 : 0,
-              }}
-              initial={false}
-              transition={{
-                height: { duration: 0.5, ease: "easeInOut" },
-                opacity: { duration: 0.4, ease: "easeInOut" },
-              }}
-              style={{ overflow: "hidden" }}
-            >
-              <div ref={contentRef}>
-                <AnimatePresence mode="wait">
-                  {isActive && (
-                    <motion.div
-                      className="treatments__grid"
-                      key={activeSection}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      {currentContent?.content.map((item, index) => (
-                        <motion.article
-                          key={item.heading}
-                          className="treatments__card"
-                          layout
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          transition={{ duration: 0.3, delay: index * 0.05 }}
-                        >
-                          <h3 className="treatments__card-title">
-                            {item.heading}
-                          </h3>
-                          <p className="treatments__card-text">
-                            {item.description}
-                          </p>
-                        </motion.article>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          </section>
-        </main>
-      </div>
-    </>
+      <section className="treatments__cta">
+        <div className="treatments__cta-content">
+          <h2>Klar for en avslappende behandling?</h2>
+          <p>Book en time i dag og opplev forskjellen</p>
+          <button className="treatments__cta-button" onClick={handleBookClick}>Book Time</button>
+        </div>
+      </section>
+    </div>
   );
 }
 
