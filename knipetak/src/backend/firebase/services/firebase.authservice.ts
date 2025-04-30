@@ -34,7 +34,7 @@ export const signInWithGoogle = async () => {
         userType: UserType.CUSTOMER,
         createdAt: new Date(),
         // Optional fields with default values
-        age: 0,
+        birthYear: 0,
         healthIssues: "",
         location: {
           id: "",
@@ -83,7 +83,7 @@ export const signUp = async (
       email: email,
       userType: UserType.CUSTOMER,
       createdAt: new Date(),
-      age: 0,
+      birthYear: 0,
       healthIssues: "",
       location: {
         id: "",
