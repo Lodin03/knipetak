@@ -47,15 +47,18 @@ export function WorkHoursManager({
   const defaultLocation = useDefaultLocation(locations);
 
   // Setup initial empty schedule
-  const initialSchedule = DAYS.reduce((acc, norwegianDay) => {
-    const englishDay = DAY_MAPPING[norwegianDay];
-    acc[englishDay] = {
-      workhours: {
-        timeSlots: [],
-      },
-    };
-    return acc;
-  }, {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>);
+  const initialSchedule = DAYS.reduce(
+    (acc, norwegianDay) => {
+      const englishDay = DAY_MAPPING[norwegianDay];
+      acc[englishDay] = {
+        workhours: {
+          timeSlots: [],
+        },
+      };
+      return acc;
+    },
+    {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>,
+  );
 
   // Use our custom hook for managing the weekly schedule
   const {
@@ -80,31 +83,37 @@ export function WorkHoursManager({
 
         if (defaultHours) {
           // Transform API data to our UI format
-          const uiSchedule = DAYS.reduce((acc, norwegianDay) => {
-            const englishDay = DAY_MAPPING[norwegianDay];
+          const uiSchedule = DAYS.reduce(
+            (acc, norwegianDay) => {
+              const englishDay = DAY_MAPPING[norwegianDay];
 
-            // Map the API response to our UI format
-            const timeSlots =
-              defaultHours?.[englishDay]?.workhours?.timeSlots || [];
+              // Map the API response to our UI format
+              const timeSlots =
+                defaultHours?.[englishDay]?.workhours?.timeSlots || [];
 
-            acc[englishDay] = {
-              workhours: {
-                timeSlots:
-                  timeSlots.length > 0
-                    ? timeSlots.map((slot) => ({
-                        start:
-                          typeof slot.start === "string" ? slot.start : "09:00",
-                        end: typeof slot.end === "string" ? slot.end : "17:00",
-                        location:
-                          typeof slot.location === "string"
-                            ? slot.location
-                            : slot.location?.id || locations[0]?.id || "",
-                      }))
-                    : [],
-              },
-            };
-            return acc;
-          }, {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>);
+              acc[englishDay] = {
+                workhours: {
+                  timeSlots:
+                    timeSlots.length > 0
+                      ? timeSlots.map((slot) => ({
+                          start:
+                            typeof slot.start === "string"
+                              ? slot.start
+                              : "09:00",
+                          end:
+                            typeof slot.end === "string" ? slot.end : "17:00",
+                          location:
+                            typeof slot.location === "string"
+                              ? slot.location
+                              : slot.location?.id || locations[0]?.id || "",
+                        }))
+                      : [],
+                },
+              };
+              return acc;
+            },
+            {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>,
+          );
 
           setSchedule(uiSchedule);
         }
@@ -132,7 +141,7 @@ export function WorkHoursManager({
     norwegianDay: string,
     index: number,
     field: "start" | "end",
-    value: string
+    value: string,
   ) => {
     scheduleOps.updateTimeSlot(norwegianDay, index, field, value);
   };
@@ -140,7 +149,7 @@ export function WorkHoursManager({
   const handleLocationChange = (
     norwegianDay: string,
     index: number,
-    locationId: string
+    locationId: string,
   ) => {
     if (locationId === "new") {
       setActiveDay(DAY_MAPPING[norwegianDay]);
@@ -164,7 +173,7 @@ export function WorkHoursManager({
           (slot) => ({
             ...slot,
             location: slot.location === "" ? newLocation.id : slot.location,
-          })
+          }),
         );
 
         setSchedule((prev) => ({
@@ -201,7 +210,7 @@ export function WorkHoursManager({
           };
           return acc;
         },
-        {} as WeeklySchedule
+        {} as WeeklySchedule,
       );
 
       await setDefaultWorkHours(apiSchedule);
@@ -292,7 +301,7 @@ export function WorkHoursManager({
                                   norwegianDay,
                                   index,
                                   "start",
-                                  e.target.value
+                                  e.target.value,
                                 )
                               }
                               className="form-input"
@@ -315,7 +324,7 @@ export function WorkHoursManager({
                                   norwegianDay,
                                   index,
                                   "end",
-                                  e.target.value
+                                  e.target.value,
                                 )
                               }
                               className="form-input"
@@ -336,7 +345,7 @@ export function WorkHoursManager({
                                 handleLocationChange(
                                   norwegianDay,
                                   index,
-                                  e.target.value
+                                  e.target.value,
                                 )
                               }
                               className="form-input"
@@ -353,7 +362,7 @@ export function WorkHoursManager({
                             </select>
                           </div>
                         </div>
-                      )
+                      ),
                     )}
 
                   {!isDayOff && (

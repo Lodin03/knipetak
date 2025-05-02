@@ -1,24 +1,26 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { Treatment } from '@/backend/interfaces/Treatment';
-import { Location as VenueLocation } from '@/backend/interfaces/Location';
-import { CustomerLocation } from '@/backend/interfaces/Location';
-import EventDetails from '@/backend/interfaces/availabilityInterfaces/EventDetails';
-import { getAvailableSlotsByDate } from '@/backend/firebase/services/firebase.availabilityservice';
-import { createBooking } from '@/backend/firebase/services/firebase.bookingservice';
-import { getTreatments } from '@/backend/firebase/services/firebase.treatmentservice';
-import { getLocations } from '@/backend/firebase/services/firebase.locationservice';
-import { auth } from '@/backend/firebase/services/firebase.authservice';
-import { BookingData } from '@/backend/interfaces/BookingData';
-import { useNavigate } from 'react-router-dom';
-import { 
-  startOfMonth, 
-  endOfMonth, 
-  eachDayOfInterval 
-} from 'date-fns';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
+import { Treatment } from "@/backend/interfaces/Treatment";
+import { Location as VenueLocation } from "@/backend/interfaces/Location";
+import { CustomerLocation } from "@/backend/interfaces/Location";
+import EventDetails from "@/backend/interfaces/availabilityInterfaces/EventDetails";
+import { getAvailableSlotsByDate } from "@/backend/firebase/services/firebase.availabilityservice";
+import { createBooking } from "@/backend/firebase/services/firebase.bookingservice";
+import { getTreatments } from "@/backend/firebase/services/firebase.treatmentservice";
+import { getLocations } from "@/backend/firebase/services/firebase.locationservice";
+import { auth } from "@/backend/firebase/services/firebase.authservice";
+import { BookingData } from "@/backend/interfaces/BookingData";
+import { useNavigate } from "react-router-dom";
+import { startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
 
 // Helper function to format dates as YYYY-MM-DD
 function formatDateForAPI(date: Date): string {
-  return date.toLocaleDateString('sv-SE'); // Using Swedish locale which gives us YYYY-MM-DD format
+  return date.toLocaleDateString("sv-SE"); // Using Swedish locale which gives us YYYY-MM-DD format
 }
 
 interface LocationSlots {
@@ -48,13 +50,13 @@ interface BookingContextType {
   dateManuallySelected: boolean;
   eventDetails: EventDetails | null;
   locationSlots: LocationSlots[];
-  
+
   // Loading state
   isLoading: boolean;
   loadingDate: string | null;
   initialDataLoaded: boolean;
   dayInfoCache: DayInfoCache;
-  
+
   // Treatment and booking details
   treatments: Treatment[];
   locations: VenueLocation[];
@@ -62,7 +64,7 @@ interface BookingContextType {
   groupSize: number;
   selectedTreatment: Treatment | null;
   selectedDuration: number | null;
-  
+
   // Form state
   address: string;
   city: string;
@@ -71,11 +73,11 @@ interface BookingContextType {
   guestEmail: string;
   guestName: string;
   guestPhone: string;
-  
+
   // Booking confirmation
   showCompletedBooking: boolean;
   completedBookingId: string;
-  
+
   // Action handlers
   handleDateSelect: (date: Date, preloadOnly?: boolean) => void;
   handleSlotClick: (time: string, location: VenueLocation | null) => void;
@@ -83,7 +85,7 @@ interface BookingContextType {
   handleCancelBooking: () => void;
   handleCloseCompletedBooking: () => void;
   handleMonthChange: (month: Date) => void;
-  
+
   // State setters
   setIsGroupBooking: (isGroup: boolean) => void;
   setGroupSize: (size: number) => void;
@@ -98,16 +100,20 @@ interface BookingContextType {
 }
 
 // Create the context
-export const BookingContext = createContext<BookingContextType | undefined>(undefined);
+export const BookingContext = createContext<BookingContextType | undefined>(
+  undefined,
+);
 
 // Create a provider component
 interface BookingProviderProps {
   children: React.ReactNode;
 }
 
-export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) => {
+export const BookingProvider: React.FC<BookingProviderProps> = ({
+  children,
+}) => {
   const navigate = useNavigate();
-  
+
   // Core booking state
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -116,23 +122,26 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
   const [locations, setLocations] = useState<VenueLocation[]>([]);
   const [locationSlots, setLocationSlots] = useState<LocationSlots[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<VenueLocation | null>(null);
+  const [selectedLocation, setSelectedLocation] =
+    useState<VenueLocation | null>(null);
   const [dayInfoCache, setDayInfoCache] = useState<DayInfoCache>({});
   const [isPreloadingMonth, setIsPreloadingMonth] = useState(false);
   const [pendingDates, setPendingDates] = useState<Date[]>([]);
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   const [dateManuallySelected, setDateManuallySelected] = useState(false);
-  
+
   // Ref to track dates currently being fetched
   const fetchingDates = useRef<Set<string>>(new Set());
-  
+
   // Treatment and group booking state
   const [isGroupBooking, setIsGroupBooking] = useState(false);
   const [groupSize, setGroupSize] = useState<number>(1);
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
-  const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null);
-  
+  const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(
+    null,
+  );
+
   // Form and modal state
   const [showCompletedBooking, setShowCompletedBooking] = useState(false);
   const [completedBookingId, setCompletedBookingId] = useState<string>("");
@@ -140,39 +149,38 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
   const [city, setCity] = useState<string>("");
   const [postalCode, setPostalCode] = useState<number | null>(null);
   const [isGuestBooking, setIsGuestBooking] = useState(false);
-  const [guestEmail, setGuestEmail] = useState('');
-  const [guestName, setGuestName] = useState('');
-  const [guestPhone, setGuestPhone] = useState('');
+  const [guestEmail, setGuestEmail] = useState("");
+  const [guestName, setGuestName] = useState("");
+  const [guestPhone, setGuestPhone] = useState("");
 
   // Fetch treatments and locations when the component mounts
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        console.log('Starting initial data fetch...');
-        
+        console.log("Starting initial data fetch...");
+
         // First load locations and treatments simultaneously
         const [treatmentsData, locationsData] = await Promise.all([
           getTreatments(),
-          getLocations()
+          getLocations(),
         ]);
-        
+
         setTreatments(treatmentsData);
         setLocations(locationsData);
-        
+
         // Once the core data is loaded, preload the current month
         // Use a local date variable for preloading, don't update selectedDate
         const today = new Date();
         const dayInfo = await fetchAvailabilityForDate(today);
-        console.log('Preloaded today:', dayInfo);
-        
+        console.log("Preloaded today:", dayInfo);
+
         // Start preloading the rest of the month
         handleMonthChange(today);
-        
       } catch (error) {
-        console.error('Error loading initial data:', error);
+        console.error("Error loading initial data:", error);
       }
     };
-    
+
     fetchInitialData();
   }, []);
 
@@ -180,102 +188,118 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
   const fetchAvailabilityForDate = async (date: Date) => {
     const dateStr = formatDateForAPI(date);
     console.log(`Fetching availability for ${dateStr}`);
-    
+
     // Check if already fetching this date
     if (fetchingDates.current.has(dateStr)) {
       console.log(`Already fetching data for ${dateStr}, skipping`);
       return null;
     }
     fetchingDates.current.add(dateStr);
-    
+
     // If requesting the current loading date, update the loading state
     if (dateStr === loadingDate) {
       setLoadingDate(dateStr);
     }
-    
+
     try {
       const result = await getAvailableSlotsByDate(dateStr);
-      
+
       if (!result) {
         console.log(`No result for ${dateStr}`);
         // Cache negative result so we don't try to fetch it again
         const emptyResult = {
           locationSlots: [],
-          eventDetails: null
+          eventDetails: null,
         };
-        setDayInfoCache(prev => ({
+        setDayInfoCache((prev) => ({
           ...prev,
-          [dateStr]: emptyResult
+          [dateStr]: emptyResult,
         }));
         return emptyResult;
       }
-      
-      console.log(`Got availability for ${dateStr}:`, 
-                 result.availabilityByLocation.length > 0 
-                 ? `${result.availabilityByLocation.length} locations` 
-                 : 'No locations');
-      
+
+      console.log(
+        `Got availability for ${dateStr}:`,
+        result.availabilityByLocation.length > 0
+          ? `${result.availabilityByLocation.length} locations`
+          : "No locations",
+      );
+
       if (result.eventDetails) {
         console.log(`Event for ${dateStr}:`, result.eventDetails);
       }
 
       // Convert availability data to match our expected interface
-      const convertedLocationSlots: LocationSlots[] = result.availabilityByLocation.map(slot => {
-        // Find the location by ID if it's a string
-        let locationObj: VenueLocation | null = null;
-        if (typeof slot.location === 'string') {
-          locationObj = locations.find(loc => loc.id === slot.location) || null;
-        } else {
-          locationObj = slot.location;
-        }
+      const convertedLocationSlots: LocationSlots[] =
+        result.availabilityByLocation.map((slot) => {
+          // Find the location by ID if it's a string
+          let locationObj: VenueLocation | null = null;
+          if (typeof slot.location === "string") {
+            locationObj =
+              locations.find((loc) => loc.id === slot.location) || null;
+          } else {
+            locationObj = slot.location;
+          }
 
-        // Extract string versions for display if they exist
-        const startString = 'startString' in slot.workHours 
-          ? (slot.workHours as { startString?: string }).startString 
-          : '';
-        const endString = 'endString' in slot.workHours 
-          ? (slot.workHours as { endString?: string }).endString 
-          : '';
+          // Extract string versions for display if they exist
+          const startString =
+            "startString" in slot.workHours
+              ? (slot.workHours as { startString?: string }).startString
+              : "";
+          const endString =
+            "endString" in slot.workHours
+              ? (slot.workHours as { endString?: string }).endString
+              : "";
 
-        return {
-          location: locationObj,
-          workHours: {
-            start: typeof slot.workHours.start === 'string' 
-              ? slot.workHours.start 
-              : '00:00',
-            end: typeof slot.workHours.end === 'string' 
-              ? slot.workHours.end 
-              : '00:00',
-            // Add the string versions for UI display
-            startString: startString || (typeof slot.workHours.start === 'string' ? slot.workHours.start : '00:00'),
-            endString: endString || (typeof slot.workHours.end === 'string' ? slot.workHours.end : '00:00')
-          },
-          availableSlots: slot.availableSlots
-        };
-      });
-      
+          return {
+            location: locationObj,
+            workHours: {
+              start:
+                typeof slot.workHours.start === "string"
+                  ? slot.workHours.start
+                  : "00:00",
+              end:
+                typeof slot.workHours.end === "string"
+                  ? slot.workHours.end
+                  : "00:00",
+              // Add the string versions for UI display
+              startString:
+                startString ||
+                (typeof slot.workHours.start === "string"
+                  ? slot.workHours.start
+                  : "00:00"),
+              endString:
+                endString ||
+                (typeof slot.workHours.end === "string"
+                  ? slot.workHours.end
+                  : "00:00"),
+            },
+            availableSlots: slot.availableSlots,
+          };
+        });
+
       const dayInfo = {
         locationSlots: convertedLocationSlots,
-        eventDetails: result.eventDetails
+        eventDetails: result.eventDetails,
       };
-      
+
       // Cache results for reuse
-      setDayInfoCache(prev => ({
+      setDayInfoCache((prev) => ({
         ...prev,
-        [dateStr]: dayInfo
+        [dateStr]: dayInfo,
       }));
-      
+
       return dayInfo;
     } catch (error) {
       console.error(`Error fetching slots for ${dateStr}:`, error);
       // Cache error as a valid empty result (not null) to prevent repeated retries
       const errorResult = {
         locationSlots: [],
-        eventDetails: null
+        eventDetails: null,
       };
-      setDayInfoCache(prev => ({
+      setDayInfoCache((prev) => ({
         ...prev,
-        [dateStr]: errorResult
+        [dateStr]: errorResult,
       }));
       return errorResult;
     } finally {
@@ -287,11 +311,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
   // Fetch availability for selected date and update UI
   useEffect(() => {
     if (!selectedDate || !locations.length) return;
-    
+
     const fetchSlots = async () => {
       setIsLoading(true);
       const dateStr = formatDateForAPI(selectedDate);
-      
+
       // If we have cached data for this date, use it
       if (dayInfoCache[dateStr]) {
         const cachedData = dayInfoCache[dateStr];
@@ -305,95 +329,118 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
         setIsLoading(false);
         return;
       }
-      
+
       const dayInfo = await fetchAvailabilityForDate(selectedDate);
-      
+
       if (dayInfo) {
         setLocationSlots(dayInfo.locationSlots);
-        
+
         if (dayInfo.eventDetails) {
-          const eventName = typeof dayInfo.eventDetails.name === 'string' ? dayInfo.eventDetails.name : "Ukjent arrangement";
-          const eventLocation = typeof dayInfo.eventDetails.location === 'string' ? dayInfo.eventDetails.location : "Ukjent sted";
-            setEventDetails({
-              name: eventName,
-              location: eventLocation
-            });
-          } else {
-            setEventDetails(null);
-          }
+          const eventName =
+            typeof dayInfo.eventDetails.name === "string"
+              ? dayInfo.eventDetails.name
+              : "Ukjent arrangement";
+          const eventLocation =
+            typeof dayInfo.eventDetails.location === "string"
+              ? dayInfo.eventDetails.location
+              : "Ukjent sted";
+          setEventDetails({
+            name: eventName,
+            location: eventLocation,
+          });
         } else {
-          setLocationSlots([]);
           setEventDetails(null);
         }
-      
-        setIsLoading(false);
+      } else {
+        setLocationSlots([]);
+        setEventDetails(null);
+      }
+
+      setIsLoading(false);
     };
-    
+
     fetchSlots();
   }, [selectedDate, locations]);
 
   // Preload data for the current month, but with limited concurrency
   useEffect(() => {
-    if (!isPreloadingMonth || !locations.length || pendingDates.length === 0) return;
-    
+    if (!isPreloadingMonth || !locations.length || pendingDates.length === 0)
+      return;
+
     let isMounted = true;
-    
+
     // Safety timeout to ensure loading overlay is dismissed even if preloading fails
     const safetyTimer = setTimeout(() => {
       if (isMounted && !initialDataLoaded) {
-        console.log('DEBUG: Safety timeout triggered - forcing initialDataLoaded to true');
+        console.log(
+          "DEBUG: Safety timeout triggered - forcing initialDataLoaded to true",
+        );
         setIsPreloadingMonth(false);
         setInitialDataLoaded(true);
       }
     }, 5000); // Reduced from 10s to 5s for faster user experience
-    
+
     // Optimized data loading using batching with higher concurrency
     const loadDataInBatches = async () => {
-      console.log('DEBUG: Starting loadDataInBatches with', pendingDates.length, 'dates to load');
+      console.log(
+        "DEBUG: Starting loadDataInBatches with",
+        pendingDates.length,
+        "dates to load",
+      );
       // Increased max concurrent requests for faster loading
       const MAX_CONCURRENT_REQUESTS = 5; // Increased from 3 to 5
       let successfullyLoaded = 0;
       let failedToLoad = 0;
-      
+
       // Eagerly load first visible week before loading the rest
       const visibleDatesFirst = [...pendingDates];
       // Sort to prioritize dates in current week
       const today = new Date();
       const endOfWeek = new Date(today);
       endOfWeek.setDate(today.getDate() + (7 - today.getDay()));
-      
+
       visibleDatesFirst.sort((a, b) => {
         const aInCurrentWeek = a <= endOfWeek;
         const bInCurrentWeek = b <= endOfWeek;
-        
+
         if (aInCurrentWeek && !bInCurrentWeek) return -1;
         if (!aInCurrentWeek && bInCurrentWeek) return 1;
         return a.getTime() - b.getTime();
       });
-      
+
       // Replace original pending dates with sorted ones
       setPendingDates(visibleDatesFirst);
-      
+
       // Continue as long as we have dates to load and the component is still mounted
       while (pendingDates.length > 0 && isMounted) {
         // Take the next batch of dates (up to max number)
         const batchDates = pendingDates.slice(0, MAX_CONCURRENT_REQUESTS);
-        setPendingDates(prev => prev.slice(MAX_CONCURRENT_REQUESTS));
-        console.log('DEBUG: Processing batch of', batchDates.length, 'dates. Remaining dates:', pendingDates.length - batchDates.length);
-        
+        setPendingDates((prev) => prev.slice(MAX_CONCURRENT_REQUESTS));
+        console.log(
+          "DEBUG: Processing batch of",
+          batchDates.length,
+          "dates. Remaining dates:",
+          pendingDates.length - batchDates.length,
+        );
+
         try {
           // Run API calls for all dates in the batch in parallel
-          const results = await Promise.allSettled(batchDates.map(date => fetchAvailabilityForDate(date)));
-          
+          const results = await Promise.allSettled(
+            batchDates.map((date) => fetchAvailabilityForDate(date)),
+          );
+
           // Set initialDataLoaded to true after processing the first batch
-          if (successfullyLoaded === 0 && results.some(r => r.status === 'fulfilled')) {
+          if (
+            successfullyLoaded === 0 &&
+            results.some((r) => r.status === "fulfilled")
+          ) {
             // As soon as we have some data, make the UI responsive
             setInitialDataLoaded(true);
           }
-          
+
           // Count successes and failures
-          results.forEach(result => {
-            if (result.status === 'fulfilled') {
+          results.forEach((result) => {
+            if (result.status === "fulfilled") {
               successfullyLoaded++;
             } else {
               failedToLoad++;
@@ -404,16 +451,18 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
           failedToLoad += batchDates.length;
           // Continue with next batch even if there's an error
         }
-        
+
         // Only add a minimal delay to avoid UI freezing
         if (pendingDates.length > 0) {
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
         }
       }
-      
+
       // Done loading all dates
       if (isMounted) {
-        console.log(`Month data loading complete. Successful: ${successfullyLoaded}, Failed: ${failedToLoad}`);
+        console.log(
+          `Month data loading complete. Successful: ${successfullyLoaded}, Failed: ${failedToLoad}`,
+        );
         setIsPreloadingMonth(false);
         // Add a small delay to ensure state is updated after isPreloadingMonth
         setTimeout(() => {
@@ -423,9 +472,9 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
         }, 10);
       }
     };
-    
+
     loadDataInBatches();
-    
+
     // Cleanup function
     return () => {
       isMounted = false;
@@ -438,50 +487,54 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     // Clear existing loading queue to stop unnecessary loading
     setPendingDates([]);
     setIsPreloadingMonth(false);
-    
+
     // Set initialDataLoaded to false to show the loading spinner
     setInitialDataLoaded(false);
-    
-    console.log(`Changing month to ${month.toLocaleDateString()}, starting data loading...`);
-    
+
+    console.log(
+      `Changing month to ${month.toLocaleDateString()}, starting data loading...`,
+    );
+
     // Create array of dates for current month
     const monthStart = startOfMonth(month);
     const monthEnd = endOfMonth(month);
-    
+
     // Only include dates from today forward
     const today = new Date(new Date().setHours(0, 0, 0, 0));
     const startDate = today > monthStart ? today : monthStart;
-    
+
     if (startDate > monthEnd) {
       // Month is in the past, nothing to preload
       console.log("Month is in the past, nothing to preload");
       setInitialDataLoaded(true);
       return;
     }
-    
+
     const datesInMonth = eachDayOfInterval({
       start: startDate,
-      end: monthEnd
+      end: monthEnd,
     });
-    
+
     // Clear the cache for all dates in this month to ensure fresh data
     const newCache = { ...dayInfoCache };
-    datesInMonth.forEach(date => {
+    datesInMonth.forEach((date) => {
       const dateStr = formatDateForAPI(date);
       delete newCache[dateStr];
     });
     setDayInfoCache(newCache);
-    
+
     // All dates need to be loaded since we cleared the cache
-    console.log(`Generated ${datesInMonth.length} dates to preload for ${month.toLocaleDateString('nb-NO', { month: 'long', year: 'numeric' })}`);
-    
+    console.log(
+      `Generated ${datesInMonth.length} dates to preload for ${month.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}`,
+    );
+
     if (datesInMonth.length === 0) {
       // Nothing to preload, we can just show the data we have
       console.log("No dates to preload, setting initialDataLoaded to true");
       setInitialDataLoaded(true);
       return;
     }
-    
+
     // Start the preloading process
     setPendingDates(datesInMonth);
     setIsPreloadingMonth(true);
@@ -495,19 +548,19 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
       setSelectedTime(null);
       setSelectedLocation(null);
       setDateManuallySelected(true);
-      
+
       // Scroll to the timeslots section after a short delay to ensure rendering
       setTimeout(() => {
-        const timeslotsSection = document.getElementById('available-timeslots');
+        const timeslotsSection = document.getElementById("available-timeslots");
         if (timeslotsSection) {
-          timeslotsSection.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start'
+          timeslotsSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
           });
         }
       }, 300); // Short delay to ensure the section is rendered
     }
-    
+
     // Always fetch data for the date if we don't have it yet
     const dateStr = formatDateForAPI(date);
     if (!dayInfoCache[dateStr]) {
@@ -519,14 +572,14 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
   const handleSlotClick = (time: string, location: VenueLocation | null) => {
     setSelectedTime(time);
     setSelectedLocation(location);
-    
+
     // Scroll to booking form after a short delay
     setTimeout(() => {
-      const bookingForm = document.getElementById('booking-form');
+      const bookingForm = document.getElementById("booking-form");
       if (bookingForm) {
-        bookingForm.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start'
+        bookingForm.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
         });
       }
     }, 300);
@@ -535,17 +588,24 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
   // Confirm booking by constructing the booking object and calling createBooking
   const handleBookingConfirm = async () => {
     if (!auth.currentUser && !isGuestBooking) {
-      const confirmGuest = window.confirm("Du er ikke logget inn. Vil du fortsette som gjest?");
+      const confirmGuest = window.confirm(
+        "Du er ikke logget inn. Vil du fortsette som gjest?",
+      );
       if (confirmGuest) {
         setIsGuestBooking(true);
         return;
       } else {
-        navigate('/login');
+        navigate("/login");
         return;
       }
     }
 
-    if (!selectedDate || !selectedTime || !selectedTreatment || !selectedLocation) {
+    if (
+      !selectedDate ||
+      !selectedTime ||
+      !selectedTreatment ||
+      !selectedLocation
+    ) {
       alert("Vennligst fyll ut alle detaljer for bookingen.");
       return;
     }
@@ -577,7 +637,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
       }
       duration = selectedDuration;
       const durationOption = selectedTreatment.durations.find(
-        (d) => d.duration === duration
+        (d) => d.duration === duration,
       );
       if (!durationOption) {
         alert("Valgt varighet er ikke tilgjengelig for denne behandlingen.");
@@ -594,11 +654,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
       // Calculate effective duration per person
       const effectiveDuration = duration / groupSize;
       const durationOption = selectedTreatment.durations.find(
-        (d) => d.duration === effectiveDuration
+        (d) => d.duration === effectiveDuration,
       );
       if (!durationOption) {
         alert(
-          `Effektiv varighet per person (${effectiveDuration} minutter) er ikke gyldig for valgt behandling.`
+          `Effektiv varighet per person (${effectiveDuration} minutter) er ikke gyldig for valgt behandling.`,
         );
         return;
       }
@@ -607,7 +667,8 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
         groupSize >= selectedTreatment.discounts.groupSize &&
         selectedTreatment.discounts.prices[effectiveDuration.toString()]
       ) {
-        pricePerPerson = selectedTreatment.discounts.prices[effectiveDuration.toString()];
+        pricePerPerson =
+          selectedTreatment.discounts.prices[effectiveDuration.toString()];
       }
       price = pricePerPerson * groupSize;
     }
@@ -616,23 +677,29 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     const dateStr = formatDateForAPI(selectedDate);
     const startDateTime = new Date(`${dateStr}T${selectedTime}:00`);
     const endDateTime = new Date(startDateTime.getTime() + duration * 60000);
-    
+
     console.log(`🕒 Creating booking for ${dateStr} at ${selectedTime}`);
-    console.log(`📅 Booking will be from ${startDateTime.toTimeString()} to ${endDateTime.toTimeString()}`);
+    console.log(
+      `📅 Booking will be from ${startDateTime.toTimeString()} to ${endDateTime.toTimeString()}`,
+    );
     console.log(`⏱️ Total duration: ${duration} minutes`);
 
     // Create a booking location using the BookingLocation interface
     const bookingLocation: CustomerLocation = {
       address,
       city,
-      postalCode: Number(postalCode)
+      postalCode: Number(postalCode),
     };
 
     const bookingData: BookingData = {
       customerId: auth.currentUser?.uid || `guest_${Date.now()}`,
-      customerEmail: isGuestBooking ? guestEmail : auth.currentUser?.email || '',
-      customerName: isGuestBooking ? guestName : auth.currentUser?.displayName || '',
-      customerPhone: isGuestBooking ? guestPhone : '',
+      customerEmail: isGuestBooking
+        ? guestEmail
+        : auth.currentUser?.email || "",
+      customerName: isGuestBooking
+        ? guestName
+        : auth.currentUser?.displayName || "",
+      customerPhone: isGuestBooking ? guestPhone : "",
       date: selectedDate,
       duration,
       location: bookingLocation,
@@ -645,39 +712,42 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
         end: endDateTime,
       },
       treatmentId: selectedTreatment.id,
-      isGuestBooking: isGuestBooking
+      isGuestBooking: isGuestBooking,
     };
 
     try {
       const bookingId = await createBooking(bookingData);
       setCompletedBookingId(bookingId);
       setShowCompletedBooking(true);
-      
+
       // Add a delay to ensure the booking is registered in the database
       // before refreshing the availability data
-      console.log('Waiting for booking to be registered in database...');
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      console.log("Waiting for booking to be registered in database...");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Refresh availability data for this date to update the cache
       if (selectedDate) {
         // Clear the cache for this date first
         const dateStr = formatDateForAPI(selectedDate);
-        setDayInfoCache(prev => {
+        setDayInfoCache((prev) => {
           const newCache = { ...prev };
           delete newCache[dateStr];
           return newCache;
         });
-        
+
         // Then fetch fresh data
-        console.log(`Refreshing availability data after booking for ${dateStr}...`);
+        console.log(
+          `Refreshing availability data after booking for ${dateStr}...`,
+        );
         const updatedData = await fetchAvailabilityForDate(selectedDate);
-        
+
         // Update locationSlots directly to reflect the changes immediately
         if (updatedData) {
-          console.log(`Updated timeslots received for ${dateStr}:`, 
-            updatedData.locationSlots.map(l => 
-              `Location: ${l.availableSlots.length} slots`
-            )
+          console.log(
+            `Updated timeslots received for ${dateStr}:`,
+            updatedData.locationSlots.map(
+              (l) => `Location: ${l.availableSlots.length} slots`,
+            ),
           );
           setLocationSlots(updatedData.locationSlots);
         } else {
@@ -686,14 +756,16 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
       }
     } catch (error) {
       console.error("Error creating booking:", error);
-      alert("Det oppsto en feil ved oppretting av booking, vennligst prøv igjen.");
+      alert(
+        "Det oppsto en feil ved oppretting av booking, vennligst prøv igjen.",
+      );
     }
   };
 
   const handleCloseCompletedBooking = () => {
     // Store the selectedDate before resetting it
     const dateToRefresh = selectedDate;
-    
+
     // Reset all form state
     setShowCompletedBooking(false);
     setSelectedTime(null);
@@ -703,61 +775,65 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     setIsGroupBooking(false);
     setGroupSize(1);
     setDateManuallySelected(false);
-    
+
     // Refresh availability data for all dates in the current month
     // to ensure we have the latest data when user returns to calendar
     if (dateToRefresh) {
       // Clear the cache for the specific date first
       const dateStr = formatDateForAPI(dateToRefresh);
-      setDayInfoCache(prev => {
+      setDayInfoCache((prev) => {
         const newCache = { ...prev };
         delete newCache[dateStr];
         return newCache;
       });
-      
+
       // Fetch fresh data for the specific date
       fetchAvailabilityForDate(dateToRefresh);
-      
+
       // Also refresh the data for the current month by resetting the cache
       // for all dates and triggering a new month preload
-      console.log('Refreshing entire month data after booking completion...');
+      console.log("Refreshing entire month data after booking completion...");
       setDayInfoCache({}); // Clear all cache
       setInitialDataLoaded(false); // Reset loading state
       const today = new Date();
       handleMonthChange(today);
     }
-    
+
     // Navigate to homepage
-    navigate('/');
+    navigate("/");
   };
 
   const handleCancelBooking = () => {
     // If we have a selected date, refresh its data to ensure we have the latest availability
     if (selectedDate) {
       const dateStr = formatDateForAPI(selectedDate);
-      
+
       // Add a delay before refreshing to ensure database consistency
-      console.log('Preparing to refresh availability data after cancellation...');
-      
+      console.log(
+        "Preparing to refresh availability data after cancellation...",
+      );
+
       // Clear the cache for this date first
-      setDayInfoCache(prev => {
+      setDayInfoCache((prev) => {
         const newCache = { ...prev };
         delete newCache[dateStr];
         return newCache;
       });
-      
+
       // Then fetch fresh data with a delay to ensure database is up to date
-      console.log('Refreshing availability data after cancellation...');
+      console.log("Refreshing availability data after cancellation...");
       setTimeout(() => {
-        fetchAvailabilityForDate(selectedDate).then(updatedData => {
+        fetchAvailabilityForDate(selectedDate).then((updatedData) => {
           if (updatedData) {
-            console.log(`Updated data received after cancellation for ${dateStr}`);
+            console.log(
+              `Updated data received after cancellation for ${dateStr}`,
+            );
             setLocationSlots(updatedData.locationSlots);
           }
         });
       }, 1000);
     }
-    
+
     // Reset form-related state but keep the selected date
     setSelectedTime(null);
     setSelectedLocation(null);
@@ -772,13 +848,13 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     dateManuallySelected,
     eventDetails,
     locationSlots,
-    
+
     // Loading state
     isLoading,
     loadingDate,
     initialDataLoaded,
     dayInfoCache,
-    
+
     // Treatment and booking details
     treatments,
     locations,
@@ -786,7 +862,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     groupSize,
     selectedTreatment,
     selectedDuration,
-    
+
     // Form state
     address,
     city,
@@ -795,11 +871,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     guestEmail,
     guestName,
     guestPhone,
-    
+
     // Booking confirmation
     showCompletedBooking,
     completedBookingId,
-    
+
     // Action handlers
     handleDateSelect,
     handleSlotClick,
@@ -807,7 +883,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     handleCancelBooking,
     handleCloseCompletedBooking,
     handleMonthChange,
-    
+
     // State setters
     setIsGroupBooking,
     setGroupSize,
@@ -820,7 +896,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
     setGuestName,
     setGuestPhone,
   };
-  
+
   return (
     <BookingContext.Provider value={contextValue}>
       {children}
@@ -832,7 +908,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) =>
 export const useBooking = () => {
   const context = useContext(BookingContext);
   if (context === undefined) {
-    throw new Error('useBooking must be used within a BookingProvider');
+    throw new Error("useBooking must be used within a BookingProvider");
   }
   return context;
 };

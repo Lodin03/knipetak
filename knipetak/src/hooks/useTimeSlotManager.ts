@@ -10,7 +10,7 @@ export function useTimeSlotsArray(
   options?: {
     onUpdate?: () => void;
     defaultLocation?: string;
-  }
+  },
 ) {
   const [timeSlots, setTimeSlots] = useState<TimeSlotUI[]>(initialSlots);
 
@@ -20,7 +20,7 @@ export function useTimeSlotsArray(
       end: "17:00",
       location: options?.defaultLocation || "",
     }),
-    [options?.defaultLocation]
+    [options?.defaultLocation],
   );
 
   // Create memoized callbacks for operations to prevent unnecessary rerenders
@@ -35,7 +35,7 @@ export function useTimeSlotsArray(
       ]);
       options?.onUpdate?.();
     },
-    [defaultSlot, options?.onUpdate]
+    [defaultSlot, options?.onUpdate],
   );
 
   const remove = useCallback(
@@ -43,19 +43,19 @@ export function useTimeSlotsArray(
       setTimeSlots((prev) => prev.filter((_, i) => i !== index));
       options?.onUpdate?.();
     },
-    [options?.onUpdate]
+    [options?.onUpdate],
   );
 
   const update = useCallback(
     (index: number, field: keyof TimeSlotUI, value: string) => {
       setTimeSlots((prev) =>
         prev.map((slot, i) =>
-          i === index ? { ...slot, [field]: value } : slot
-        )
+          i === index ? { ...slot, [field]: value } : slot,
+        ),
       );
       options?.onUpdate?.();
     },
-    [options?.onUpdate]
+    [options?.onUpdate],
   );
 
   const replace = useCallback(
@@ -63,7 +63,7 @@ export function useTimeSlotsArray(
       setTimeSlots(newSlots);
       options?.onUpdate?.();
     },
-    [options?.onUpdate]
+    [options?.onUpdate],
   );
 
   const clear = useCallback(() => {
@@ -109,7 +109,7 @@ export function useWeeklyTimeSlots(
     dayMapping?: DayMapping;
     onUpdate?: () => void;
     defaultLocation?: string;
-  }
+  },
 ) {
   const [schedule, setSchedule] = useState<WeeklyScheduleUI>(initialSchedule);
 
@@ -119,7 +119,7 @@ export function useWeeklyTimeSlots(
       end: "17:00",
       location: options?.defaultLocation || "",
     }),
-    [options?.defaultLocation]
+    [options?.defaultLocation],
   );
 
   // Helper to map display day (e.g. Norwegian) to storage day (e.g. English)
@@ -127,7 +127,7 @@ export function useWeeklyTimeSlots(
     (day: string): string => {
       return options?.dayMapping?.[day] || day;
     },
-    [options?.dayMapping]
+    [options?.dayMapping],
   );
 
   // Create memoized callbacks for operations
@@ -172,7 +172,7 @@ export function useWeeklyTimeSlots(
 
       options?.onUpdate?.();
     },
-    [getDayKey, defaultSlot, options?.onUpdate]
+    [getDayKey, defaultSlot, options?.onUpdate],
   );
 
   const removeTimeSlot = useCallback(
@@ -185,7 +185,7 @@ export function useWeeklyTimeSlots(
           ...prev[dayKey],
           workhours: {
             timeSlots: prev[dayKey].workhours.timeSlots.filter(
-              (_, i) => i !== index
+              (_, i) => i !== index,
             ),
           },
         },
@@ -193,7 +193,7 @@ export function useWeeklyTimeSlots(
 
       options?.onUpdate?.();
     },
-    [getDayKey, options?.onUpdate]
+    [getDayKey, options?.onUpdate],
   );
 
   const updateTimeSlot = useCallback(
@@ -206,7 +206,7 @@ export function useWeeklyTimeSlots(
           ...prev[dayKey],
           workhours: {
             timeSlots: prev[dayKey].workhours.timeSlots.map((slot, i) =>
-              i === index ? { ...slot, [field]: value } : slot
+              i === index ? { ...slot, [field]: value } : slot,
             ),
           },
         },
@@ -214,7 +214,7 @@ export function useWeeklyTimeSlots(
 
       options?.onUpdate?.();
     },
-    [getDayKey, options?.onUpdate]
+    [getDayKey, options?.onUpdate],
   );
 
   const toggleDayOff = useCallback(
@@ -240,7 +240,7 @@ export function useWeeklyTimeSlots(
 
       options?.onUpdate?.();
     },
-    [getDayKey, defaultSlot, options?.onUpdate]
+    [getDayKey, defaultSlot, options?.onUpdate],
   );
 
   // Return both state and operations

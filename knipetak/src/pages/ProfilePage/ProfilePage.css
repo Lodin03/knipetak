@@ -4,388 +4,388 @@
 }
 
 .profile-container {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
 .profile-sidebar {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-    height: fit-content;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  height: fit-content;
 }
 
 .profile-header {
-    text-align: center;
-    margin-bottom: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .profile-image-container {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 1rem;
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 1rem;
 }
 
 .profile-image {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #6FB5C0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #6fb5c0;
 }
 
 .image-upload-label {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: #6FB5C0;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #6fb5c0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
 .image-upload-label:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .image-upload-input {
-    display: none;
+  display: none;
 }
 
 .image-upload-icon {
-    color: white;
-    font-size: 1.2rem;
-    height: 85%;
-    width: 100%;
+  color: white;
+  font-size: 1.2rem;
+  height: 85%;
+  width: 100%;
 }
 
 .profile-name {
-    font-size: 1.5rem;
-    margin: 0.5rem 0;
-    color: #333;
+  font-size: 1.5rem;
+  margin: 0.5rem 0;
+  color: #333;
 }
 
 .profile-email {
-    color: #666;
-    font-size: 0.9rem;
-    margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
 }
 
 .profile-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .action-button {
-    padding: 0.8rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-    background: #6FB5C0;
-    color: white;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  background: #6fb5c0;
+  color: white;
 }
 
 .action-button:hover {
-    background: #5da1ac;
+  background: #5da1ac;
 }
 
 .action-button.active {
-    background: #d32f2f;
-    color: white;
+  background: #d32f2f;
+  color: white;
 }
 
 .action-button.active:hover {
-    background: #b71c1c;
+  background: #b71c1c;
 }
 
 .action-button.delete {
-    background: #ffebee;
-    color: #d32f2f;
+  background: #ffebee;
+  color: #d32f2f;
 }
 
 .action-button.delete:hover {
-    background: #ffcdd2;
+  background: #ffcdd2;
 }
 
 .action-button.logout {
-    background: #f5f5f5;
-    color: #666;
+  background: #f5f5f5;
+  color: #666;
 }
 
 .action-button.save {
-    background: #6FB5C0;
-    color: white;
-    margin-top: 1rem;
+  background: #6fb5c0;
+  color: white;
+  margin-top: 1rem;
 }
 
 .action-button.save:hover {
-    background: #5da1ac;
+  background: #5da1ac;
 }
 
 .action-button.save:disabled {
-    background: #ccc;
-    cursor: not-allowed;
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 .profile-content {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
 }
 
 .profile-section {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
 .profile-section h3 {
-    color: #333;
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
 }
 
 .info-item {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 8px;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
 }
 
 .info-item.full-width {
-    grid-column: 1 / -1;
+  grid-column: 1 / -1;
 }
 
 .info-item label {
-    display: block;
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
+  display: block;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
 }
 
 .info-item p {
-    margin: 0;
-    color: #333;
+  margin: 0;
+  color: #333;
 }
 
 .info-item input,
 .info-item textarea,
 .info-item select {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .info-item textarea {
-    min-height: 100px;
-    resize: vertical;
+  min-height: 100px;
+  resize: vertical;
 }
 
 .treatment-history {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .treatment-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    transition: transform 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: transform 0.2s;
 }
 
 .treatment-info h4 {
-    margin: 0;
-    color: #333;
+  margin: 0;
+  color: #333;
 }
 
 .treatment-info p {
-    margin: 0.5rem 0 0;
-    color: #666;
-    font-size: 0.9rem;
+  margin: 0.5rem 0 0;
+  color: #666;
+  font-size: 0.9rem;
 }
 
 .treatment-price p {
-    margin: 0;
-    color: #6FB5C0;
-    font-weight: 500;
+  margin: 0;
+  color: #6fb5c0;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {
-    .profile-container {
-        grid-template-columns: 1fr;
-    }
+  .profile-container {
+    grid-template-columns: 1fr;
+  }
 
-    .profile-sidebar {
-        margin-bottom: 2rem;
-    }
+  .profile-sidebar {
+    margin-bottom: 2rem;
+  }
 
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
 
-    .info-item.full-width {
-        grid-column: auto;
-    }
+  .info-item.full-width {
+    grid-column: auto;
+  }
 }
 
 .profile {
-    min-height: 85vh;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 20px;
-    border: solid 1px #ccc;
+  min-height: 85vh;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  border: solid 1px #ccc;
 }
 
 .profile > div:nth-child(1) {
-    grid-column: 1;
-    display: flex;
-    flex-direction: column;
-    border: solid 1px #ccc;
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  border: solid 1px #ccc;
 }
 
 .profile > div:nth-child(2) {
-    grid-column: 2 / 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border: solid 1px #ccc; 
+  grid-column: 2 / 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: solid 1px #ccc;
 }
 
 .profile > div:nth-child(3) {
-    grid-column: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: solid 1px #ccc;
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid 1px #ccc;
 }
 
 .profile img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin: 0.5rem;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0.5rem;
 }
 
 .profile p {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 .profile button {
-    padding: 0.5rem 1rem;
-    background-color: #f1356d;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #f1356d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 0.5rem;
 }
 
 .profile button:hover {
-    background-color: #f1356d;
+  background-color: #f1356d;
 }
 
 .profile button:active {
-    background-color: #f1356d;
+  background-color: #f1356d;
 }
 
 .profile button:focus {
-    outline: none;
+  outline: none;
 }
 
 .profile button:disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: not-allowed;
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
 }
 
 .profile button:disabled:hover {
-    background-color: #ccc;
+  background-color: #ccc;
 }
 
 .profile button:disabled:active {
-    background-color: #ccc;
+  background-color: #ccc;
 }
 
 .profile button:disabled:focus {
-    outline: none;
+  outline: none;
 }
 
 .profile input {
-    padding-left: 0.75rem;
-    width: 100%;
-    margin-bottom: 1rem;
+  padding-left: 0.75rem;
+  width: 100%;
+  margin-bottom: 1rem;
 }
 .profileInfo {
-padding-left: 10px;
+  padding-left: 10px;
 }
 
 @media screen and (max-width: 769px) {
-.textProfile {
+  .textProfile {
     font-size: 20px;
+  }
 }
 
 .save-button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1rem;
-    width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  width: 100%;
 }
 
 .form-select {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
 }
 
 .input-with-error {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 .error-message {
-    color: #d32f2f;
-    font-size: 0.8rem;
-    margin-top: 0.25rem;
+  color: #d32f2f;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
 }
 
 .info-item input.error,
 .info-item textarea.error {
-    border-color: #d32f2f;
+  border-color: #d32f2f;
 }
 
 .mt-2 {
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
 }
-

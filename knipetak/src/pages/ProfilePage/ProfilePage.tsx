@@ -16,7 +16,7 @@ const Profile: React.FC = () => {
   // Use AuthContext instead of managing our own user state
   const { user, signOut: authSignOut, isLoading: authLoading } = useAuth();
   const [profileImage, setProfileImage] = useState(
-    "src/assets/images/defaultProfileIcon.png"
+    "src/assets/images/defaultProfileIcon.png",
   );
   const [, setUserData] = useState<Partial<UserData> | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -152,7 +152,7 @@ const Profile: React.FC = () => {
     const phoneRegex = /^(\+47|0047)?\s*[2-9]\d{7}$/;
     if (!phoneRegex.test(value.replace(/\s/g, ""))) {
       setPhoneError(
-        "Ugyldig telefonnummer. Må være 8 siffer og kan starte med +47"
+        "Ugyldig telefonnummer. Må være 8 siffer og kan starte med +47",
       );
       return false;
     }
@@ -195,7 +195,7 @@ const Profile: React.FC = () => {
     } catch (error) {
       console.error("Feil ved lagring av profil:", error);
       alert(
-        "Det oppsto en feil ved lagring av profilen. Vennligst prøv igjen."
+        "Det oppsto en feil ved lagring av profilen. Vennligst prøv igjen.",
       );
     } finally {
       setIsSaving(false);
@@ -335,7 +335,9 @@ const Profile: React.FC = () => {
                             value={postalCode || ""}
                             onChange={(e) =>
                               setPostalCode(
-                                e.target.value ? parseInt(e.target.value) : null
+                                e.target.value
+                                  ? parseInt(e.target.value)
+                                  : null,
                               )
                             }
                             placeholder="Postnummer"

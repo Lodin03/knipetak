@@ -34,7 +34,7 @@ export const uiToTimeSlot = (ui: TimeSlotUI, dateStr: string): TimeSlot => ({
 // Convert between WorkHours format and TimeSlot
 export const workHoursToTimeSlots = (
   workHours: WorkHours,
-  dateStr: string
+  dateStr: string,
 ): TimeSlot[] => {
   return workHours.timeSlots.map((slot) => ({
     start:

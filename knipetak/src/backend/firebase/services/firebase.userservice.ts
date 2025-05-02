@@ -15,7 +15,7 @@ const db = getFirestore(app);
 
 export const createUserDocument = async (
   userId: string,
-  userData: UserData
+  userData: UserData,
 ) => {
   try {
     const userRef = doc(db, "users", userId);
@@ -47,7 +47,7 @@ export async function getUserData(uid: string): Promise<UserData | null> {
 
 export async function updateUserProfile(
   uid: string,
-  userData: Partial<UserData>
+  userData: Partial<UserData>,
 ): Promise<void> {
   try {
     const userRef = doc(db, "users", uid);
@@ -65,7 +65,7 @@ export async function updateUserProfile(
 
 export const updateUserData = async (
   userId: string,
-  updates: Partial<UserData>
+  updates: Partial<UserData>,
 ) => {
   try {
     const userRef = doc(db, "users", userId);

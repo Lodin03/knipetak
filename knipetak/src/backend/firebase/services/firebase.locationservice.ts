@@ -34,12 +34,12 @@ export async function getLocations(): Promise<Location[]> {
  * Create a new location
  */
 export async function createLocation(
-  locationData: LocationFormData
+  locationData: LocationFormData,
 ): Promise<string> {
   try {
     const docRef = await addDoc(
       collection(db, LOCATIONS_COLLECTION),
-      locationData
+      locationData,
     );
     return docRef.id;
   } catch (error) {
@@ -53,7 +53,7 @@ export async function createLocation(
  */
 export async function updateLocation(
   id: string,
-  locationData: Partial<LocationFormData>
+  locationData: Partial<LocationFormData>,
 ): Promise<void> {
   try {
     const locationRef = doc(db, LOCATIONS_COLLECTION, id);

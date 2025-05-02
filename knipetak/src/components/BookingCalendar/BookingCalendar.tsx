@@ -1,5 +1,8 @@
 import React from "react";
-import { BookingProvider, useBooking } from "../../backend/Context/BookingContext";
+import {
+  BookingProvider,
+  useBooking,
+} from "../../backend/Context/BookingContext";
 import "./BookingCalendar.css";
 
 // Import our components
@@ -18,20 +21,20 @@ const BookingCalendarContent: React.FC = () => {
     dateManuallySelected,
     eventDetails,
     locationSlots,
-    
+
     // Loading state
     isLoading,
     loadingDate,
     initialDataLoaded,
     dayInfoCache,
-    
+
     // Treatment and booking details
     treatments,
     isGroupBooking,
     groupSize,
     selectedTreatment,
     selectedDuration,
-    
+
     // Form state
     address,
     city,
@@ -40,11 +43,11 @@ const BookingCalendarContent: React.FC = () => {
     guestEmail,
     guestName,
     guestPhone,
-    
+
     // Booking confirmation
     showCompletedBooking,
     completedBookingId,
-    
+
     // Action handlers
     handleDateSelect,
     handleSlotClick,
@@ -52,7 +55,7 @@ const BookingCalendarContent: React.FC = () => {
     handleCancelBooking,
     handleCloseCompletedBooking,
     handleMonthChange,
-    
+
     // State setters
     setIsGroupBooking,
     setGroupSize,
@@ -69,8 +72,8 @@ const BookingCalendarContent: React.FC = () => {
   return (
     <div className="booking-calendar">
       <h2>Velg en dato</h2>
-      
-      <CalendarView 
+
+      <CalendarView
         selectedDate={selectedDate}
         onDateSelect={handleDateSelect}
         dayInfoCache={dayInfoCache}
@@ -124,25 +127,28 @@ const BookingCalendarContent: React.FC = () => {
         </div>
       )}
 
-      {showCompletedBooking && selectedDate && selectedTime && selectedTreatment && (
-        <CompletedBookingComponent
-          bookingId={completedBookingId}
-          date={selectedDate}
-          time={selectedTime}
-          treatment={selectedTreatment}
-          duration={selectedDuration || 0}
-          isGroup={isGroupBooking}
-          groupSize={groupSize}
-          location={{
-            id: "default-id", // Replace with the actual id
-            name: "default-name", // Replace with the actual name
-            address,
-            city,
-            postalCode: Number(postalCode)
-          }}
-          onClose={handleCloseCompletedBooking}
-        />
-      )}
+      {showCompletedBooking &&
+        selectedDate &&
+        selectedTime &&
+        selectedTreatment && (
+          <CompletedBookingComponent
+            bookingId={completedBookingId}
+            date={selectedDate}
+            time={selectedTime}
+            treatment={selectedTreatment}
+            duration={selectedDuration || 0}
+            isGroup={isGroupBooking}
+            groupSize={groupSize}
+            location={{
+              id: "default-id", // Replace with the actual id
+              name: "default-name", // Replace with the actual name
+              address,
+              city,
+              postalCode: Number(postalCode),
+            }}
+            onClose={handleCloseCompletedBooking}
+          />
+        )}
     </div>
   );
 };

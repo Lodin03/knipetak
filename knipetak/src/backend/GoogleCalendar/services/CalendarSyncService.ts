@@ -15,7 +15,7 @@ export class CalendarSyncService {
    */
   static async fetchUpcomingEvents(
     maxResults: number = 10,
-    calendarId: string = DEFAULT_CALENDAR_ID
+    calendarId: string = DEFAULT_CALENDAR_ID,
   ): Promise<CalendarEvent[]> {
     if (!window.gapi?.client?.calendar) {
       throw new Error("Google API client not initialized");
@@ -58,7 +58,7 @@ export class CalendarSyncService {
    */
   static async createEvent(
     event: Omit<CalendarEvent, "id">,
-    calendarId: string = DEFAULT_CALENDAR_ID
+    calendarId: string = DEFAULT_CALENDAR_ID,
   ): Promise<CalendarEvent> {
     if (!window.gapi?.client?.calendar) {
       throw new Error("Google API client not initialized");
@@ -110,7 +110,7 @@ export class CalendarSyncService {
   static async updateEvent(
     eventId: string,
     event: Partial<CalendarEvent>,
-    calendarId: string = DEFAULT_CALENDAR_ID
+    calendarId: string = DEFAULT_CALENDAR_ID,
   ): Promise<CalendarEvent> {
     if (!window.gapi?.client?.calendar) {
       throw new Error("Google API client not initialized");
@@ -164,7 +164,7 @@ export class CalendarSyncService {
    */
   static async deleteEvent(
     eventId: string,
-    calendarId: string = DEFAULT_CALENDAR_ID
+    calendarId: string = DEFAULT_CALENDAR_ID,
   ): Promise<void> {
     if (!window.gapi?.client?.calendar) {
       throw new Error("Google API client not initialized");

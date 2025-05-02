@@ -19,12 +19,12 @@ const HandleBookings: React.FC<HandleBookingsProps> = ({ isExpanded }) => {
   const [showHistory, setShowHistory] = useState(false);
   const [selectedHistoryMonth, setSelectedHistoryMonth] = useState<string>("");
   const [historyViewType, setHistoryViewType] = useState<"month" | "year">(
-    "month"
+    "month",
   );
 
   // State for editing and cancellation
   const [editingBooking, setEditingBooking] = useState<BookingData | null>(
-    null
+    null,
   );
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -61,7 +61,7 @@ const HandleBookings: React.FC<HandleBookingsProps> = ({ isExpanded }) => {
         if (showHistory) {
           const bookingEndTime = new Date(bookingDate);
           bookingEndTime.setMinutes(
-            bookingEndTime.getMinutes() + booking.duration
+            bookingEndTime.getMinutes() + booking.duration,
           );
 
           if (bookingEndTime >= now) {
@@ -82,7 +82,7 @@ const HandleBookings: React.FC<HandleBookingsProps> = ({ isExpanded }) => {
 
         const bookingEndTime = new Date(bookingDate);
         bookingEndTime.setMinutes(
-          bookingEndTime.getMinutes() + booking.duration
+          bookingEndTime.getMinutes() + booking.duration,
         );
 
         if (bookingEndTime < now) {
@@ -147,7 +147,7 @@ const HandleBookings: React.FC<HandleBookingsProps> = ({ isExpanded }) => {
 
       if (bookingEndTime < now) {
         const monthKey = `${bookingDate.getFullYear()}-${String(
-          bookingDate.getMonth() + 1
+          bookingDate.getMonth() + 1,
         ).padStart(2, "0")}`;
         uniqueMonths.add(monthKey);
         uniqueYears.add(bookingDate.getFullYear().toString());
@@ -194,15 +194,15 @@ const HandleBookings: React.FC<HandleBookingsProps> = ({ isExpanded }) => {
         bookings.map((booking) =>
           booking.bookingId === editingBooking.bookingId
             ? editingBooking
-            : booking
-        )
+            : booking,
+        ),
       );
       setShowEditModal(false);
       setEditingBooking(null);
     } catch (error) {
       console.error("Feil ved oppdatering av booking:", error);
       setErrorMessage(
-        "Det oppsto en feil ved oppdatering av booking. Vennligst prøv igjen."
+        "Det oppsto en feil ved oppdatering av booking. Vennligst prøv igjen.",
       );
     } finally {
       setIsSubmitting(false);
@@ -221,15 +221,15 @@ const HandleBookings: React.FC<HandleBookingsProps> = ({ isExpanded }) => {
         bookings.map((booking) =>
           booking.bookingId === cancelBookingId
             ? { ...booking, status: "cancelled" }
-            : booking
-        )
+            : booking,
+        ),
       );
       setShowCancelModal(false);
       setCancelBookingId(null);
     } catch (error) {
       console.error("Feil ved kansellering av booking:", error);
       setErrorMessage(
-        "Det oppsto en feil ved kansellering av booking. Vennligst prøv igjen."
+        "Det oppsto en feil ved kansellering av booking. Vennligst prøv igjen.",
       );
     } finally {
       setIsSubmitting(false);
@@ -395,8 +395,8 @@ const HandleBookings: React.FC<HandleBookingsProps> = ({ isExpanded }) => {
                     {booking.status === "pending"
                       ? "Venter"
                       : booking.status === "confirmed"
-                      ? "Bekreftet"
-                      : "Kansellert"}
+                        ? "Bekreftet"
+                        : "Kansellert"}
                   </p>
                   <div className="booking-actions">
                     <button

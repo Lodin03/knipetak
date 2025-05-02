@@ -23,7 +23,7 @@ export class TokenService {
    */
   static saveToken(
     token: string,
-    expiresIn: number = DEFAULT_TOKEN_EXPIRATION
+    expiresIn: number = DEFAULT_TOKEN_EXPIRATION,
   ): void {
     try {
       const tokenData: TokenData = {

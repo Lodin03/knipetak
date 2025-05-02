@@ -60,7 +60,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
   guestName,
   setGuestName,
   guestPhone,
-  setGuestPhone
+  setGuestPhone,
 }) => {
   const [availableDurations, setAvailableDurations] = useState<
     { duration: number; price: number }[]
@@ -95,9 +95,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
       postalCode
     ) {
       if (isGuestBooking) {
-        setIsFormValid(
-          Boolean(guestEmail && guestName && guestPhone)
-        );
+        setIsFormValid(Boolean(guestEmail && guestName && guestPhone));
       } else {
         setIsFormValid(true);
       }
@@ -158,9 +156,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
           <select
             value={selectedTreatment?.id || ""}
             onChange={(e) => {
-              const treatment = treatments.find(
-                (t) => t.id === e.target.value
-              );
+              const treatment = treatments.find((t) => t.id === e.target.value);
               setSelectedTreatment(treatment || null);
             }}
             required
@@ -184,7 +180,9 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 checked={isGroupBooking}
                 onChange={(e) => setIsGroupBooking(e.target.checked)}
               />
-              <label htmlFor="isGroupBooking">Ja, dette er en gruppebooking</label>
+              <label htmlFor="isGroupBooking">
+                Ja, dette er en gruppebooking
+              </label>
             </div>
           </div>
         )}
@@ -217,7 +215,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
               value={selectedDuration || ""}
               onChange={(e) => {
                 setSelectedDuration(
-                  e.target.value ? parseInt(e.target.value) : null
+                  e.target.value ? parseInt(e.target.value) : null,
                 );
               }}
               required
@@ -233,13 +231,15 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   // Remove price calculations but keep discount information
                   if (
                     groupSize >= selectedTreatment.discounts.groupSize &&
-                    selectedTreatment.discounts.prices[option.duration.toString()]
+                    selectedTreatment.discounts.prices[
+                      option.duration.toString()
+                    ]
                   ) {
                     display = `${totalDuration} minutter (med grupperabatt)`;
                   } else {
                     display = `${totalDuration} minutter`;
                   }
-                  
+
                   return (
                     <option key={totalDuration} value={totalDuration}>
                       {display}
@@ -260,7 +260,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
         {selectedLocation && (
           <div className="location-warning">
             <p>
-              For å fullføre bookingen, trenger vi din adresse hvor behandlingen skal utføres.
+              For å fullføre bookingen, trenger vi din adresse hvor behandlingen
+              skal utføres.
             </p>
           </div>
         )}
@@ -344,11 +345,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
           >
             Bekreft booking
           </button>
-          <button 
-            type="button" 
-            className="cancel-button" 
-            onClick={onCancel}
-          >
+          <button type="button" className="cancel-button" onClick={onCancel}>
             Avbryt
           </button>
         </div>
@@ -357,4 +354,4 @@ const BookingForm: React.FC<BookingFormProps> = ({
   );
 };
 
-export default BookingForm; 
+export default BookingForm;

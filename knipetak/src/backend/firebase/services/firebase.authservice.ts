@@ -63,13 +63,13 @@ export { onAuthStateChanged };
 export const signUp = async (
   email: string,
   password: string,
-  username: string
+  username: string,
 ) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const user = userCredential.user;
 
@@ -110,7 +110,7 @@ export const signIn = async (email: string, password: string) => {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const user = userCredential.user;
     console.log("User signed in: ", user);

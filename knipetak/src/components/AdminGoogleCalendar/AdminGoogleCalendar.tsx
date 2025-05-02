@@ -62,7 +62,7 @@ const AdminGoogleCalendar: React.FC<Props> = ({
     Array<{ id: string; summary: string }>
   >([]);
   const [selectedCalendarId, setSelectedCalendarId] = useState<string>(
-    calendarIds[0]
+    calendarIds[0],
   );
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [syncDetails, setSyncDetails] = useState<SyncDetails | null>(null);
@@ -88,7 +88,7 @@ const AdminGoogleCalendar: React.FC<Props> = ({
 
         // Check if we have a valid token in localStorage
         const savedToken = localStorage.getItem(
-          "google_calendar_permanent_token"
+          "google_calendar_permanent_token",
         );
         if (savedToken) {
           try {

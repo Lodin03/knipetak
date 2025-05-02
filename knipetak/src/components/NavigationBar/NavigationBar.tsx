@@ -146,7 +146,9 @@ function NavigationBar() {
 
   return (
     <div className={`navBar ${isPending ? "nav-pending" : ""}`}>
-      <img src={logo} alt="LOGO" className="logo" />
+      <Link to="/" onClick={() => setIsMenuOpen(false)} className="button-logo">
+        <img src={logo} alt="LOGO" className="logo" />
+      </Link>
 
       {/* Hamburger Button */}
       <button

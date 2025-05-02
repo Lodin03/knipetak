@@ -67,14 +67,14 @@ export class GoogleCalendarService {
 
   private constructor(
     private readonly apiKey: string,
-    private readonly clientId: string
+    private readonly clientId: string,
   ) {}
 
   static getInstance(apiKey: string, clientId: string): GoogleCalendarService {
     if (!GoogleCalendarService.instance) {
       GoogleCalendarService.instance = new GoogleCalendarService(
         apiKey,
-        clientId
+        clientId,
       );
     }
     return GoogleCalendarService.instance;
@@ -157,7 +157,7 @@ export class GoogleCalendarService {
     } catch (error) {
       console.error("GAPI initialization error:", error);
       throw new GoogleCalendarError(
-        `Failed to initialize Google API client: ${error}`
+        `Failed to initialize Google API client: ${error}`,
       );
     }
   }
@@ -166,7 +166,7 @@ export class GoogleCalendarService {
     try {
       console.log("Attempting to load saved token...");
       const savedToken = localStorage.getItem(
-        GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY
+        GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY,
       );
       if (savedToken) {
         console.log("Found saved token in localStorage");
@@ -186,7 +186,7 @@ export class GoogleCalendarService {
         } else {
           console.log("Token expired, removing from storage");
           localStorage.removeItem(
-            GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY
+            GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY,
           );
           this.accessToken = null;
         }
@@ -209,7 +209,7 @@ export class GoogleCalendarService {
       };
       localStorage.setItem(
         GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY,
-        JSON.stringify(tokenData)
+        JSON.stringify(tokenData),
       );
       this.accessToken = token;
       console.log("Token saved successfully");
@@ -219,7 +219,7 @@ export class GoogleCalendarService {
   }
 
   async authorize(
-    scope: "readonly" | "events" | "full" = "readonly"
+    scope: "readonly" | "events" | "full" = "readonly",
   ): Promise<boolean> {
     if (!window.google?.accounts?.oauth2) {
       throw new GoogleCalendarError("Google Identity Services not loaded");
@@ -306,7 +306,7 @@ export class GoogleCalendarService {
       const authorized = await this.authorize("full");
       if (!authorized) {
         throw new GoogleCalendarError(
-          "Failed to authorize with Google Calendar"
+          "Failed to authorize with Google Calendar",
         );
       }
     } else {
@@ -314,7 +314,7 @@ export class GoogleCalendarService {
       try {
         // First check if token is expired
         const savedToken = localStorage.getItem(
-          GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY
+          GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY,
         );
         if (savedToken) {
           const tokenData = JSON.parse(savedToken);
@@ -322,7 +322,7 @@ export class GoogleCalendarService {
             console.log("Token expired, requesting new authorization...");
             this.accessToken = null;
             localStorage.removeItem(
-              GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY
+              GoogleCalendarService.LOCAL_STORAGE_TOKEN_KEY,
             );
             const authorized = await this.authorize("full");
             if (!authorized) {
@@ -344,7 +344,7 @@ export class GoogleCalendarService {
         const authorized = await this.authorize("full");
         if (!authorized) {
           throw new GoogleCalendarError(
-            "Failed to reauthorize with Google Calendar"
+            "Failed to reauthorize with Google Calendar",
           );
         }
       }
@@ -354,7 +354,7 @@ export class GoogleCalendarService {
   async fetchUpcomingEvents(maxResults: number = 10): Promise<CalendarEvent[]> {
     if (!this.isInitialized || !this.accessToken) {
       throw new GoogleCalendarError(
-        "Service not initialized or not authorized"
+        "Service not initialized or not authorized",
       );
     }
 
@@ -390,11 +390,11 @@ export class GoogleCalendarService {
 
   async createEvent(
     event: Omit<CalendarEvent, "id">,
-    calendarId: string = "primary"
+    calendarId: string = "primary",
   ): Promise<CalendarEvent> {
     if (!this.isInitialized || !this.accessToken) {
       throw new GoogleCalendarError(
-        "Service not initialized or not authorized"
+        "Service not initialized or not authorized",
       );
     }
 
@@ -428,11 +428,11 @@ export class GoogleCalendarService {
   async updateEvent(
     eventId: string,
     event: Partial<CalendarEvent>,
-    calendarId: string = "primary"
+    calendarId: string = "primary",
   ): Promise<CalendarEvent> {
     if (!this.isInitialized || !this.accessToken) {
       throw new GoogleCalendarError(
-        "Service not initialized or not authorized"
+        "Service not initialized or not authorized",
       );
     }
 
@@ -452,7 +452,7 @@ export class GoogleCalendarService {
           console.log(`Event ${eventId} not found, creating new event`);
           const newEvent = await this.createEvent(
             event as Omit<CalendarEvent, "id">,
-            calendarId
+            calendarId,
           );
           return newEvent;
         }
@@ -488,11 +488,11 @@ export class GoogleCalendarService {
 
   async deleteEvent(
     eventId: string,
-    calendarId: string = "primary"
+    calendarId: string = "primary",
   ): Promise<void> {
     if (!this.isInitialized || !this.accessToken) {
       throw new GoogleCalendarError(
-        "Service not initialized or not authorized"
+        "Service not initialized or not authorized",
       );
     }
 
@@ -595,7 +595,7 @@ export class GoogleCalendarService {
         if (groupEvents.length <= 1) continue;
 
         console.log(
-          `Found ${groupEvents.length} potential duplicates for group: ${groupKey}`
+          `Found ${groupEvents.length} potential duplicates for group: ${groupKey}`,
         );
 
         // Sort by creation time (oldest first)
@@ -615,7 +615,7 @@ export class GoogleCalendarService {
         }, groupEvents[0]);
 
         console.log(
-          `Keeping most complete event: ${mostCompleteEvent.id} (${mostCompleteEvent.summary})`
+          `Keeping most complete event: ${mostCompleteEvent.id} (${mostCompleteEvent.summary})`,
         );
 
         // Update Firebase bookings to use the most complete event ID
@@ -636,7 +636,7 @@ export class GoogleCalendarService {
               },
             });
             console.log(
-              `Updated booking ${doc.id} to use event ID ${mostCompleteEvent.id}`
+              `Updated booking ${doc.id} to use event ID ${mostCompleteEvent.id}`,
             );
           }
         }
@@ -649,7 +649,7 @@ export class GoogleCalendarService {
             await this.deleteEvent(event.id, targetCalendarId);
             duplicatesRemoved++;
             console.log(
-              `Removed duplicate event: ${event.id} (${event.summary})`
+              `Removed duplicate event: ${event.id} (${event.summary})`,
             );
           } catch (error) {
             const calendarError = error as GoogleCalendarErrorResponse;
@@ -659,7 +659,7 @@ export class GoogleCalendarService {
             }
             console.warn(
               `Failed to delete duplicate event ${event.id}:`,
-              error
+              error,
             );
           }
         }
@@ -699,9 +699,8 @@ export class GoogleCalendarService {
       console.log("Syncing with calendar ID:", targetCalendarId);
 
       // First clean up duplicates
-      const duplicatesRemoved = await this.cleanupDuplicateEvents(
-        targetCalendarId
-      );
+      const duplicatesRemoved =
+        await this.cleanupDuplicateEvents(targetCalendarId);
       result.deleted = duplicatesRemoved;
       console.log(`Removed ${duplicatesRemoved} duplicate events`);
 
@@ -771,19 +770,19 @@ export class GoogleCalendarService {
                 },
               });
               console.log(
-                `Removed cancelled event ${existingEventId} from calendar ${targetCalendarId}`
+                `Removed cancelled event ${existingEventId} from calendar ${targetCalendarId}`,
               );
             } catch (error) {
               const calendarError = error as GoogleCalendarErrorResponse;
               if (calendarError.status === 410) {
                 console.log(
-                  `Event ${existingEventId} already deleted from calendar ${targetCalendarId}`
+                  `Event ${existingEventId} already deleted from calendar ${targetCalendarId}`,
                 );
                 continue;
               }
               console.warn(
                 `Failed to delete cancelled event ${existingEventId}:`,
-                error
+                error,
               );
             }
           }
@@ -815,7 +814,7 @@ export class GoogleCalendarService {
                     timeZone: "Europe/Oslo",
                   },
                 },
-                targetCalendarId
+                targetCalendarId,
               );
               result.updated++;
               result.details.updated.push({
@@ -825,13 +824,13 @@ export class GoogleCalendarService {
                 endTime: updatedEvent.end.dateTime,
               });
               console.log(
-                `Updated event ${existingEventId} in calendar ${targetCalendarId}`
+                `Updated event ${existingEventId} in calendar ${targetCalendarId}`,
               );
             } catch (error) {
               const calendarError = error as GoogleCalendarErrorResponse;
               if (calendarError.status === 404) {
                 console.log(
-                  `Event ${existingEventId} not found in calendar ${targetCalendarId}, creating new event`
+                  `Event ${existingEventId} not found in calendar ${targetCalendarId}, creating new event`,
                 );
                 // Event doesn't exist, create a new one
                 const newEvent = await this.createEvent(
@@ -847,7 +846,7 @@ export class GoogleCalendarService {
                       timeZone: "Europe/Oslo",
                     },
                   },
-                  targetCalendarId
+                  targetCalendarId,
                 );
                 result.created++;
                 result.details.created.push({
@@ -865,7 +864,7 @@ export class GoogleCalendarService {
                   },
                 });
                 console.log(
-                  `Created new event ${newEvent.id} in calendar ${targetCalendarId}`
+                  `Created new event ${newEvent.id} in calendar ${targetCalendarId}`,
                 );
               } else {
                 console.warn(`Failed to update booking ${bookingId}:`, error);
@@ -887,7 +886,7 @@ export class GoogleCalendarService {
                     timeZone: "Europe/Oslo",
                   },
                 },
-                targetCalendarId
+                targetCalendarId,
               );
               result.created++;
               result.details.created.push({
@@ -905,7 +904,7 @@ export class GoogleCalendarService {
                 },
               });
               console.log(
-                `Created new event ${newEvent.id} in calendar ${targetCalendarId}`
+                `Created new event ${newEvent.id} in calendar ${targetCalendarId}`,
               );
             } catch (error) {
               console.warn(`Failed to create booking ${bookingId}:`, error);

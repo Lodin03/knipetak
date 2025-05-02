@@ -8,7 +8,8 @@ import { OverrideManager } from "./OverrideManager/OverrideManager";
 type AvailabilitySection = "workHours" | "overrides" | null;
 
 export function AdminAvailabilityManager() {
-  const [expandedSection, setExpandedSection] = useState<AvailabilitySection>(null);
+  const [expandedSection, setExpandedSection] =
+    useState<AvailabilitySection>(null);
   const [locations, setLocations] = useState<Location[]>([]);
 
   useEffect(() => {
@@ -28,14 +29,15 @@ export function AdminAvailabilityManager() {
   };
 
   const handleLocationCreated = (newLocation: Location) => {
-    setLocations(prev => [...prev, newLocation]);
+    setLocations((prev) => [...prev, newLocation]);
   };
 
   return (
     <div className="admin-availability-manager">
       <h1 className="availability-title">Administrer Tilgjengelighet</h1>
       <p className="availability-description">
-        Her kan du administrere arbeidstider og overstyre tidspunkter. Velg en seksjon under for å komme i gang.
+        Her kan du administrere arbeidstider og overstyre tidspunkter. Velg en
+        seksjon under for å komme i gang.
       </p>
 
       <div className="availability-sections">
@@ -74,13 +76,13 @@ export function AdminAvailabilityManager() {
         <div className="section-content">
           {expandedSection === "workHours" && (
             <div className="expanded-section">
-              <WorkHoursManager 
-                locations={locations} 
+              <WorkHoursManager
+                locations={locations}
                 onLocationCreated={handleLocationCreated}
               />
             </div>
           )}
-          
+
           {expandedSection === "overrides" && (
             <div className="expanded-section">
               <OverrideManager locations={locations} />
@@ -90,4 +92,4 @@ export function AdminAvailabilityManager() {
       </div>
     </div>
   );
-} 
+}
