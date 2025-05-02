@@ -19,7 +19,7 @@ const RatingsComponent: React.FC = () => {
         "Helene gav en utrolig bra opplevelse både med sin gode massasje. Hun lytter og tilpasser behandling etter dine behov, enten det er plager/smerter eller behandling å vedlikeholde et aktivt treningsliv. Du føler deg sett, trygg og oppnår avslapning og hvile i hennes hender! Jeg er skikkelig fornøyd!",
     },
     {
-      author: "Consumer",
+      author: "Anonym",
       reviewText: "Må oppleves",
       feedback:
         "Helene hos Knipetak er utrolig flink og profesjonell. Hun lytter til kunden sine og viser er genuint interessert for å finne årsaken til plagene. Hun har hjulpet meg. Kan virkelig anbefale Helene og knipetak",
