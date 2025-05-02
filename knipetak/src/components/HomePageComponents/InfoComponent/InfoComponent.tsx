@@ -30,6 +30,7 @@ const InfoComponent: React.FC = () => {
               <img
                 src="/src/assets/images/Massasje2.jpg"
                 alt="Helene muskelterapeut"
+                draggable="false"
               />
             </div>
           </div>

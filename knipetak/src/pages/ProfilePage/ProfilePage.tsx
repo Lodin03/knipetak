@@ -217,6 +217,7 @@ const Profile: React.FC = () => {
                   src={profileImage}
                   alt="Profile"
                   className="profile-image"
+                  draggable="false"
                 />
                 <label className="image-upload-label">
                   <input

@@ -39,21 +39,21 @@ function TreatmentsPage() {
           </div>
         </div>
         <div className="treatments__hero-image">
-          <img src="/src/assets/images/massasje_stol.jpg" alt="Massasje behandling" />
+          <img src="/src/assets/images/massasje_stol.jpg" alt="Massasje behandling" draggable="false" />
         </div>
       </div>
 
       <section className="treatments__overview">
         <div className="treatments__gallery">
           <div className="treatments__gallery-item">
-            <img src="/src/assets/images/MassasjeBat.png" alt="Massasje behandling" />
+            <img src="/src/assets/images/MassasjeBat.png" alt="Massasje behandling" draggable="false" />
             <div className="treatments__gallery-overlay">
               <h3>Profesjonell Massasje</h3>
               <p>Skreddersydd for dine behov</p>
             </div>
           </div>
           <div className="treatments__gallery-item">
-            <img src="/src/assets/images/knipetak_behandling.jpg" alt="Massasje behandling" />
+            <img src="/src/assets/images/knipetak_behandling.jpg" alt="Massasje behandling" draggable="false" />
             <div className="treatments__gallery-overlay">
               <h3>Muskelterapi</h3>
               <p>Lindring og gjenoppbygging</p>

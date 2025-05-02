@@ -93,6 +93,7 @@ const HomeScreenSlider: React.FC = () => {
             height={400}
             width={300}
             loading="lazy"
+            draggable="false"
           />
         ))}
         <div
