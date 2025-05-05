@@ -337,4 +337,42 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   <label>E-post:</label>
                   <input
                     type="email"
-               
+                    value={guestEmail}
+                    onChange={(e) => setGuestEmail(e.target.value)}
+                    placeholder="Din e-postadresse"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Telefon:</label>
+                  <input
+                    type="tel"
+                    value={guestPhone}
+                    onChange={(e) => setGuestPhone(e.target.value)}
+                    placeholder="Ditt telefonnummer"
+                    required
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          <div className="form-actions">
+            <button
+              type="submit"
+              className="confirm-button"
+              disabled={!isFormValid}
+            >
+              Bekreft booking
+            </button>
+            <button type="button" className="cancel-button" onClick={onCancel}>
+              Avbryt
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default BookingForm;
