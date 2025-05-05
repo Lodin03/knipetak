@@ -36,16 +36,16 @@ const BookingSlotsPerDay: React.FC<BookingSlotsPerDayProps> = ({
   locationSlots,
   eventDetails,
   onSlotClick,
-  selectedTime
+  selectedTime,
 }) => {
   // Format date to Norwegian format
   const formatDateNorwegian = (date: Date | null): string => {
-    if (!date) return '';
-    return date.toLocaleDateString('nb-NO', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    if (!date) return "";
+    return date.toLocaleDateString("nb-NO", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -58,11 +58,12 @@ const BookingSlotsPerDay: React.FC<BookingSlotsPerDayProps> = ({
   }
 
   return (
-    <>
-      <h3 id="available-timeslots">Tilgjengelige tider for {formatDateNorwegian(selectedDate)}</h3>
+    <div className="booking-slots-container booking-slots-component">
+      <h3>Tilgjengelige tider for {formatDateNorwegian(selectedDate)}</h3>
       {eventDetails ? (
         <p>
-          📅 Helene deltar på <strong>{eventDetails['name'] as string}</strong> på {eventDetails['location'] as string}
+          📅 Helene deltar på <strong>{eventDetails["name"] as string}</strong>{" "}
+          på {eventDetails["location"] as string}
         </p>
       ) : isLoading ? (
         <div className="timeslots-loading-container">
@@ -74,7 +75,11 @@ const BookingSlotsPerDay: React.FC<BookingSlotsPerDayProps> = ({
             <div key={index} className="location-slots">
               <h4>📍 {handleLocationDisplay(locationSlot.location)}</h4>
               <p className="work-hours">
-                Arbeidstid: {locationSlot.workHours.startString || locationSlot.workHours.start} - {locationSlot.workHours.endString || locationSlot.workHours.end}
+                Arbeidstid:{" "}
+                {locationSlot.workHours.startString ||
+                  locationSlot.workHours.start}{" "}
+                -{" "}
+                {locationSlot.workHours.endString || locationSlot.workHours.end}
               </p>
               {locationSlot.availableSlots.length > 0 ? (
                 <div className="timeslot-grid">
@@ -82,27 +87,38 @@ const BookingSlotsPerDay: React.FC<BookingSlotsPerDayProps> = ({
                     <button
                       key={slot}
                       onClick={() => onSlotClick(slot, locationSlot.location)}
-                      className={`time-slot-button ${selectedTime === slot ? "selected" : ""}`}
+                      className={`time-slot-button ${
+                        selectedTime === slot ? "selected" : ""
+                      }`}
                     >
                       {slot}
                     </button>
                   ))}
                 </div>
               ) : (
-                <p className="no-slots-message">Ingen ledige tider for denne plasseringen. Alle tider kan være booket eller reservert.</p>
+                <p className="no-slots-message">
+                  Ingen ledige tider for denne plasseringen. Alle tider kan være
+                  booket eller reservert.
+                </p>
               )}
             </div>
           ))}
         </div>
       ) : (
         <div className="no-slots-container">
-          <p className="no-slots-message">Ingen tilgjengelige tider denne dagen.</p>
-          <p className="no-slots-suggestion">Dette kan være fordi alle tider er booket eller fordi det ikke er planlagt noen arbeidstid på denne datoen. Det er også mulig at en eksisterende booking blokkerer tilgjengelige tider med 15 minutters reisebuffer.</p>
+          <p className="no-slots-message">
+            Ingen tilgjengelige tider denne dagen.
+          </p>
+          <p className="no-slots-suggestion">
+            Dette kan være fordi alle tider er booket eller fordi det ikke er
+            planlagt noen arbeidstid på denne datoen. Det er også mulig at en
+            eksisterende booking blokkerer tilgjengelige tider med 15 minutters
+            reisebuffer.
+          </p>
         </div>
       )}
-      {selectedTime && <p className="selected-time">Valgt tid: {selectedTime}</p>}
-    </>
+    </div>
   );
 };
 
-export default BookingSlotsPerDay; 
+export default BookingSlotsPerDay;

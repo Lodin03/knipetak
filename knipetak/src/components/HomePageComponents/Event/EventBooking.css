@@ -1,5 +1,5 @@
 .home-event-section {
-  background-color: #6fb5c0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   width: 100vw;
   position: relative;
   overflow: hidden;
@@ -18,7 +18,7 @@
 
 .event-info {
   flex: 1;
-  color: white;
+  color: #2c3e50;
 }
 
 .event-info h2 {
@@ -41,14 +41,14 @@
 .booking-icon {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
-  color: white;
+  color: #2c3e50;
 }
 
 .booking-type p {
   font-size: 1.2rem;
   line-height: 1.6;
   margin-bottom: 2rem;
-  color: rgba(255, 255, 255, 0.95);
+  color: #2c3e50;
 }
 
 .home-event-section .action-button.contact-button {
@@ -60,7 +60,6 @@
   transition: all 0.3s ease;
   background-color: #2b2c2d;
   color: white;
-
 }
 
 .home-event-section .action-button.contact-button:hover {

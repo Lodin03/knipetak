@@ -60,11 +60,8 @@ function Footer() {
           <a href="/terms" className="footer-link">
             Vilkår for bruk
           </a>
-          <a href="/privacy" className="footer-link">
+          <a href="/personvern" className="footer-link">
             Personvern
-          </a>
-          <a href="/about" className="footer-link">
-            Om Oss
           </a>
         </div>
       </div>

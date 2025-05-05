@@ -37,42 +37,42 @@ body {
 }
 
 .profile-image {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #6FB5C0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #178192;
 }
 
 .image-upload-label {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: #6FB5C0;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #178192;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
 .image-upload-label:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .image-upload-input {
-    display: none;
+  display: none;
 }
 
 .image-upload-icon {
-    color: white;
-    font-size: 1.2rem;
-    height: 85%;
-    width: 100%;
+  color: white;
+  font-size: 1.2rem;
+  height: 85%;
+  width: 100%;
 }
 
 .profile-name {
@@ -115,7 +115,7 @@ body {
 }
 
 .action-button.active:hover {
-    background: #b71c1c;
+  background: #b71c1c;
 }
 
 .action-button.delete {
@@ -141,12 +141,12 @@ body {
 }
 
 .action-button.save:hover {
-    background: #5da1ac;
+  background: #14717f;
 }
 
 .action-button.save:disabled {
-    background: #ccc;
-    cursor: not-allowed;
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 .profile-content {
@@ -179,7 +179,7 @@ body {
 }
 
 .info-item.full-width {
-    grid-column: 1 / -1;
+  grid-column: 1 / -1;
 }
 
 .info-item label {
@@ -257,13 +257,13 @@ body {
         margin-bottom: 1.8rem;
     }
 
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
 
-    .info-item.full-width {
-        grid-column: auto;
-    }
+  .info-item.full-width {
+    grid-column: auto;
+  }
 }
 
 .save-button-container {
@@ -305,137 +305,141 @@ body {
 }
 
 .profile {
-    min-height: 85vh;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 20px;
-    border: solid 1px #ccc;
+  min-height: 85vh;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  border: solid 1px #ccc;
 }
 
 .profile > div:nth-child(1) {
-    grid-column: 1;
-    display: flex;
-    flex-direction: column;
-    border: solid 1px #ccc;
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  border: solid 1px #ccc;
 }
 
 .profile > div:nth-child(2) {
-    grid-column: 2 / 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border: solid 1px #ccc; 
+  grid-column: 2 / 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: solid 1px #ccc;
 }
 
 .profile > div:nth-child(3) {
-    grid-column: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: solid 1px #ccc;
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid 1px #ccc;
 }
 
 .profile img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin: 0.5rem;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0.5rem;
 }
 
 .profile p {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 .profile button {
-    padding: 0.5rem 1rem;
-    background-color: #f1356d;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #f1356d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 0.5rem;
 }
 
 .profile button:hover {
-    background-color: #f1356d;
+  background-color: #f1356d;
 }
 
 .profile button:active {
-    background-color: #f1356d;
+  background-color: #f1356d;
 }
 
 .profile button:focus {
-    outline: none;
+  outline: none;
 }
 
 .profile button:disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: not-allowed;
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
 }
 
 .profile button:disabled:hover {
-    background-color: #ccc;
+  background-color: #ccc;
 }
 
 .profile button:disabled:active {
-    background-color: #ccc;
+  background-color: #ccc;
 }
 
 .profile button:disabled:focus {
-    outline: none;
+  outline: none;
 }
 
 .profile input {
-    padding-left: 0.75rem;
-    width: 100%;
-    margin-bottom: 1rem;
+  padding-left: 0.75rem;
+  width: 100%;
+  margin-bottom: 1rem;
 }
 .profileInfo {
-padding-left: 10px;
+  padding-left: 10px;
 }
 
 @media screen and (max-width: 769px) {
-.textProfile {
+  .textProfile {
     font-size: 20px;
-}
+  }
 
-.save-button-container {
+  .save-button-container {
     display: flex;
     justify-content: flex-end;
     margin-top: 1rem;
     width: 100%;
-}
+  }
 
-.form-select {
+  .form-select {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: white;
-}
+  }
 
-.input-with-error {
+  .input-with-error {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
-}
+  }
 
-.error-message {
+  .error-message {
     color: #d32f2f;
     font-size: 0.8rem;
     margin-top: 0.25rem;
-}
+  }
 
-.info-item input.error,
-.info-item textarea.error {
+  .info-item input.error,
+  .info-item textarea.error {
     border-color: #d32f2f;
-}
+  }
 
-.mt-2 {
+  .mt-2 {
     margin-top: 0.5rem;
+  }
 }
+<<<<<<< HEAD
+=======
 }
+>>>>>>> main

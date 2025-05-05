@@ -311,6 +311,7 @@ export const getAvailableSlotsByDate = async (
               start: data.timeslot?.start?.toDate?.()?.toISOString(),
               end: data.timeslot?.end?.toDate?.()?.toISOString(),
             },
+            status: data.status,
           };
         })
       );
@@ -340,6 +341,7 @@ export const getAvailableSlotsByDate = async (
               start: data.timeslot?.start?.toDate?.()?.toISOString(),
               end: data.timeslot?.end?.toDate?.()?.toISOString(),
             },
+            status: data.status,
           };
         })
       );
@@ -351,6 +353,10 @@ export const getAvailableSlotsByDate = async (
     // Store full booking time ranges instead of just individual time slots
     const bookedRanges: { start: Date; end: Date }[] = [];
 
+    // Count bookings by status for debugging
+    let activeBookings = 0;
+    let cancelledBookings = 0;
+
     // Debug bookings found
     console.log(
       `🔍 Examining ${bookingsSnapshot.size} bookings for ${dateStr}`
@@ -360,6 +366,13 @@ export const getAvailableSlotsByDate = async (
     bookingsSnapshot.docs.forEach((doc) => {
       const data = doc.data();
       console.log(`Booking ID: ${doc.id}, Data:`, data);
+
+      // Skip cancelled bookings
+      if (data.status === "cancelled") {
+        console.log(`Skipping cancelled booking ${doc.id}`);
+        cancelledBookings++;
+        return;
+      }
 
       const timeslot = data.timeslot;
       if (timeslot && timeslot.start && timeslot.end) {
@@ -393,6 +406,7 @@ export const getAvailableSlotsByDate = async (
           console.log(
             `Added booking range: ${startTime.toTimeString()} - ${endTimeWithBuffer.toTimeString()} (with ${travelBuffer}min buffer)`
           );
+          activeBookings++;
         } catch (e) {
           console.error(`Error processing booking timeslot:`, e);
         }
@@ -410,6 +424,13 @@ export const getAvailableSlotsByDate = async (
 
       const data = doc.data();
       console.log(`Adding timeslot-based booking ID: ${doc.id}, Data:`, data);
+
+      // Skip cancelled bookings
+      if (data.status === "cancelled") {
+        console.log(`Skipping cancelled timeslot-based booking ${doc.id}`);
+        cancelledBookings++;
+        return;
+      }
 
       const timeslot = data.timeslot;
       if (timeslot && timeslot.start && timeslot.end) {
@@ -443,6 +464,7 @@ export const getAvailableSlotsByDate = async (
           console.log(
             `Added timeslot booking range: ${startTime.toTimeString()} - ${endTimeWithBuffer.toTimeString()} (with ${travelBuffer}min buffer)`
           );
+          activeBookings++;
         } catch (e) {
           console.error(`Error processing timeslot booking:`, e);
         }
@@ -463,6 +485,13 @@ export const getAvailableSlotsByDate = async (
 
         const data = doc.data();
         console.log(`Adding manually found booking ID: ${doc.id}, Data:`, data);
+
+        // Skip cancelled bookings
+        if (data.status === "cancelled") {
+          console.log(`Skipping cancelled manually found booking ${doc.id}`);
+          cancelledBookings++;
+          return;
+        }
 
         const timeslot = data.timeslot;
         if (timeslot && timeslot.start && timeslot.end) {
@@ -496,6 +525,7 @@ export const getAvailableSlotsByDate = async (
             console.log(
               `Added manual booking range: ${startTime.toTimeString()} - ${endTimeWithBuffer.toTimeString()} (with ${travelBuffer}min buffer)`
             );
+            activeBookings++;
           } catch (e) {
             console.error(`Error processing manual booking timeslot:`, e);
           }
@@ -516,6 +546,11 @@ export const getAvailableSlotsByDate = async (
             .toTimeString()
             .substring(0, 5)}`
       )
+    );
+
+    // Log booking statistics
+    console.log(
+      `Booking statistics for ${dateStr}: ${activeBookings} active, ${cancelledBookings} cancelled`
     );
 
     // STEP 3: Generate available slots for each work hour time slot
