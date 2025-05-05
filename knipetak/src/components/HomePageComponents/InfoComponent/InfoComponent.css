@@ -10,7 +10,7 @@
   border-radius: 5%;
   height: 350px;
   width: 450px;
-  background-color: #178192;
+  background-color: #2b2c2d;
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
@@ -363,7 +363,7 @@
 
 /* Full width section */
 .full-width-section {
-  background-color: #178192;
+  background-color: #1782921e;
   width: 100%;
   position: relative;
   padding: 4rem 0 0rem;
@@ -442,7 +442,7 @@
   top: 50%;
   width: 2rem;
   height: 2px;
-  background: #178192;
+  background: #2b2c2d;
   z-index: 1;
 }
 
@@ -478,7 +478,7 @@
   font-size: 1.5rem;
   line-height: 1.6;
   margin-bottom: 2rem;
-  color: #2b2c2d;
+  color: #060505;
 }
 
 .treatment-types {
@@ -493,7 +493,6 @@
   padding: 1.5rem;
   border-radius: 8px;
   position: relative;
-  border: 2px solid #2b2c2d;
 }
 
 .treatment-type h4 {
