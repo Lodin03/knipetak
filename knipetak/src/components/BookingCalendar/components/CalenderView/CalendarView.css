@@ -46,11 +46,25 @@
   background-color: #f0f0f0;
 }
 
+/* Utility class to hide elements */
+.hidden {
+  display: none !important;
+}
+
+/* Desktop view styles */
+.desktop-calendar-view {
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+
 .weekday-header {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
   background-color: #f8f9fa;
   border-bottom: 1px solid #e0e0e0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .weekday {
@@ -59,20 +73,22 @@
   font-weight: 600;
   font-size: 0.9rem;
   color: #555;
+  box-sizing: border-box;
 }
 
 .days-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
   grid-auto-rows: minmax(100px, auto);
   width: 100%;
+  box-sizing: border-box;
 }
 
 .calendar-day {
   position: relative;
   border: 1px solid #e0e0e0;
   min-height: 100px;
-  min-width: 90px;
+  min-width: 0; /* Allow cells to shrink */
   padding: 5px;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -107,13 +123,20 @@
 
 .day-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: 2px 5px;
 }
 
 .day-number {
   font-weight: 600;
   font-size: 0.9rem;
+}
+
+.day-name {
+  display: none; /* Hidden by default on desktop */
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .day-content {
@@ -129,6 +152,91 @@
   width: 100%;
 }
 
+/* Mobile view styles */
+.mobile-calendar-view {
+  width: 100%;
+}
+
+.mobile-days-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  padding: 10px;
+}
+
+.mobile-calendar-day {
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.mobile-calendar-day:hover:not(.disabled) {
+  background-color: #f8f9fa;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.mobile-calendar-day.outside-month {
+  display: none; /* Hide days outside the current month */
+}
+
+.mobile-calendar-day.disabled {
+  color: #ccc;
+  cursor: default;
+  background-color: #f5f5f5;
+}
+
+.mobile-calendar-day.today {
+  background-color: #e6f7ff;
+  border-color: #b3e5fc;
+}
+
+.mobile-calendar-day.selected {
+  background-color: #e3f2fd;
+  border-color: #90caf9;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.mobile-day-header {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 8px;
+}
+
+.mobile-day-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-day-number {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.mobile-day-name {
+  font-size: 1rem;
+  color: #555;
+  text-transform: capitalize;
+}
+
+.mobile-day-content {
+  flex: 1;
+  padding: 8px 0;
+}
+
+/* Common styles for both views */
 .location-info,
 .event-info {
   display: flex;
@@ -198,6 +306,12 @@
   animation: spin 1s ease-in-out infinite;
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Calendar loading overlay */
 .calendar-loading-overlay {
   position: absolute;
@@ -231,19 +345,23 @@
 }
 
 /* Weekend styles (Saturday and Sunday) */
-.calendar-day.weekend {
+.calendar-day.weekend,
+.mobile-calendar-day.weekend {
   background-color: #f9f9f9;
 }
 
-.calendar-day.weekend:hover:not(.disabled) {
+.calendar-day.weekend:hover:not(.disabled),
+.mobile-calendar-day.weekend:hover:not(.disabled) {
   background-color: #f0f0f0;
 }
 
-.calendar-day.weekend .day-number {
+.calendar-day.weekend .day-number,
+.mobile-calendar-day.weekend .mobile-day-number {
   color: #999;
 }
 
-.calendar-day.weekend.disabled {
+.calendar-day.weekend.disabled,
+.mobile-calendar-day.weekend.disabled {
   background-color: #f5f5f5;
   color: #ddd;
 }
@@ -256,41 +374,44 @@
 }
 
 @media (max-width: 768px) {
-  .days-grid {
-    grid-auto-rows: minmax(80px, auto);
+  /* Hide desktop view, show mobile view */
+  .desktop-calendar-view {
+    display: none !important;
   }
 
-  .calendar-day {
-    min-height: 80px;
-    padding: 3px;
+  .mobile-calendar-view {
+    display: block;
   }
 
-  .day-content {
-    font-size: 0.75rem;
+  .mobile-day-content {
+    font-size: 0.9rem;
   }
 
   .location-name,
-  .work-hours,
   .event-name {
-    font-size: 0.7rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .days-grid {
-    grid-auto-rows: minmax(60px, auto);
-  }
-
-  .calendar-day {
-    min-height: 60px;
-    padding: 2px;
-  }
-
-  .day-content {
-    padding: 2px;
+    font-size: 0.9rem;
   }
 
   .work-hours {
-    display: none;
+    font-size: 0.8rem;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .mobile-day-header {
+    padding-bottom: 6px;
+  }
+
+  .mobile-day-number {
+    font-size: 1.1rem;
+  }
+
+  .mobile-day-name {
+    font-size: 0.9rem;
+  }
+
+  .mobile-calendar-day {
+    padding: 10px;
   }
 }
