@@ -140,7 +140,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
   };
 
   return (
-    <div className="booking-form-container">
+    <div className="booking-form-container booking-form-component">
       <h3>Fullfør booking</h3>
       <div className="form-content">
         <form onSubmit={handleSubmit}>

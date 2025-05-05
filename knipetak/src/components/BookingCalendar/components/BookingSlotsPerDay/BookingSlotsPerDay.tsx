@@ -58,7 +58,7 @@ const BookingSlotsPerDay: React.FC<BookingSlotsPerDayProps> = ({
   }
 
   return (
-    <div className="booking-slots-container">
+    <div className="booking-slots-container booking-slots-component">
       <h3>Tilgjengelige tider for {formatDateNorwegian(selectedDate)}</h3>
       {eventDetails ? (
         <p>

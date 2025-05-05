@@ -9,13 +9,12 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  padding: 2rem;
+  padding: 4rem 2rem;
   background: linear-gradient(135deg, #80ccd8 0%, #c1d2d4 100%);
   color: white;
   position: relative;
   overflow: hidden;
-  height: 60vh;
-  border-top: 2px solid rgba(255, 255, 255, 0.75);
+  height: 80vh;
 }
 
 .treatments__hero::before {
@@ -60,7 +59,7 @@
   line-height: 1.6;
   font-weight: 400;
   opacity: 0.8;
-  margin-bottom: 22.5rem;
+  margin-bottom: 2rem;
 }
 
 .treatments__hero-description p {
@@ -157,7 +156,7 @@
 
 .treatments__toggle-button {
   width: 100%;
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem;
   background-color: white;
   border: 2px solid #178192;
   border-radius: 12px;
@@ -169,6 +168,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  text-align: left;
 }
 
 .treatments__toggle-button:hover {
@@ -189,17 +189,18 @@
 
 .treatments__category-preview {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 5px);
   left: 0;
   right: 0;
   background-color: white;
-  padding: 1rem;
-  border-radius: 0 0 12px 12px;
+  padding: 1.5rem;
+  border-radius: 12px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   z-index: 10;
   opacity: 0;
   transform: translateY(-10px);
   transition: all 0.3s ease;
+  border: 1px solid rgba(23, 129, 146, 0.2);
 }
 
 .treatments__category:hover .treatments__category-preview {
@@ -211,6 +212,7 @@
 .treatments__grid-container {
   transition: all 0.5s ease;
   overflow: hidden;
+  margin-top: 2rem;
 }
 
 .treatments__grid {
@@ -227,6 +229,9 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .treatments__card:hover {
@@ -236,6 +241,9 @@
 
 .treatments__card-content {
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .treatments__card-title {
@@ -267,6 +275,7 @@
   text-align: center;
   color: #2b2c2d;
   position: relative;
+  margin-top: 4rem;
   clip-path: polygon(
     0 3rem,
     5% 1.5rem,
@@ -319,10 +328,10 @@
   overflow: hidden;
   border: none;
   outline: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  margin-left: 17.5rem;
+  margin: 0 auto;
 }
 
 .treatments__cta-button:hover {
@@ -344,10 +353,18 @@
   .treatments__hero {
     grid-template-columns: 1fr;
     text-align: center;
+    height: auto;
+    padding: 4rem 2rem;
   }
 
   .treatments__hero-content {
     padding-right: 0;
+  }
+
+  .treatments__hero-image {
+    height: 400px;
+    max-width: 600px;
+    margin: 0 auto;
   }
 
   .treatments__title {
@@ -357,11 +374,18 @@
   .treatments__subtitle {
     font-size: 1.8rem;
   }
+
+  .treatments__cta-button {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
 }
 
 @media screen and (max-width: 768px) {
   .treatments__gallery {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .treatments__categories {
@@ -378,6 +402,18 @@
 
   .treatments__subtitle {
     font-size: 1.5rem;
+  }
+
+  .treatments__content {
+    padding: 3rem 1.5rem;
+  }
+
+  .treatments__cta {
+    padding: 6rem 1.5rem;
+  }
+
+  .treatments__cta-content h2 {
+    font-size: 2.2rem;
   }
 }
 
@@ -399,6 +435,28 @@
   }
 
   .treatments__cta-content h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
+  }
+
+  .treatments__cta-content p {
+    font-size: 1rem;
+  }
+
+  .treatments__cta-button {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+  }
+
+  .treatments__card-content {
+    padding: 1.5rem;
+  }
+
+  .treatments__card-title {
+    font-size: 1.3rem;
+  }
+
+  .treatments__section-title {
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
   }
 }
