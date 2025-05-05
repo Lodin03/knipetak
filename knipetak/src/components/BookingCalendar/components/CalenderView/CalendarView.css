@@ -155,11 +155,12 @@
 /* Mobile view styles */
 .mobile-calendar-view {
   width: 100%;
+  display: block !important;
 }
 
 .mobile-days-grid {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
   width: 100%;
   gap: 10px;
   padding: 10px;
@@ -374,26 +375,26 @@
 }
 
 @media (max-width: 768px) {
-  /* Hide desktop view, show mobile view */
   .desktop-calendar-view {
     display: none !important;
   }
 
   .mobile-calendar-view {
-    display: block;
+    display: block !important;
   }
 
   .mobile-day-content {
-    font-size: 0.9rem;
+    padding: 5px 0;
   }
 
   .location-name,
   .event-name {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
   }
 
   .work-hours {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    padding: 2px 4px;
   }
 }
 

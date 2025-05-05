@@ -31,6 +31,8 @@ export interface BookingFormProps {
   setGuestName: (name: string) => void;
   guestPhone: string;
   setGuestPhone: (phone: string) => void;
+  customerMessage: string;
+  setCustomerMessage: (message: string) => void;
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({
@@ -61,6 +63,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
   setGuestName,
   guestPhone,
   setGuestPhone,
+  customerMessage,
+  setCustomerMessage,
 }) => {
   const [availableDurations, setAvailableDurations] = useState<
     { duration: number; price: number }[]
@@ -260,6 +264,18 @@ const BookingForm: React.FC<BookingFormProps> = ({
               </select>
             </div>
           )}
+
+          <div className="form-group">
+            <label htmlFor="customerMessage">Beskjed til behandler:</label>
+            <textarea
+              id="customerMessage"
+              value={customerMessage}
+              onChange={(e) => setCustomerMessage(e.target.value)}
+              placeholder="Har du noen skader, helsetilstander eller annet Helene bør vite om? (valgfritt)"
+              rows={4}
+              className="message-input"
+            />
+          </div>
 
           {selectedLocation && (
             <div className="location-warning">
