@@ -5,7 +5,7 @@
   gap: 30px;
   padding: 40px 20px;
   padding-bottom: 60px;
-  background-color: #6fb5c0;
+  background-color: #178192;
 }
 
 .Review {
@@ -15,7 +15,7 @@
   gap: 12px;
   justify-content: flex-start;
   border-radius: 15px;
-  background-color: #6fb5c0;
+  background-color: #178192;
   box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.1);
   border: none;
   flex-direction: column;

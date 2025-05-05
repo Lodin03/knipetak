@@ -1,5 +1,5 @@
 .home-event-section {
-  background-color: #6fb5c0;
+  background-color: #178192;
   width: 100vw;
   position: relative;
   overflow: hidden;
@@ -65,7 +65,7 @@
 
 .action-button:hover {
   background-color: white;
-  color: #6fb5c0;
+  color: #178192;
   transform: translateY(-2px);
 }
 

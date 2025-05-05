@@ -6,6 +6,7 @@
   transition: opacity 0.2s ease;
   position: relative;
   z-index: 1000;
+  background-color: #178192;
 }
 
 .nav-pending {
@@ -187,7 +188,7 @@
     height: 100vh;
     width: 75%;
     max-width: 400px;
-    background-color: #6fb5c0;
+    background-color: #178192;
     flex-direction: column;
     padding: 5rem 2rem 2rem;
     transition: right 0.3s ease-in-out;
