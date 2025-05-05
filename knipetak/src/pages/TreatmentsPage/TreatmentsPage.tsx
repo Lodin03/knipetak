@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { TreatmentType } from "../../interfaces/treatment.interface";
 import { treatmentData } from "../../data/treatmentData";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import "./TreatmentsPage.css";
 
 function TreatmentsPage() {
@@ -120,7 +122,10 @@ function TreatmentsPage() {
         <div className="treatments__cta-content">
           <h2>Klar for en avslappende behandling?</h2>
           <p>Book en time i dag og opplev forskjellen</p>
-          <button className="treatments__cta-button" onClick={handleBookClick}>Book Time</button>
+          <button className="treatments__cta-button" onClick={handleBookClick}>
+            <FontAwesomeIcon icon={faCalendarCheck} className="cta-icon" />
+            <span>Book Time</span>
+          </button>
         </div>
       </section>
     </div>
