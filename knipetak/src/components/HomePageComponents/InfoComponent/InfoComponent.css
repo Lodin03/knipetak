@@ -223,11 +223,9 @@
 
 /* Introduction Section */
 .intro-section {
-  background-color: white;
   padding: 2rem;
   border-radius: 10px;
   margin-bottom: 3rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
   /* Single wave at the bottom */
   clip-path: polygon(
@@ -473,13 +471,14 @@
 
 /* Additional Info Section - now inside full-width */
 .additional-info {
-  color: white;
+  color: #2b2c2d;
 }
 
 .additional-info p {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   line-height: 1.6;
   margin-bottom: 2rem;
+  color: #2b2c2d;
 }
 
 .treatment-types {
@@ -490,21 +489,23 @@
 }
 
 .treatment-type {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgb(236, 235, 235);
   padding: 1.5rem;
   border-radius: 8px;
   position: relative;
+  border: 2px solid #2b2c2d;
 }
 
 .treatment-type h4 {
   margin-bottom: 1rem;
   font-size: 1.2rem;
-  color: white;
+  color: #2b2c2d;
 }
 
 .treatment-type p {
   margin: 0;
   font-size: 1rem;
+  color: #2b2c2d;
 }
 
 /* Responsive Design */
