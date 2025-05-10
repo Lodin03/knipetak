@@ -66,7 +66,7 @@ function LoginPage() {
             email: result.user.email || "",
             userType: UserType.CUSTOMER,
             createdAt: new Date(),
-            age: 0,
+            birthYear: 0,
             healthIssues: "",
             location: {
               id: "",
@@ -204,7 +204,7 @@ function LoginPage() {
         email: email,
         userType: UserType.CUSTOMER,
         createdAt: new Date(),
-        age: 0,
+        birthYear: 0,
         healthIssues: "",
         location: {
           id: "",
@@ -366,7 +366,7 @@ function LoginPage() {
             )}
             <button type="submit" className="login-button" disabled={isLoading}>
               {isLoading ? (
-                <span className="loading-spinner"></span>
+                <span></span>
               ) : isRegistering ? (
                 "Registrer deg"
               ) : (
@@ -385,7 +385,7 @@ function LoginPage() {
 
           <div className="toggle-form">
             <button
-              className="toggle-button"
+              className="change-button"
               onClick={() => {
                 setIsRegistering(!isRegistering);
                 setError("");

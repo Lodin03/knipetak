@@ -18,7 +18,6 @@ const BookingCalendarContent: React.FC = () => {
     selectedDate,
     selectedTime,
     selectedLocation,
-    dateManuallySelected,
     eventDetails,
     locationSlots,
 
@@ -43,6 +42,7 @@ const BookingCalendarContent: React.FC = () => {
     guestEmail,
     guestName,
     guestPhone,
+    customerMessage,
 
     // Booking confirmation
     showCompletedBooking,
@@ -67,12 +67,29 @@ const BookingCalendarContent: React.FC = () => {
     setGuestEmail,
     setGuestName,
     setGuestPhone,
+    setCustomerMessage,
   } = useBooking();
+
+  // Return early for the completed booking view
+  if (showCompletedBooking) {
+    return (
+      <CompletedBookingComponent
+        bookingId={completedBookingId}
+        date={selectedDate!}
+        time={selectedTime!}
+        treatment={selectedTreatment!}
+        duration={selectedDuration!}
+        isGroup={isGroupBooking}
+        groupSize={groupSize}
+        location={selectedLocation!}
+        onClose={handleCloseCompletedBooking}
+      />
+    );
+  }
 
   return (
     <div className="booking-calendar">
-      <h2>Velg en dato</h2>
-
+      {/* Step 1: Select a date from calendar */}
       <CalendarView
         selectedDate={selectedDate}
         onDateSelect={handleDateSelect}
@@ -82,18 +99,22 @@ const BookingCalendarContent: React.FC = () => {
         initialDataLoaded={initialDataLoaded}
       />
 
-      {selectedDate && dateManuallySelected && (
-        <BookingSlotsPerDay
-          selectedDate={selectedDate}
-          isLoading={isLoading}
-          locationSlots={locationSlots}
-          eventDetails={eventDetails}
-          onSlotClick={handleSlotClick}
-          selectedTime={selectedTime}
-        />
+      {/* Step 2: Display available slots for selected date */}
+      {selectedDate && (
+        <div id="available-timeslots">
+          <BookingSlotsPerDay
+            selectedDate={selectedDate}
+            isLoading={isLoading}
+            locationSlots={locationSlots}
+            eventDetails={eventDetails}
+            onSlotClick={handleSlotClick}
+            selectedTime={selectedTime}
+          />
+        </div>
       )}
 
-      {selectedTime && selectedLocation && (
+      {/* Step 3: Show booking form once time slot is selected */}
+      {selectedDate && selectedTime && selectedLocation && (
         <div id="booking-form">
           <BookingForm
             selectedDate={selectedDate}
@@ -101,6 +122,7 @@ const BookingCalendarContent: React.FC = () => {
             selectedLocation={selectedLocation}
             treatments={treatments}
             onConfirm={handleBookingConfirm}
+            onCancel={handleCancelBooking}
             isGroupBooking={isGroupBooking}
             setIsGroupBooking={setIsGroupBooking}
             groupSize={groupSize}
@@ -122,33 +144,11 @@ const BookingCalendarContent: React.FC = () => {
             setGuestName={setGuestName}
             guestPhone={guestPhone}
             setGuestPhone={setGuestPhone}
-            onCancel={handleCancelBooking}
+            customerMessage={customerMessage}
+            setCustomerMessage={setCustomerMessage}
           />
         </div>
       )}
-
-      {showCompletedBooking &&
-        selectedDate &&
-        selectedTime &&
-        selectedTreatment && (
-          <CompletedBookingComponent
-            bookingId={completedBookingId}
-            date={selectedDate}
-            time={selectedTime}
-            treatment={selectedTreatment}
-            duration={selectedDuration || 0}
-            isGroup={isGroupBooking}
-            groupSize={groupSize}
-            location={{
-              id: "default-id", // Replace with the actual id
-              name: "default-name", // Replace with the actual name
-              address,
-              city,
-              postalCode: Number(postalCode),
-            }}
-            onClose={handleCloseCompletedBooking}
-          />
-        )}
     </div>
   );
 };

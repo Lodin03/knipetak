@@ -7,6 +7,8 @@ import LoginPage from "../pages/LoginPage/LoginPage.tsx";
 import ProfilePage from "../pages/ProfilePage/ProfilePage.tsx";
 import AdminHomePage from "../pages/AdminHomePage/AdminHomePage.tsx";
 import AdminCalendarPage from "../pages/AdminCalendarPage/AdminCalendarPage.tsx";
+import TermsPage from "../pages/TermsPage/TermsPage.tsx";
+import PrivacyPage from "../pages/PrivacyPage/PrivacyPage.tsx";
 
 const AppRoutes = () => (
   <Routes>
@@ -18,6 +20,8 @@ const AppRoutes = () => (
     <Route path="/profile" element={<ProfilePage />} />
     <Route path="/admin-home-page" element={<AdminHomePage />} />
     <Route path="/admin-calendar-page" element={<AdminCalendarPage />} />
+    <Route path="/terms" element={<TermsPage />} />
+    <Route path="/personvern" element={<PrivacyPage />} />
   </Routes>
 );
 

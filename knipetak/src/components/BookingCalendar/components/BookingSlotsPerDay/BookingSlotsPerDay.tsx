@@ -58,10 +58,8 @@ const BookingSlotsPerDay: React.FC<BookingSlotsPerDayProps> = ({
   }
 
   return (
-    <>
-      <h3 id="available-timeslots">
-        Tilgjengelige tider for {formatDateNorwegian(selectedDate)}
-      </h3>
+    <div className="booking-slots-container booking-slots-component">
+      <h3>Tilgjengelige tider for {formatDateNorwegian(selectedDate)}</h3>
       {eventDetails ? (
         <p>
           📅 Helene deltar på <strong>{eventDetails["name"] as string}</strong>{" "}
@@ -89,7 +87,9 @@ const BookingSlotsPerDay: React.FC<BookingSlotsPerDayProps> = ({
                     <button
                       key={slot}
                       onClick={() => onSlotClick(slot, locationSlot.location)}
-                      className={`time-slot-button ${selectedTime === slot ? "selected" : ""}`}
+                      className={`time-slot-button ${
+                        selectedTime === slot ? "selected" : ""
+                      }`}
                     >
                       {slot}
                     </button>
@@ -117,10 +117,7 @@ const BookingSlotsPerDay: React.FC<BookingSlotsPerDayProps> = ({
           </p>
         </div>
       )}
-      {selectedTime && (
-        <p className="selected-time">Valgt tid: {selectedTime}</p>
-      )}
-    </>
+    </div>
   );
 };
 

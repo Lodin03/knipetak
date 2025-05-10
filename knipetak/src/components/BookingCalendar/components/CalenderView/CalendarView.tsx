@@ -112,15 +112,128 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
 
   return (
     <div
-      className={`calendar-day ${!isCurrentMonth ? "outside-month" : ""} ${isSelected ? "selected" : ""} ${isToday(date) ? "today" : ""} ${isDisabled ? "disabled" : ""} ${isWeekend ? "weekend" : ""}`}
+      className={`calendar-day ${!isCurrentMonth ? "outside-month" : ""} ${
+        isSelected ? "selected" : ""
+      } ${isToday(date) ? "today" : ""} ${isDisabled ? "disabled" : ""} ${
+        isWeekend ? "weekend" : ""
+      }`}
       onClick={isDisabled ? undefined : onClick}
       onMouseEnter={isDisabled ? undefined : onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <div className="day-header">
         <span className="day-number">{dayNum}</span>
+        <span className="day-name">{format(date, "EEEE", { locale: nb })}</span>
       </div>
       <div className="day-content">
+        {showLoading ? (
+          <div className="day-loading">
+            <div className="mini-spinner"></div>
+          </div>
+        ) : hasLocationInfo ? (
+          <div className="location-info">
+            <span className="location-name">{getLocationDisplay()}</span>
+
+            <span className="work-hours">
+              {dayInfo?.locationSlots.length > 1
+                ? "Flere tidspunkter"
+                : `${
+                    dayInfo?.locationSlots[0].workHours.startString ||
+                    dayInfo?.locationSlots[0].workHours.start
+                  }-${
+                    dayInfo?.locationSlots[0].workHours.endString ||
+                    dayInfo?.locationSlots[0].workHours.end
+                  }`}
+            </span>
+          </div>
+        ) : hasEvent ? (
+          <div className="event-info">
+            <span className="event-indicator">📅</span>
+            <span className="event-name">
+              {dayInfo?.eventDetails?.name as string}
+            </span>
+          </div>
+        ) : isCurrentMonth && !isDisabled && isDataAttempted ? (
+          <div className="no-info">
+            {isWeekend ? "Helg - ikke tilgjengelig" : "Ikke tilgjengelig"}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+};
+
+// Mobile calendar day component with a different layout
+const MobileCalendarDay: React.FC<CalendarDayProps> = ({
+  date,
+  isCurrentMonth,
+  isSelected,
+  dayInfo,
+  isLoading,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+  initialDataLoaded,
+}) => {
+  const dayNum = date.getDate();
+  const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+  const isDisabled = date < new Date(new Date().setHours(0, 0, 0, 0));
+  const hasLocationInfo = dayInfo && dayInfo.locationSlots.length > 0;
+  const hasEvent = dayInfo && dayInfo.eventDetails;
+
+  const isDataAttempted = dayInfo !== undefined;
+  const showLoading =
+    isLoading ||
+    (!isDataAttempted && !isDisabled && isCurrentMonth && !initialDataLoaded);
+
+  // For location display, truncate to first 15 chars if needed
+  const getLocationDisplay = () => {
+    if (!hasLocationInfo || !dayInfo?.locationSlots?.length) {
+      return "Ikke tilgjengelig";
+    }
+
+    // Check if we have multiple locations
+    if (dayInfo.locationSlots.length > 1) {
+      return "Flere steder";
+    }
+
+    const locationData = dayInfo.locationSlots[0];
+    const locationName = locationData?.location?.name;
+
+    if (locationName) {
+      return locationName.length > 20
+        ? `${locationName.substring(0, 20)}...`
+        : locationName;
+    } else if (locationData?.location) {
+      return "Tilgjengelig";
+    } else if (locationData) {
+      return "Tilgjengelig";
+    } else {
+      return "Ikke tilgjengelig";
+    }
+  };
+
+  // Only render days in the current month
+  if (!isCurrentMonth) return null;
+
+  return (
+    <div
+      className={`mobile-calendar-day ${isSelected ? "selected" : ""} ${
+        isToday(date) ? "today" : ""
+      } ${isDisabled ? "disabled" : ""} ${isWeekend ? "weekend" : ""}`}
+      onClick={isDisabled ? undefined : onClick}
+      onMouseEnter={isDisabled ? undefined : onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <div className="mobile-day-header">
+        <div className="mobile-day-info">
+          <span className="mobile-day-number">{dayNum}</span>
+          <span className="mobile-day-name">
+            {format(date, "EEEE", { locale: nb })}
+          </span>
+        </div>
+      </div>
+      <div className="mobile-day-content">
         {showLoading ? (
           <div className="day-loading">
             <div className="mini-spinner"></div>
@@ -131,7 +244,13 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
             <span className="work-hours">
               {dayInfo?.locationSlots.length > 1
                 ? "Flere tidspunkter"
-                : `${dayInfo?.locationSlots[0].workHours.startString || dayInfo?.locationSlots[0].workHours.start}-${dayInfo?.locationSlots[0].workHours.endString || dayInfo?.locationSlots[0].workHours.end}`}
+                : `${
+                    dayInfo?.locationSlots[0].workHours.startString ||
+                    dayInfo?.locationSlots[0].workHours.start
+                  }-${
+                    dayInfo?.locationSlots[0].workHours.endString ||
+                    dayInfo?.locationSlots[0].workHours.end
+                  }`}
             </span>
           </div>
         ) : hasEvent ? (
@@ -170,6 +289,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   initialDataLoaded,
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768);
   // Use a ref to track the hover timeout for debouncing
   const hoverTimeoutRef = useRef<number | null>(null);
 
@@ -192,6 +312,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   const daysInMonth = eachDayOfInterval({
     start: startDate,
     end: endDate,
+  });
+
+  // For mobile view, only include days in the current month
+  const daysForMobileView = eachDayOfInterval({
+    start: monthStart,
+    end: monthEnd,
   });
 
   const goToPreviousMonth = () => {
@@ -239,6 +365,18 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       hoverTimeoutRef.current = null;
     }
   };
+
+  // Handle window resize events to toggle between mobile and desktop views
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // Cleanup any pending timeouts when component unmounts
   useEffect(() => {
@@ -288,35 +426,64 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         </button>
       </div>
 
-      <div className="weekday-header">
-        {["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"].map((day) => (
-          <div key={day} className="weekday">
-            {day}
-          </div>
-        ))}
+      {/* Desktop view with 7-column grid */}
+      <div className={`desktop-calendar-view ${isMobileView ? "hidden" : ""}`}>
+        <div className="weekday-header">
+          {["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"].map((day) => (
+            <div key={day} className="weekday">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        <div className="days-grid">
+          {daysInMonth.map((day) => {
+            const dateStr = formatDateForAPI(day);
+            const isLoading = loadingDate === dateStr;
+            const dayInfo = dayInfoCache[dateStr];
+
+            return (
+              <CalendarDay
+                key={dateStr}
+                date={day}
+                isCurrentMonth={isSameMonth(day, currentMonth)}
+                isSelected={selectedDate ? isSameDay(day, selectedDate) : false}
+                dayInfo={dayInfo}
+                isLoading={isLoading}
+                onClick={() => onDateSelect(day, false)}
+                onMouseEnter={() => handleDayHover(day)}
+                onMouseLeave={() => handleDayLeave()}
+                initialDataLoaded={initialDataLoaded}
+              />
+            );
+          })}
+        </div>
       </div>
 
-      <div className="days-grid">
-        {daysInMonth.map((day) => {
-          const dateStr = formatDateForAPI(day);
-          const isLoading = loadingDate === dateStr;
-          const dayInfo = dayInfoCache[dateStr];
+      {/* Mobile view with single column layout */}
+      <div className={`mobile-calendar-view ${!isMobileView ? "hidden" : ""}`}>
+        <div className="mobile-days-grid">
+          {daysForMobileView.map((day) => {
+            const dateStr = formatDateForAPI(day);
+            const isLoading = loadingDate === dateStr;
+            const dayInfo = dayInfoCache[dateStr];
 
-          return (
-            <CalendarDay
-              key={dateStr}
-              date={day}
-              isCurrentMonth={isSameMonth(day, currentMonth)}
-              isSelected={selectedDate ? isSameDay(day, selectedDate) : false}
-              dayInfo={dayInfo}
-              isLoading={isLoading}
-              onClick={() => onDateSelect(day, false)}
-              onMouseEnter={() => handleDayHover(day)}
-              onMouseLeave={() => handleDayLeave()}
-              initialDataLoaded={initialDataLoaded}
-            />
-          );
-        })}
+            return (
+              <MobileCalendarDay
+                key={dateStr}
+                date={day}
+                isCurrentMonth={true} // All days are in current month for mobile view
+                isSelected={selectedDate ? isSameDay(day, selectedDate) : false}
+                dayInfo={dayInfo}
+                isLoading={isLoading}
+                onClick={() => onDateSelect(day, false)}
+                onMouseEnter={() => handleDayHover(day)}
+                onMouseLeave={() => handleDayLeave()}
+                initialDataLoaded={initialDataLoaded}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {/* Only show loading overlay if explicitly not loaded */}

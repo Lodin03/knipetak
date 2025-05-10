@@ -1,35 +1,39 @@
+body {
+    background-color: rgb(243, 243, 243);
+}
+
 /* Passer på at skjermen "fill ut" hele siden */
 .main-container {
   min-height: 77.5vh;
 }
 
 .profile-container {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2.2rem;
+    max-width: 1200px;
+    margin: 2.2rem auto;
+    padding: 0 1.3rem;
 }
 
 .profile-sidebar {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  height: fit-content;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 2.2rem;
+    height: fit-content;
 }
 
 .profile-header {
-  text-align: center;
-  margin-bottom: 2rem;
+    text-align: center;
+    margin-bottom: 2.2rem;
 }
 
 .profile-image-container {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 1rem;
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 1.3rem;
 }
 
 .profile-image {
@@ -37,14 +41,14 @@
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #6fb5c0;
+  border: 3px solid #178192;
 }
 
 .image-upload-label {
   position: absolute;
   bottom: 0;
   right: 0;
-  background: #6fb5c0;
+  background: #178192;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -72,41 +76,42 @@
 }
 
 .profile-name {
-  font-size: 1.5rem;
-  margin: 0.5rem 0;
-  color: #333;
+    font-size: 1.6rem;
+    margin: 0.7rem 0;
+    color: #333;
 }
 
 .profile-email {
-  color: #666;
-  font-size: 0.9rem;
-  margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+    margin: 0;
 }
 
 .profile-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
 }
 
 .action-button {
-  padding: 0.8rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-  background: #6fb5c0;
-  color: white;
+    padding: 0.9rem;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background: #2b2c2d;
+    color: white;
 }
 
 .action-button:hover {
-  background: #5da1ac;
+    background: #585b5d;
 }
 
 .action-button.active {
-  background: #d32f2f;
-  color: white;
+    background: #d74444;
+    color: white;
 }
 
 .action-button.active:hover {
@@ -114,27 +119,29 @@
 }
 
 .action-button.delete {
-  background: #ffebee;
-  color: #d32f2f;
+    background: #d74444;
+    color: #ffebee;
 }
 
 .action-button.delete:hover {
-  background: #ffcdd2;
+    background: #d65c5c;
+    color: #ffebee;
 }
 
+
 .action-button.logout {
-  background: #f5f5f5;
-  color: #666;
+    background: #01647c;
+    color: #ffffff;
 }
 
 .action-button.save {
-  background: #6fb5c0;
-  color: white;
-  margin-top: 1rem;
+    background: #6FB5C0;
+    color: white;
+    margin-top: 1.1rem;
 }
 
 .action-button.save:hover {
-  background: #5da1ac;
+  background: #14717f;
 }
 
 .action-button.save:disabled {
@@ -143,32 +150,32 @@
 }
 
 .profile-content {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 2.2rem;
 }
 
 .profile-section {
-  margin-bottom: 2rem;
+    margin-bottom: 2.2rem;
 }
 
 .profile-section h3 {
-  color: #333;
-  margin-bottom: 1.5rem;
-  font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 1.6rem;
+    font-size: 1.4rem;
 }
 
 .info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.6rem;
 }
 
 .info-item {
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 8px;
+    background: #f8f9fa;
+    padding: 1.1rem;
+    border-radius: 9px;
 }
 
 .info-item.full-width {
@@ -176,75 +183,80 @@
 }
 
 .info-item label {
-  display: block;
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+    display: block;
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
 }
 
 .info-item p {
-  margin: 0;
-  color: #333;
+    margin: 0;
+    color: #333;
+    font-size: 1rem;
 }
 
 .info-item input,
 .info-item textarea,
 .info-item select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+    width: 100%;
+    padding: 0.6rem;
+    border: 1.5px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
 }
 
 .info-item textarea {
-  min-height: 100px;
-  resize: vertical;
+    min-height: 110px;
+    resize: vertical;
 }
 
 .treatment-history {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
 }
 
 .treatment-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  transition: transform 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem;
+    background: #f8f9fa;
+    border-radius: 9px;
+    transition: transform 0.2s;
 }
 
 .treatment-info h4 {
-  margin: 0;
-  color: #333;
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
 }
 
 .treatment-info p {
-  margin: 0.5rem 0 0;
-  color: #666;
-  font-size: 0.9rem;
+    margin: 0.6rem 0 0;
+    color: #666;
+    font-size: 1rem;
 }
 
 .treatment-price p {
-  margin: 0;
-  color: #6fb5c0;
-  font-weight: 500;
+    margin: 0;
+    color: #6FB5C0;
+    font-weight: 500;
+    font-size: 1.05rem;
 }
 
-@media (max-width: 768px) {
-  .profile-container {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 1024px) {
+    .profile-container {
+        grid-template-columns: 1fr;
+        gap: 1.8rem;
+        padding: 0 1.3rem;
+    }
 
-  .profile-sidebar {
-    margin-bottom: 2rem;
-  }
-
+    .profile-sidebar {
+        margin-bottom: 1.8rem;
+    }
+  
   .info-grid {
     grid-template-columns: 1fr;
   }
@@ -252,6 +264,44 @@
   .info-item.full-width {
     grid-column: auto;
   }
+}
+
+.save-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.1rem;
+    width: 100%;
+}
+
+.form-select {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1.5px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 1rem;
+}
+
+.input-with-error {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+}
+
+.error-message {
+    color: #d32f2f;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+.info-item input.error,
+.info-item textarea.error {
+    border-color: #d32f2f;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
 }
 
 .profile {
@@ -351,41 +401,41 @@
   .textProfile {
     font-size: 20px;
   }
-}
 
-.save-button-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
-  width: 100%;
-}
+  .save-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    width: 100%;
+  }
 
-.form-select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white;
-}
+  .form-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+  }
 
-.input-with-error {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 100%;
-}
+  .input-with-error {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
 
-.error-message {
-  color: #d32f2f;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-}
+  .error-message {
+    color: #d32f2f;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
 
-.info-item input.error,
-.info-item textarea.error {
-  border-color: #d32f2f;
-}
+  .info-item input.error,
+  .info-item textarea.error {
+    border-color: #d32f2f;
+  }
 
-.mt-2 {
-  margin-top: 0.5rem;
+  .mt-2 {
+    margin-top: 0.5rem;
+  }
 }

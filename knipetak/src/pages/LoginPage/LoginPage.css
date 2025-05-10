@@ -1,88 +1,134 @@
 .login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 77.75vh;
-  padding: 2rem 0;
-  background-color: #f5f5f5;
-  position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 77.75vh;
+    padding: 2rem;
+    background-color: #f5f5f5;
+    position: relative;
 }
 
 .login-box {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 0.625rem;
-  box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 25rem;
-  padding-top: 2rem;
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 28rem;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.login-box:hover {
+    transform: translateY(-5px);
 }
 
 .login-box h1 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 2rem;
-  font-size: 2rem;
+    text-align: center;
+    color: #333;
+    margin-bottom: 2.5rem;
+    font-size: 2.2rem;
+    font-weight: 700;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #555;
-  font-weight: 500;
+    display: block;
+    margin-bottom: 0.75rem;
+    color: #555;
+    font-weight: 500;
+    font-size: 1.1rem;
 }
 
 .form-group input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 0.3125rem;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f9f9f9;
 }
 
 .form-group input:focus {
-  outline: none;
-  border-color: #007bff;
+    outline: none;
+    border-color: #2b2c2d;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(43, 44, 45, 0.1);
 }
 
-.login-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #6fb5c0;
-  color: white;
-  border: none;
-  border-radius: 0.3125rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.form-group input::placeholder {
+    color: #999;
 }
 
-.login-button:hover {
-  background-color: #0056b3;
+.login-box form .login-button {
+    color: rgb(236, 235, 235);
+    background-color: #2b2c2d;
+    padding: 1rem 3rem;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.login-box form .login-button:hover {
+    transform: translateY(-0.25rem);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    background-color: rgb(236, 235, 235);
+    color: #2b2c2d;
+    border: none;
+    outline: none;
+}
+
+.login-box form .login-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-box form .login-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .error-message {
-  color: #dc3545;
-  text-align: center;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: #f8d7da;
-  border-radius: 0.3125rem;
+    color: #dc3545;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f8d7da;
+    border-radius: 0.5rem;
+    border: 1px solid #f5c6cb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .success-message {
-  color: #28a745;
-  text-align: center;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: #d4edda;
-  border-radius: 0.3125rem;
+    color: #28a745;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #d4edda;
+    border-radius: 0.5rem;
+    border: 1px solid #c3e6cb;
 }
 
 .toggle-form {
@@ -90,51 +136,52 @@
   text-align: center;
 }
 
-.toggle-button {
-  background: none;
-  border: none;
-  color: #6fb5c0;
-  cursor: pointer;
-  font-size: 0.9rem;
-  padding: 0.5rem;
-  transition: color 0.3s ease;
-}
-
-.toggle-button:hover:not(:disabled) {
-  color: #0056b3;
-  text-decoration: underline;
-}
-
-.toggle-button:disabled {
-  color: #ccc;
-  cursor: not-allowed;
-}
-
 .form-group input:disabled {
   background-color: #f5f5f5;
   cursor: not-allowed;
 }
 
-.login-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
 .google-button {
-  background-color: #db4437;
-  color: white;
-  padding: 0.75rem;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-top: 10px;
-  width: 100%;
-  border-radius: 5px;
-  transition: background 0.3s;
+    color: rgb(236, 235, 235);
+    background-color: #db4437;
+    padding: 1rem 3rem;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 1rem;
 }
 
 .google-button:hover {
-  background-color: #b23628;
+    transform: translateY(-0.25rem);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    background-color: #c23325;
+    color: rgb(236, 235, 235);
+    border: none;
+    outline: none;
+}
+
+.google-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.google-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .password-input-container {
@@ -144,36 +191,45 @@
 }
 
 .toggle-password-button {
-  position: absolute;
-  right: 0.75rem;
-  background: none;
-  border: none;
-  color: #6fb5c0;
-  cursor: pointer;
-  padding: 0.25rem;
-  font-size: 0.9rem;
+    position: absolute;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #2b2c2d;
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 1rem;
+    transition: color 0.3s ease;
 }
 
 .toggle-password-button:hover {
-  color: #0056b3;
+    color: #1a1b1c;
+}
+
+.toggle-password-button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
 }
 
 .password-strength-container {
-  margin-top: 0.5rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
 }
 
 .password-strength-bar {
-  display: flex;
-  gap: 0.25rem;
-  margin-bottom: 0.25rem;
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .strength-segment {
-  height: 0.25rem;
-  flex: 1;
-  background-color: #e0e0e0;
-  border-radius: 0.125rem;
-  transition: background-color 0.3s ease;
+    height: 0.5rem;
+    flex: 1;
+    background-color: #e0e0e0;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
 }
 
 /* Strength colors */
@@ -194,8 +250,9 @@
 }
 
 .password-strength-text {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: #666;
+  text-align: center;
 }
 
 /* Info button for password requirements */
@@ -251,8 +308,8 @@
 /* Loading spinner */
 .loading-spinner {
   display: inline-block;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: white;
@@ -278,5 +335,50 @@
 
 /* Make password input padding account for the button */
 .password-input-container input {
-  padding-right: 4rem;
+    padding-right: 4rem;
+}
+
+.change-button {
+    color: #2b2c2d;
+    background-color: white;
+    border: none;
+    font-size: 0.75rem;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .login-container {
+        padding: 1rem;
+    }
+
+    .login-box {
+        padding: 2rem;
+    }
+
+    .login-box h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group input {
+        padding: 0.875rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .login-box {
+        padding: 1.5rem;
+    }
+
+    .login-box h1 {
+        font-size: 1.8rem;
+    }
+
+    .form-group label {
+        font-size: 1rem;
+    }
 }

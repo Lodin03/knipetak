@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { TreatmentType } from "../../interfaces/treatment.interface";
 import { treatmentData } from "../../data/treatmentData";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import "./TreatmentsPage.css";
 
 function TreatmentsPage() {
@@ -24,10 +26,16 @@ function TreatmentsPage() {
   const currentContent = activeSection ? treatmentData[activeSection] : null;
 
   useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollIntoView({ behavior: "smooth" });
+    if (isActive && contentRef.current) {
+      // Add a small delay to ensure the content is rendered before scrolling
+      setTimeout(() => {
+        contentRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
     }
-  }, [currentContent]);
+  }, [activeSection, isActive]);
 
   return (
     <div className="treatments-page">
@@ -57,31 +65,6 @@ function TreatmentsPage() {
       </div>
 
       <section className="treatments__overview">
-        <div className="treatments__gallery">
-          <div className="treatments__gallery-item">
-            <img
-              src="/src/assets/images/MassasjeBat.png"
-              alt="Massasje behandling"
-              draggable="false"
-            />
-            <div className="treatments__gallery-overlay">
-              <h3>Profesjonell Massasje</h3>
-              <p>Skreddersydd for dine behov</p>
-            </div>
-          </div>
-          <div className="treatments__gallery-item">
-            <img
-              src="/src/assets/images/knipetak_behandling.jpg"
-              alt="Massasje behandling"
-              draggable="false"
-            />
-            <div className="treatments__gallery-overlay">
-              <h3>Muskelterapi</h3>
-              <p>Lindring og gjenoppbygging</p>
-            </div>
-          </div>
-        </div>
-
         <div className="treatments__content">
           <h3 className="treatments__section-title">
             Massasje kan benyttes ved følgende tilstander:
@@ -91,13 +74,20 @@ function TreatmentsPage() {
             {Object.entries(treatmentData).map(([key, section]) => (
               <div
                 key={key}
-                className={`treatments__category ${activeSection === key ? "treatments__category--active" : ""}`}
+                className={`treatments__category ${
+                  activeSection === key ? "treatments__category--active" : ""
+                }`}
                 onMouseEnter={() => setIsHovered(key)}
                 onMouseLeave={() => setIsHovered(null)}
               >
                 <button
-                  className={`treatments__toggle-button ${activeSection === key ? "treatments__toggle-button--active" : ""}`}
+                  className={`treatments__toggle-button ${
+                    activeSection === key
+                      ? "treatments__toggle-button--active"
+                      : ""
+                  }`}
                   onClick={() => toggleSection(key as TreatmentType)}
+                  aria-expanded={activeSection === key}
                 >
                   <span className="treatments__button-icon">
                     {activeSection === key ? "▼" : "▶"}
@@ -123,10 +113,10 @@ function TreatmentsPage() {
             }}
           >
             <div ref={contentRef}>
-              {isActive && (
+              {currentContent && (
                 <div className="treatments__grid">
-                  {currentContent?.content.map((item) => (
-                    <article key={item.heading} className="treatments__card">
+                  {currentContent.content.map((item, index) => (
+                    <article key={index} className="treatments__card">
                       <div className="treatments__card-content">
                         <h3 className="treatments__card-title">
                           {item.heading}
@@ -143,14 +133,41 @@ function TreatmentsPage() {
             </div>
           </div>
         </div>
+        <div className="treatments__gallery">
+          <div className="treatments__gallery-item">
+            <img
+              src="/src/assets/images/MassasjeBat.png"
+              alt="Massasje behandling"
+            />
+            <div className="treatments__gallery-overlay">
+              <h3>Profesjonell Massasje</h3>
+              <p>Skreddersydd for dine behov</p>
+            </div>
+          </div>
+          <div className="treatments__gallery-item">
+            <img
+              src="/src/assets/images/knipetak_behandling.jpg"
+              alt="Massasje behandling"
+            />
+            <div className="treatments__gallery-overlay">
+              <h3>Muskelterapi</h3>
+              <p>Lindring og gjenoppbygging</p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="treatments__cta">
         <div className="treatments__cta-content">
           <h2>Klar for en avslappende behandling?</h2>
           <p>Book en time i dag og opplev forskjellen</p>
-          <button className="treatments__cta-button" onClick={handleBookClick}>
-            Book Time
+          <button
+            className="treatments__cta-button"
+            onClick={handleBookClick}
+            aria-label="Book Time"
+          >
+            <FontAwesomeIcon icon={faCalendarCheck} className="cta-icon" />
+            <span>Book Time</span>
           </button>
         </div>
       </section>

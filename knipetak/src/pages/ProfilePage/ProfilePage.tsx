@@ -11,13 +11,12 @@ import { getTreatments } from "../../backend/firebase/services/firebase.treatmen
 import { Treatment } from "../../backend/interfaces/Treatment";
 import { Gender, UserData } from "../../backend/interfaces/UserData";
 import { useAuth } from "@/context/AuthContext";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const Profile: React.FC = () => {
   // Use AuthContext instead of managing our own user state
   const { user, signOut: authSignOut, isLoading: authLoading } = useAuth();
-  const [profileImage, setProfileImage] = useState(
-    "src/assets/images/defaultProfileIcon.png",
-  );
+  const [profileImage, setProfileImage] = useState<string>("");
   const [, setUserData] = useState<Partial<UserData> | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [bookings, setBookings] = useState<BookingData[]>([]);
@@ -25,15 +24,17 @@ const Profile: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [gender, setGender] = useState<Gender | "">("");
-  const [age, setAge] = useState<number | "">("");
+  const [birthYear, setBirthYear] = useState<number | "">("");
   const [address, setAddress] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [postalCode, setPostalCode] = useState<number | null>(null);
   const [healthIssues, setHealthIssues] = useState<string>("");
   const [addressError, setAddressError] = useState<string>("");
-  const [ageError, setAgeError] = useState<string>("");
+  const [birthYearError, setBirthYearError] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [phoneError, setPhoneError] = useState<string>("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string>("");
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -49,9 +50,10 @@ const Profile: React.FC = () => {
           if (userDataResult) {
             setUserData(userDataResult);
             setGender(userDataResult.gender || "");
-            setAge(userDataResult.age || "");
+            setBirthYear(userDataResult.birthYear || "");
             setHealthIssues(userDataResult.healthIssues || "");
             setPhoneNumber(userDataResult.phoneNumber || "");
+            setProfileImage(userDataResult.profileImage || "");
             if (userDataResult.location) {
               setAddress(userDataResult.location.address || "");
               setCity(userDataResult.location.city || "");
@@ -74,14 +76,45 @@ const Profile: React.FC = () => {
     loadUserData();
   }, [user]); // Only depend on user from AuthContext
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file || !user) return;
+
+    // Valider filtype
+    if (!file.type.match(/image\/(jpeg|png)/)) {
+      setUploadError("Kun JPG og PNG bilder er tillatt");
+      return;
+    }
+
+    // Valider filstørrelse (maks 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Bildet er for stort. Maksimal størrelse er 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError("");
+
+    try {
+      const storage = getStorage();
+      const storageRef = ref(storage, `profile_images/${user.uid}/${file.name}`);
+      
+      // Last opp bildet
+      await uploadBytes(storageRef, file);
+      
+      // Hent nedlastingslenke
+      const downloadURL = await getDownloadURL(storageRef);
+      
+      // Oppdater brukerens profilbilde i Firestore
+      await updateUserProfile(user.uid, { profileImage: downloadURL });
+      
+      // Oppdater lokal state
+      setProfileImage(downloadURL);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      setUploadError("Det oppsto en feil ved opplasting av bildet");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -118,21 +151,23 @@ const Profile: React.FC = () => {
   };
 
   // Valideringsfunksjoner
-  const validateAge = (value: string) => {
+  const validateBirthYear = (value: string) => {
     const numValue = parseInt(value);
+    const currentYear = new Date().getFullYear();
+    
     if (isNaN(numValue)) {
-      setAgeError("Alder må være et tall");
+      setBirthYearError("Fødselsår må være et tall");
       return false;
     }
-    if (numValue < 0 || numValue > 120) {
-      setAgeError("Alder må være mellom 0 og 120 år");
+    if (numValue < 1900 || numValue > currentYear) {
+      setBirthYearError(`Fødselsår må være mellom 1900 og ${currentYear}`);
       return false;
     }
     if (!Number.isInteger(numValue)) {
-      setAgeError("Alder må være et helt tall");
+      setBirthYearError("Fødselsår må være et helt tall");
       return false;
     }
-    setAgeError("");
+    setBirthYearError("");
     return true;
   };
 
@@ -163,40 +198,55 @@ const Profile: React.FC = () => {
   const handleSave = async () => {
     if (!user) return;
 
-    const isAgeValid = age === "" || validateAge(age.toString());
-    const isAddressValid = address === "" || validateAddress(address);
-    const isPhoneValid = phoneNumber === "" || validatePhoneNumber(phoneNumber);
+    // Validerer kun de feltene som faktisk er endret
+    const updatedData: Partial<UserData> = {};
 
-    if (!isAgeValid || !isAddressValid || !isPhoneValid) {
+    if (birthYear !== "") {
+      const isBirthYearValid = validateBirthYear(birthYear.toString());
+      if (!isBirthYearValid) return;
+      updatedData.birthYear = Number(birthYear);
+    }
+
+    if (address !== "") {
+      const isAddressValid = validateAddress(address);
+      if (!isAddressValid) return;
+      updatedData.location = {
+        id: "default-id",
+        name: "default-name",
+        address,
+        city,
+        postalCode: postalCode || 0,
+      };
+    }
+
+    if (phoneNumber !== "") {
+      const isPhoneValid = validatePhoneNumber(phoneNumber);
+      if (!isPhoneValid) return;
+      updatedData.phoneNumber = phoneNumber;
+    }
+
+    if (gender !== "") {
+      updatedData.gender = gender as Gender;
+    }
+
+    if (healthIssues !== "") {
+      updatedData.healthIssues = healthIssues;
+    }
+
+    // Hvis ingen felt er endret, avbryt
+    if (Object.keys(updatedData).length === 0) {
+      setIsEditing(false);
       return;
     }
 
     setIsSaving(true);
     try {
-      const updatedData: Partial<UserData> = {
-        gender: gender || undefined,
-        age: age === "" ? undefined : Number(age),
-        healthIssues: healthIssues || undefined,
-        phoneNumber: phoneNumber || undefined,
-        location: address
-          ? {
-              id: "default-id", // Replace with a proper id if available
-              name: "default-name", // Replace with a proper name if available
-              address,
-              city,
-              postalCode: postalCode || 0,
-            }
-          : undefined,
-      };
-
       await updateUserProfile(user.uid, updatedData);
       setUserData((prev) => ({ ...prev, ...updatedData }));
       setIsEditing(false);
     } catch (error) {
       console.error("Feil ved lagring av profil:", error);
-      alert(
-        "Det oppsto en feil ved lagring av profilen. Vennligst prøv igjen.",
-      );
+      alert("Det oppsto en feil ved lagring av profilen. Vennligst prøv igjen.");
     } finally {
       setIsSaving(false);
     }
@@ -214,7 +264,7 @@ const Profile: React.FC = () => {
             <div className="profile-header">
               <div className="profile-image-container">
                 <img
-                  src={profileImage}
+                  src={profileImage || "src/assets/images/defaultProfileIcon.png"}
                   alt="Profile"
                   className="profile-image"
                   draggable="false"
@@ -223,11 +273,17 @@ const Profile: React.FC = () => {
                   <input
                     type="file"
                     onChange={handleImageUpload}
-                    accept="image/*"
+                    accept="image/jpeg,image/png"
                     className="image-upload-input"
+                    disabled={isUploading}
                   />
-                  <span className="image-upload-icon">📷</span>
+                  <span className="image-upload-icon">
+                    {isUploading ? "📤" : "📷"}
+                  </span>
                 </label>
+                {uploadError && (
+                  <span className="error-message">{uploadError}</span>
+                )}
               </div>
               <h2 className="profile-name">{user?.displayName || "Bruker"}</h2>
               <p className="profile-email">
@@ -278,28 +334,28 @@ const Profile: React.FC = () => {
                     </p>
                   </div>
                   <div className="info-item">
-                    <label>Alder</label>
+                    <label>Fødselsår</label>
                     <p>
                       {isEditing ? (
                         <div className="input-with-error">
                           <input
                             type="number"
-                            value={age}
+                            value={birthYear}
                             onChange={(e) => {
                               const value = e.target.value;
-                              setAge(value === "" ? "" : parseInt(value));
-                              validateAge(value);
+                              setBirthYear(value === "" ? "" : parseInt(value));
+                              validateBirthYear(value);
                             }}
-                            min="0"
-                            max="120"
+                            min="1900"
+                            max={new Date().getFullYear()}
                             step="1"
                           />
-                          {ageError && (
-                            <span className="error-message">{ageError}</span>
+                          {birthYearError && (
+                            <span className="error-message">{birthYearError}</span>
                           )}
                         </div>
                       ) : (
-                        age || "Ikke spesifisert"
+                        birthYear || "Ikke spesifisert"
                       )}
                     </p>
                   </div>
@@ -397,7 +453,7 @@ const Profile: React.FC = () => {
                     className="action-button save"
                     onClick={handleSave}
                     disabled={
-                      !!ageError || !!addressError || !!phoneError || isSaving
+                      !!birthYearError || !!addressError || !!phoneError || isSaving
                     }
                   >
                     {isSaving ? "Lagrer..." : "Lagre endringer"}

@@ -1,8 +1,10 @@
-import { FC } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import "./HeroHomePage.css";
 
-const HeroHomePage: FC = () => {
+const HeroHomePage: React.FC = () => {
   return (
     <div className="hero-container">
       <div className="hero-background" />
@@ -15,7 +17,8 @@ const HeroHomePage: FC = () => {
             Profesjonell muskelterapi der du er - hjemme eller på jobb
           </p>
           <Link to="/book" className="hero-button">
-            Book nå
+            <FontAwesomeIcon icon={faCalendarCheck} className="hero-icon" />
+            Book Time
           </Link>
         </div>
       </div>

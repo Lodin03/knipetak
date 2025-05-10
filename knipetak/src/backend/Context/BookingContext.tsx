@@ -73,6 +73,7 @@ interface BookingContextType {
   guestEmail: string;
   guestName: string;
   guestPhone: string;
+  customerMessage: string;
 
   // Booking confirmation
   showCompletedBooking: boolean;
@@ -97,6 +98,7 @@ interface BookingContextType {
   setGuestEmail: (email: string) => void;
   setGuestName: (name: string) => void;
   setGuestPhone: (phone: string) => void;
+  setCustomerMessage: (message: string) => void;
 }
 
 // Create the context
@@ -152,7 +154,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
   const [guestEmail, setGuestEmail] = useState("");
   const [guestName, setGuestName] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
-
+  const [customerMessage, setCustomerMessage] = useState("");
   // Fetch treatments and locations when the component mounts
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -706,7 +708,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
       paymentStatus: false,
       price,
       status: "pending",
-      customerMessage: "",
+      customerMessage: customerMessage,
       timeslot: {
         start: startDateTime,
         end: endDateTime,
@@ -775,6 +777,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     setIsGroupBooking(false);
     setGroupSize(1);
     setDateManuallySelected(false);
+    setCustomerMessage("");
 
     // Refresh availability data for all dates in the current month
     // to ensure we have the latest data when user returns to calendar
@@ -871,6 +874,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     guestEmail,
     guestName,
     guestPhone,
+    customerMessage,
 
     // Booking confirmation
     showCompletedBooking,
@@ -895,6 +899,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     setGuestEmail,
     setGuestName,
     setGuestPhone,
+    setCustomerMessage,
   };
 
   return (

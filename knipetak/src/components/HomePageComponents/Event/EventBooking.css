@@ -1,6 +1,6 @@
 .home-event-section {
-  background-color: #6fb5c0;
-  width: 100%;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  width: 100vw;
   position: relative;
   overflow: hidden;
   margin: 0;
@@ -18,7 +18,7 @@
 
 .event-info {
   flex: 1;
-  color: white;
+  color: #2c3e50;
 }
 
 .event-info h2 {
@@ -41,32 +41,31 @@
 .booking-icon {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
-  color: white;
+  color: #2c3e50;
 }
 
 .booking-type p {
   font-size: 1.2rem;
   line-height: 1.6;
   margin-bottom: 2rem;
-  color: rgba(255, 255, 255, 0.95);
+  color: #2c3e50;
 }
 
-.action-button {
+.home-event-section .action-button.contact-button {
   padding: 1rem 2rem;
   border-radius: 25px;
   font-size: 1.1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 2px solid white;
-  background-color: transparent;
+  background-color: #2b2c2d;
   color: white;
 }
 
-.action-button:hover {
-  background-color: white;
-  color: #6fb5c0;
-  transform: translateY(-2px);
+.home-event-section .action-button.contact-button:hover {
+  background-color: rgb(236, 235, 235);
+  border: 2px solid #2b2c2d;
+  color: #2b2c2d;
 }
 
 .event-slider {
