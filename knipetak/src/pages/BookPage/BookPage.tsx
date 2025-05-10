@@ -5,10 +5,10 @@ import "./BookPage.css";
 const BookPage: React.FC = () => {
   return (
     <>
-    <div className="book-page">
-      <h1>Book en time</h1>
+      <div className="book-page">
+        <h1>Book en time</h1>
         <BookingCalendar />
-    </div>
+      </div>
     </>
   );
 };

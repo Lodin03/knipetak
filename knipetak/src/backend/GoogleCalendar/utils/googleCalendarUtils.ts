@@ -24,7 +24,7 @@ export interface CalendarEvent {
  * @returns Promise with the list of events
  */
 export const fetchUpcomingEvents = async (
-  maxResults: number = 10
+  maxResults: number = 10,
 ): Promise<CalendarEvent[]> => {
   if (!window.gapi || !window.gapi.client || !window.gapi.client.calendar) {
     throw new Error("Google API client not initialized");
@@ -118,15 +118,15 @@ export const createCalendarEvent = async (event: {
  */
 export const formatCalendarDateTime = (
   dateTime?: string,
-  date?: string
+  date?: string,
 ): string => {
   if (!dateTime && !date) return "N/A";
 
   const eventDate = dateTime
     ? new Date(dateTime)
     : date
-    ? new Date(date)
-    : new Date();
+      ? new Date(date)
+      : new Date();
   return eventDate.toLocaleString("nb-NO", {
     weekday: "long",
     year: "numeric",

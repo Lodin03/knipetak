@@ -43,7 +43,7 @@ function ContactPage() {
         "service_b9we3th",
         "template_lvwabq4",
         templateParams,
-        "m7Ls2T8S_jvw9YWD6"
+        "m7Ls2T8S_jvw9YWD6",
       );
 
       setSuccess("Meldingen din har blitt sendt!");

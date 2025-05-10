@@ -160,7 +160,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
           <div className="form-group">
             <label>Velg behandling:</label>
             <select
-              value={selectedTreatment?.id || ""}
+              value={selectedTreatment ? String(selectedTreatment.id) : ""}
               onChange={(e) => {
                 const treatment = treatments.find(
                   (t) => t.id === e.target.value

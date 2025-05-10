@@ -2,7 +2,7 @@ export class GoogleCalendarError extends Error {
   constructor(
     message: string,
     public readonly code?: string,
-    public readonly context?: string
+    public readonly context?: string,
   ) {
     super(message);
     this.name = "GoogleCalendarError";
@@ -17,7 +17,7 @@ export class GoogleCalendarError extends Error {
  */
 export function handleGoogleCalendarError(
   error: unknown,
-  operation: string
+  operation: string,
 ): void {
   console.error(`Google Calendar error during ${operation}:`, error);
 
@@ -36,6 +36,6 @@ export function handleGoogleCalendarError(
 
   // Generic error message for unknown errors
   throw new Error(
-    `Failed to ${operation.toLowerCase()}. Please try again later.`
+    `Failed to ${operation.toLowerCase()}. Please try again later.`,
   );
 }

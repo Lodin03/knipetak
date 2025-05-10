@@ -103,7 +103,7 @@ interface BookingContextType {
 
 // Create the context
 export const BookingContext = createContext<BookingContextType | undefined>(
-  undefined
+  undefined,
 );
 
 // Create a provider component
@@ -141,7 +141,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(
-    null
+    null,
   );
 
   // Form and modal state
@@ -155,7 +155,6 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
   const [guestName, setGuestName] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
   const [customerMessage, setCustomerMessage] = useState("");
-
   // Fetch treatments and locations when the component mounts
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -225,7 +224,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
         `Got availability for ${dateStr}:`,
         result.availabilityByLocation.length > 0
           ? `${result.availabilityByLocation.length} locations`
-          : "No locations"
+          : "No locations",
       );
 
       if (result.eventDetails) {
@@ -376,7 +375,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     const safetyTimer = setTimeout(() => {
       if (isMounted && !initialDataLoaded) {
         console.log(
-          "DEBUG: Safety timeout triggered - forcing initialDataLoaded to true"
+          "DEBUG: Safety timeout triggered - forcing initialDataLoaded to true",
         );
         setIsPreloadingMonth(false);
         setInitialDataLoaded(true);
@@ -388,7 +387,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
       console.log(
         "DEBUG: Starting loadDataInBatches with",
         pendingDates.length,
-        "dates to load"
+        "dates to load",
       );
       // Increased max concurrent requests for faster loading
       const MAX_CONCURRENT_REQUESTS = 5; // Increased from 3 to 5
@@ -423,13 +422,13 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
           "DEBUG: Processing batch of",
           batchDates.length,
           "dates. Remaining dates:",
-          pendingDates.length - batchDates.length
+          pendingDates.length - batchDates.length,
         );
 
         try {
           // Run API calls for all dates in the batch in parallel
           const results = await Promise.allSettled(
-            batchDates.map((date) => fetchAvailabilityForDate(date))
+            batchDates.map((date) => fetchAvailabilityForDate(date)),
           );
 
           // Set initialDataLoaded to true after processing the first batch
@@ -464,7 +463,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
       // Done loading all dates
       if (isMounted) {
         console.log(
-          `Month data loading complete. Successful: ${successfullyLoaded}, Failed: ${failedToLoad}`
+          `Month data loading complete. Successful: ${successfullyLoaded}, Failed: ${failedToLoad}`,
         );
         setIsPreloadingMonth(false);
         // Add a small delay to ensure state is updated after isPreloadingMonth
@@ -495,7 +494,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     setInitialDataLoaded(false);
 
     console.log(
-      `Changing month to ${month.toLocaleDateString()}, starting data loading...`
+      `Changing month to ${month.toLocaleDateString()}, starting data loading...`,
     );
 
     // Create array of dates for current month
@@ -528,12 +527,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
 
     // All dates need to be loaded since we cleared the cache
     console.log(
-      `Generated ${
-        datesInMonth.length
-      } dates to preload for ${month.toLocaleDateString("nb-NO", {
-        month: "long",
-        year: "numeric",
-      })}`
+      `Generated ${datesInMonth.length} dates to preload for ${month.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}`,
     );
 
     if (datesInMonth.length === 0) {
@@ -597,7 +591,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
   const handleBookingConfirm = async () => {
     if (!auth.currentUser && !isGuestBooking) {
       const confirmGuest = window.confirm(
-        "Du er ikke logget inn. Vil du fortsette som gjest?"
+        "Du er ikke logget inn. Vil du fortsette som gjest?",
       );
       if (confirmGuest) {
         setIsGuestBooking(true);
@@ -645,7 +639,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
       }
       duration = selectedDuration;
       const durationOption = selectedTreatment.durations.find(
-        (d) => d.duration === duration
+        (d) => d.duration === duration,
       );
       if (!durationOption) {
         alert("Valgt varighet er ikke tilgjengelig for denne behandlingen.");
@@ -662,11 +656,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
       // Calculate effective duration per person
       const effectiveDuration = duration / groupSize;
       const durationOption = selectedTreatment.durations.find(
-        (d) => d.duration === effectiveDuration
+        (d) => d.duration === effectiveDuration,
       );
       if (!durationOption) {
         alert(
-          `Effektiv varighet per person (${effectiveDuration} minutter) er ikke gyldig for valgt behandling.`
+          `Effektiv varighet per person (${effectiveDuration} minutter) er ikke gyldig for valgt behandling.`,
         );
         return;
       }
@@ -688,7 +682,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
 
     console.log(`🕒 Creating booking for ${dateStr} at ${selectedTime}`);
     console.log(
-      `📅 Booking will be from ${startDateTime.toTimeString()} to ${endDateTime.toTimeString()}`
+      `📅 Booking will be from ${startDateTime.toTimeString()} to ${endDateTime.toTimeString()}`,
     );
     console.log(`⏱️ Total duration: ${duration} minutes`);
 
@@ -745,7 +739,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
 
         // Then fetch fresh data
         console.log(
-          `Refreshing availability data after booking for ${dateStr}...`
+          `Refreshing availability data after booking for ${dateStr}...`,
         );
         const updatedData = await fetchAvailabilityForDate(selectedDate);
 
@@ -754,8 +748,8 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
           console.log(
             `Updated timeslots received for ${dateStr}:`,
             updatedData.locationSlots.map(
-              (l) => `Location: ${l.availableSlots.length} slots`
-            )
+              (l) => `Location: ${l.availableSlots.length} slots`,
+            ),
           );
           setLocationSlots(updatedData.locationSlots);
         } else {
@@ -765,7 +759,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     } catch (error) {
       console.error("Error creating booking:", error);
       alert(
-        "Det oppsto en feil ved oppretting av booking, vennligst prøv igjen."
+        "Det oppsto en feil ved oppretting av booking, vennligst prøv igjen.",
       );
     }
   };
@@ -819,7 +813,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
 
       // Add a delay before refreshing to ensure database consistency
       console.log(
-        "Preparing to refresh availability data after cancellation..."
+        "Preparing to refresh availability data after cancellation...",
       );
 
       // Clear the cache for this date first
@@ -835,7 +829,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
         fetchAvailabilityForDate(selectedDate).then((updatedData) => {
           if (updatedData) {
             console.log(
-              `Updated data received after cancellation for ${dateStr}`
+              `Updated data received after cancellation for ${dateStr}`,
             );
             setLocationSlots(updatedData.locationSlots);
           }

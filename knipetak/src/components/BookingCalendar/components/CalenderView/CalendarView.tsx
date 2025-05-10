@@ -133,6 +133,7 @@ const CalendarDay: React.FC<CalendarDayProps> = ({
         ) : hasLocationInfo ? (
           <div className="location-info">
             <span className="location-name">{getLocationDisplay()}</span>
+
             <span className="work-hours">
               {dayInfo?.locationSlots.length > 1
                 ? "Flere tidspunkter"

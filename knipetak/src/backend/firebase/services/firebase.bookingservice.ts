@@ -42,7 +42,7 @@ export interface Booking {
  * The `createdAt` field will be automatically set to Firestore's server timestamp.
  */
 export const createBooking = async (
-  bookingData: BookingData
+  bookingData: BookingData,
 ): Promise<string> => {
   try {
     console.log("📝 Creating new booking with details:", {
@@ -68,11 +68,11 @@ export const createBooking = async (
 
     const docRef = await addDoc(
       collection(db, "bookings"),
-      bookingWithTimestamp
+      bookingWithTimestamp,
     );
     console.log("✅ Booking created successfully with ID:", docRef.id);
     console.log(
-      `📅 Booking timeslot: ${bookingData.timeslot.start.toTimeString()} - ${bookingData.timeslot.end.toTimeString()}`
+      `📅 Booking timeslot: ${bookingData.timeslot.start.toTimeString()} - ${bookingData.timeslot.end.toTimeString()}`,
     );
     console.log(`⏱️ Duration: ${bookingData.duration} minutes`);
     return docRef.id;
@@ -86,7 +86,7 @@ export const createBooking = async (
  * Fetches all bookings for a specific user from Firestore
  */
 export const getUserBookings = async (
-  userId: string
+  userId: string,
 ): Promise<BookingData[]> => {
   try {
     console.log("Fetching bookings for user:", userId);
@@ -192,7 +192,7 @@ export const getAllBookings = async (): Promise<BookingData[]> => {
  */
 export const updateBooking = async (
   bookingId: string,
-  updateData: Partial<BookingData>
+  updateData: Partial<BookingData>,
 ): Promise<void> => {
   try {
     const bookingRef = doc(db, "bookings", bookingId);

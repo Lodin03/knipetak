@@ -8,7 +8,7 @@ import "./TreatmentsPage.css";
 
 function TreatmentsPage() {
   const [activeSection, setActiveSection] = useState<TreatmentType | null>(
-    null
+    null,
   );
   const [isHovered, setIsHovered] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -59,6 +59,7 @@ function TreatmentsPage() {
           <img
             src="/src/assets/images/massasje_stol.jpg"
             alt="Massasje behandling"
+            draggable="false"
           />
         </div>
       </div>
@@ -107,9 +108,8 @@ function TreatmentsPage() {
           <div
             className="treatments__grid-container"
             style={{
-              maxHeight: isActive ? "1500px" : "0",
+              height: isActive ? "auto" : "0",
               opacity: isActive ? 1 : 0,
-              margin: isActive ? "2rem 0" : "0",
             }}
           >
             <div ref={contentRef}>

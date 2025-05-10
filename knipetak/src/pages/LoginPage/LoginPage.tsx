@@ -90,7 +90,7 @@ function LoginPage() {
           break;
         case "auth/popup-blocked":
           setError(
-            "Popup ble blokkert. Vennligst tillat popups for denne nettsiden."
+            "Popup ble blokkert. Vennligst tillat popups for denne nettsiden.",
           );
           break;
         default:
@@ -192,7 +192,7 @@ function LoginPage() {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 

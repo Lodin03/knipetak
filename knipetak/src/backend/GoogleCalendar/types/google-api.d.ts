@@ -64,14 +64,14 @@ interface Window {
       calendar: {
         events: {
           list: (
-            params: GapiCalendarParams
+            params: GapiCalendarParams,
           ) => Promise<GapiResponse<{ items: Array<Record<string, unknown>> }>>;
           insert: (
-            params: GapiCalendarParams
+            params: GapiCalendarParams,
           ) => Promise<GapiResponse<Record<string, unknown>>>;
           delete: (params: GapiCalendarParams) => Promise<GapiResponse<void>>;
           update: (
-            params: GapiCalendarParams
+            params: GapiCalendarParams,
           ) => Promise<GapiResponse<Record<string, unknown>>>;
         };
       };

@@ -75,7 +75,9 @@
   color: #333;
   background-color: white;
   cursor: pointer;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 .date-picker-input:hover {
@@ -118,7 +120,9 @@
 .react-datepicker__day {
   color: #333;
   border-radius: 4px;
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .react-datepicker__day:hover {
@@ -159,7 +163,9 @@
   border: 1px solid #007bff;
   background-color: white;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
   border-radius: 4px;
 }
 

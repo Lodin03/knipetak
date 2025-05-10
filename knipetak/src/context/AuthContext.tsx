@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isPending,
       signOut: handleSignOut,
     }),
-    [user, userType, isLoading, isPending]
+    [user, userType, isLoading, isPending],
   );
 
   return (

@@ -1,10 +1,16 @@
 import { useState, useCallback } from "react";
 import type { Location } from "@/backend/interfaces/Location";
 import type OverrideData from "@/backend/interfaces/availabilityInterfaces/OverrideData";
-import { setOverrideWorkHours, getOverrideWorkHours } from "@/backend/firebase/services/firebase.availabilityservice";
+import {
+  setOverrideWorkHours,
+  getOverrideWorkHours,
+} from "@/backend/firebase/services/firebase.availabilityservice";
 import { format, isValid, parseISO } from "date-fns";
 import { nb } from "date-fns/locale";
-import { useTimeSlotsArray, useDefaultLocation } from "@/hooks/useTimeSlotManager";
+import {
+  useTimeSlotsArray,
+  useDefaultLocation,
+} from "@/hooks/useTimeSlotManager";
 import "./OverrideManager.css";
 
 interface OverrideManagerProps {
@@ -18,24 +24,23 @@ interface ValidationError {
 
 export function OverrideManager({ locations }: OverrideManagerProps) {
   const [selectedDate, setSelectedDate] = useState<string>(
-    format(new Date(), "yyyy-MM-dd")
+    format(new Date(), "yyyy-MM-dd"),
   );
-  
+
   // Get the default location
   const defaultLocation = useDefaultLocation(locations);
-  
+
   // Validation errors state
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
-  
-  // Use our custom hook for time slots management
-  const { 
-    timeSlots, 
-    operations: timeSlotOps 
-  } = useTimeSlotsArray(
-    [{ start: "09:00", end: "17:00", location: defaultLocation }],
-    { onUpdate: () => setValidationErrors([]) }
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
+    [],
   );
-  
+
+  // Use our custom hook for time slots management
+  const { timeSlots, operations: timeSlotOps } = useTimeSlotsArray(
+    [{ start: "09:00", end: "17:00", location: defaultLocation }],
+    { onUpdate: () => setValidationErrors([]) },
+  );
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -45,15 +50,15 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
 
   const validateTimeSlots = useCallback((): ValidationError[] => {
     const errors: ValidationError[] = [];
-    
+
     timeSlots.forEach((slot, index) => {
       const start = parseISO(`2000-01-01T${slot.start}`);
       const end = parseISO(`2000-01-01T${slot.end}`);
-      
+
       if (!isValid(start) || !isValid(end)) {
         errors.push({
           index,
-          message: "Ugyldig tidsformat"
+          message: "Ugyldig tidsformat",
         });
         return;
       }
@@ -61,14 +66,14 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
       if (end <= start) {
         errors.push({
           index,
-          message: "Sluttid må være etter starttid"
+          message: "Sluttid må være etter starttid",
         });
       }
 
       if (!slot.location) {
         errors.push({
           index,
-          message: "Velg en lokasjon"
+          message: "Velg en lokasjon",
         });
       }
     });
@@ -90,7 +95,7 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
   const handleTimeChange = (
     index: number,
     field: "start" | "end",
-    value: string
+    value: string,
   ) => {
     timeSlotOps.update(index, field, value);
   };
@@ -106,18 +111,21 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
       setError(null);
       setValidationErrors([]);
       const override = await getOverrideWorkHours(date);
-      
+
       if (override) {
         // Convert the backend time slots to UI format
-        const uiTimeSlots = override.workhours.timeSlots.map(slot => ({
+        const uiTimeSlots = override.workhours.timeSlots.map((slot) => ({
           start: slot.start,
           end: slot.end,
-          location: typeof slot.location === 'string' ? slot.location : slot.location.id
+          location:
+            typeof slot.location === "string"
+              ? slot.location
+              : slot.location.id,
         }));
-        
+
         // Use the replace operation from our hook
         timeSlotOps.replace(uiTimeSlots);
-        
+
         setIsDayOff(override.workhours.timeSlots.length === 0);
         if (override.eventId) {
           const [title, description] = override.eventId.split("||");
@@ -138,9 +146,9 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
   const resetForm = () => {
     // Use the replace operation from our hook
     timeSlotOps.replace([
-      { start: "09:00", end: "17:00", location: defaultLocation }
+      { start: "09:00", end: "17:00", location: defaultLocation },
     ]);
-    
+
     setIsDayOff(false);
     setEventTitle("");
     setEventDescription("");
@@ -169,11 +177,13 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
 
       // Using the utility function to convert our UI timeSlots to WorkHours format
       const workHoursFormat = {
-        timeSlots: isDayOff ? [] : timeSlots.map(slot => ({
-          start: slot.start,
-          end: slot.end,
-          location: slot.location
-        }))
+        timeSlots: isDayOff
+          ? []
+          : timeSlots.map((slot) => ({
+              start: slot.start,
+              end: slot.end,
+              location: slot.location,
+            })),
       };
 
       const overrideData: OverrideData = {
@@ -200,7 +210,7 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
     : "";
 
   const getSlotError = (index: number) => {
-    return validationErrors.find(error => error.index === index)?.message;
+    return validationErrors.find((error) => error.index === index)?.message;
   };
 
   return (
@@ -208,8 +218,8 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
       <div className="override-header">
         <h2 className="override-title">Overstyring av Arbeidstimer</h2>
         <p className="override-description">
-          Her kan du overstyre arbeidstimer for spesifikke datoer, for eksempel ved
-          ferier, helligdager eller spesielle arrangementer.
+          Her kan du overstyre arbeidstimer for spesifikke datoer, for eksempel
+          ved ferier, helligdager eller spesielle arrangementer.
         </p>
       </div>
 
@@ -287,7 +297,9 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
             {timeSlots.map((slot, index) => (
               <div key={index} className="time-slot">
                 <div className="time-slot-header">
-                  <span className="time-slot-title">Tidsperiode {index + 1}</span>
+                  <span className="time-slot-title">
+                    Tidsperiode {index + 1}
+                  </span>
                   {index > 0 && (
                     <button
                       onClick={() => handleRemoveTimeSlot(index)}
@@ -311,7 +323,7 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
                       onChange={(e) =>
                         handleTimeChange(index, "start", e.target.value)
                       }
-                      className={`form-input ${getSlotError(index) ? 'error' : ''}`}
+                      className={`form-input ${getSlotError(index) ? "error" : ""}`}
                     />
                   </div>
 
@@ -326,7 +338,7 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
                       onChange={(e) =>
                         handleTimeChange(index, "end", e.target.value)
                       }
-                      className={`form-input ${getSlotError(index) ? 'error' : ''}`}
+                      className={`form-input ${getSlotError(index) ? "error" : ""}`}
                     />
                   </div>
 
@@ -340,7 +352,7 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
                       onChange={(e) =>
                         handleLocationChange(index, e.target.value)
                       }
-                      className={`form-input ${getSlotError(index) ? 'error' : ''}`}
+                      className={`form-input ${getSlotError(index) ? "error" : ""}`}
                     >
                       <option value="">Velg lokasjon</option>
                       {locations.map((location) => (
@@ -352,16 +364,14 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
                   </div>
 
                   {getSlotError(index) && (
-                    <div className="error-message">
-                      {getSlotError(index)}
-                    </div>
+                    <div className="error-message">{getSlotError(index)}</div>
                   )}
                 </div>
               </div>
             ))}
 
-            <button 
-              onClick={handleAddTimeSlot} 
+            <button
+              onClick={handleAddTimeSlot}
               className="add-slot-button"
               type="button"
             >
@@ -381,4 +391,4 @@ export function OverrideManager({ locations }: OverrideManagerProps) {
       </div>
     </div>
   );
-} 
+}

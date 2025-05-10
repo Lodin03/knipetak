@@ -256,7 +256,7 @@ body {
     .profile-sidebar {
         margin-bottom: 1.8rem;
     }
-
+  
   .info-grid {
     grid-template-columns: 1fr;
   }
@@ -439,7 +439,3 @@ body {
     margin-top: 0.5rem;
   }
 }
-<<<<<<< HEAD
-=======
-}
->>>>>>> main

@@ -187,7 +187,7 @@ const Profile: React.FC = () => {
     const phoneRegex = /^(\+47|0047)?\s*[2-9]\d{7}$/;
     if (!phoneRegex.test(value.replace(/\s/g, ""))) {
       setPhoneError(
-        "Ugyldig telefonnummer. Må være 8 siffer og kan starte med +47"
+        "Ugyldig telefonnummer. Må være 8 siffer og kan starte med +47",
       );
       return false;
     }
@@ -267,6 +267,7 @@ const Profile: React.FC = () => {
                   src={profileImage || "src/assets/images/defaultProfileIcon.png"}
                   alt="Profile"
                   className="profile-image"
+                  draggable="false"
                 />
                 <label className="image-upload-label">
                   <input
@@ -390,7 +391,9 @@ const Profile: React.FC = () => {
                             value={postalCode || ""}
                             onChange={(e) =>
                               setPostalCode(
-                                e.target.value ? parseInt(e.target.value) : null
+                                e.target.value
+                                  ? parseInt(e.target.value)
+                                  : null,
                               )
                             }
                             placeholder="Postnummer"

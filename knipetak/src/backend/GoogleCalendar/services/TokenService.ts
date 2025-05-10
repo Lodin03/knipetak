@@ -23,7 +23,7 @@ export class TokenService {
    */
   static saveToken(
     token: string,
-    expiresIn: number = DEFAULT_TOKEN_EXPIRATION
+    expiresIn: number = DEFAULT_TOKEN_EXPIRATION,
   ): void {
     try {
       const tokenData: TokenData = {
@@ -35,7 +35,7 @@ export class TokenService {
 
       // Set token in gapi client if available
       if (window.gapi?.client) {
-        window.gapi.client.setToken(token);
+        window.gapi.client.setToken({ access_token: token });
       }
     } catch (error) {
       console.warn("Error saving token:", error);
@@ -56,7 +56,7 @@ export class TokenService {
       if (tokenData.expires_at > Date.now()) {
         // Token is valid
         if (window.gapi?.client) {
-          window.gapi.client.setToken(tokenData.access_token);
+          window.gapi.client.setToken({ access_token: tokenData.access_token });
         }
         return tokenData.access_token;
       } else {
