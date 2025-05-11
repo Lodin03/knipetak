@@ -105,17 +105,17 @@
 }
 
 .status-pending {
-  background-color: #ffd700;
-  color: #856404;
+  background-color: #c9ae17 !important;
+  color: #ffffff;
 }
 
 .status-confirmed {
-  background-color: #28a745;
+  background-color: #29a345 !important;
   color: white;
 }
 
 .status-cancelled {
-  background-color: #dc3545;
+  background-color: #cb061a !important;
   color: white;
 }
 
@@ -126,7 +126,7 @@
 }
 
 .edit-button {
-  background-color: #178192;
+  background-color: #178192 !important;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -135,12 +135,12 @@
 }
 
 .edit-button:disabled {
-  background-color: #ccc;
+  background-color: #ccc !important;
   cursor: not-allowed;
 }
 
 .cancel-button {
-  background-color: #dc3545;
+  background-color: #cb061a;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -240,7 +240,7 @@
 }
 
 .save-button {
-  background-color: #28a745;
+  background-color: #178192 !important;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -254,7 +254,7 @@
 }
 
 .confirm-cancel-button {
-  background-color: #dc3545;
+  background-color: #178192 !important;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
