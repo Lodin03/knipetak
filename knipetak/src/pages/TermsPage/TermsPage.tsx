@@ -9,7 +9,7 @@ function TermsPage() {
         <section className="terms-page__section">
           <h2 className="terms-page__section-title">1. Tjenestens innhold og formål</h2>
           <p className="terms-page__text">
-            Knipetak tilbyr online booking av muskelterapi-tjenester. Tjenesten er tilgjengelig for alle som ønsker å booke behandling hos våre terapeuter. Ved å bruke tjenesten godtar du disse vilkårene.
+            Knipetak tilbyr online booking av muskelterapi-tjenester. Tjenesten er tilgjengelig for alle som ønsker å booke behandling hos vår terapeut. Ved å bruke tjenesten godtar du disse vilkårene.
           </p>
         </section>
 

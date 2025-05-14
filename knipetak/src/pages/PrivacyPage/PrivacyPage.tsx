@@ -61,15 +61,11 @@ function PrivacyPage() {
             Vi behandler dine personopplysninger for følgende formål:
           </p>
           <ul className="privacy-page__list">
-            <li>
-              For å administrere dine bookinger og gi deg best mulig behandling
-            </li>
-            <li>For å kommunisere med deg om dine timer og behandlinger</li>
-            <li>For å sende deg relevant informasjon om våre tjenester</li>
-            <li>For å forbedre våre tjenester og nettside</li>
-            <li>
-              For å overholde lovpålagte forpliktelser innen helsesektoren
-            </li>
+            <li>Å administrere dine bookinger og gi deg best mulig behandling</li>
+            <li>Å kommunisere med deg om dine timer og behandlinger</li>
+            <li>Å sende deg relevant informasjon om våre tjenester</li>
+            <li>Åforbedre våre tjenester og nettside</li>
+            <li>Å overholde lovpålagte forpliktelser innen helsesektoren</li>
           </ul>
         </section>
 
@@ -96,16 +92,13 @@ function PrivacyPage() {
             6. Lagring og sikkerhet
           </h2>
           <p className="privacy-page__text">
-            Vi oppbevarer dine personopplysninger så lenge det er nødvendig for
-            å oppfylle formålene beskrevet ovenfor, eller så lenge det er
-            påkrevd av loven. For helseopplysninger følger vi
-            helsepersonellovens krav om oppbevaring av pasientjournaler.
+          Vi oppbevarer dine personopplysninger så lenge det er nødvendig for å oppfylle formålene beskrevet ovenfor, eller så lenge det er påkrevd av gjeldende lovgivning. For helseopplysninger følger vi helsepersonellovens krav om oppbevaring av pasientjournaler.
           </p>
           <p className="privacy-page__text">
-            Vi har implementert tekniske og organisatoriske sikkerhetstiltak for
-            å beskytte dine personopplysninger mot uautorisert tilgang, tap
-            eller endring. Kun autorisert personell har tilgang til dine
-            helseopplysninger.
+          Vi bruker Google Firebase som teknisk plattform for autentisering, datalagring og drift av tjenesten. Personopplysninger lagres i Firebase Authentication, Firestore Database og Firebase Storage, og all data behandles i tråd med Googles sikkerhets- og personvernstandarder. 
+          </p>
+          <p className="privacy-page__text">
+          Vi har implementert både tekniske og organisatoriske sikkerhetstiltak for å beskytte dine personopplysninger mot uautorisert tilgang, tap eller endring. Kun autorisert personell har tilgang til helseopplysninger, og databehandlingen skjer innenfor rammen av inngåtte databehandleravtaler og GDPR-regelverket.
           </p>
         </section>
 
@@ -161,15 +154,7 @@ function PrivacyPage() {
             9. Cookies og sporingsteknologi
           </h2>
           <p className="privacy-page__text">
-            Vår nettside bruker cookies for å forbedre brukeropplevelsen.
-            Cookies er små tekstfiler som lagres på din enhet når du besøker
-            nettsiden. Vi bruker cookies for å huske dine preferanser, analysere
-            hvordan du bruker nettsiden, og for å tilpasse innhold.
-          </p>
-          <p className="privacy-page__text">
-            Du kan når som helst endre dine cookie-innstillinger i nettleseren
-            din. Vær oppmerksom på at blokkering av cookies kan påvirke
-            funksjonaliteten til nettsiden.
+          Per i dag benytter ikke nettsiden informasjonskapsler (cookies) til analyse, sporing eller markedsføringsformål. Kun funksjonell informasjon som er nødvendig for tjenestens drift (som brukerinnlogging via Firebase) lagres. Skulle dette endres i fremtiden, vil det innhentes eksplisitt samtykke i henhold til gjeldende lovverk.
           </p>
         </section>
 
