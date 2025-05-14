@@ -31,9 +31,9 @@ function PrivacyPage() {
           <p className="privacy-page__text">
             E-post: post@knipetak.no
             <br />
-            Telefon: +47 474 74 747
+            Telefon: +47 902 75 748
             <br />
-            Adresse: Muskelveien 12, 0000 Oslo
+            Adresse: Tobrotet 48, 5355 Knarrevik
           </p>
         </section>
 
