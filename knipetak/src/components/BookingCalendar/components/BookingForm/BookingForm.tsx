@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Location as VenueLocation } from "../../../../backend/interfaces/Location";
 import { Treatment } from "../../../../backend/interfaces/Treatment";
+import QrCodeModal from "../../../QrCode/QrCodeModal";
+import { Link } from "react-router-dom";
 import "./BookingForm.css";
 
 export interface BookingFormProps {
@@ -70,6 +72,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
     { duration: number; price: number }[]
   >([]);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // Format date to Norwegian format (DD.MM.YYYY)
   const formatDate = (date: Date | null): string => {
@@ -87,7 +91,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
     return selectedLocation.name || "Ukjent sted";
   };
 
-  // Validate form inputs
+  // Update form validation to include terms acceptance
   useEffect(() => {
     if (
       selectedDate &&
@@ -96,7 +100,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
       selectedDuration &&
       address &&
       city &&
-      postalCode
+      postalCode &&
+      acceptedTerms
     ) {
       if (isGuestBooking) {
         setIsFormValid(Boolean(guestEmail && guestName && guestPhone));
@@ -118,6 +123,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
     guestEmail,
     guestName,
     guestPhone,
+    acceptedTerms,
   ]);
 
   // Update available durations when treatment changes
@@ -130,6 +136,22 @@ const BookingForm: React.FC<BookingFormProps> = ({
       setAvailableDurations([]);
     }
   }, [selectedTreatment, setSelectedDuration]);
+
+  // Set the muskelterapi treatment by default
+  useEffect(() => {
+    const muskelterapiTreatment = treatments.find((t) =>
+      t.name.toLowerCase().includes("muskelterapi")
+    );
+    if (muskelterapiTreatment && !selectedTreatment) {
+      setSelectedTreatment(muskelterapiTreatment);
+    }
+  }, [treatments, selectedTreatment, setSelectedTreatment]);
+
+  // Helper function to handle group size change
+  const handleGroupSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const size = parseInt(e.target.value);
+    setGroupSize(size);
+  };
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -155,27 +177,23 @@ const BookingForm: React.FC<BookingFormProps> = ({
             <p>
               <strong>Sted:</strong> {getLocationName()}
             </p>
+            <p>
+              <strong>Behandling:</strong> Muskelterapi
+            </p>
           </div>
 
-          <div className="form-group">
-            <label>Velg behandling:</label>
-            <select
-              value={selectedTreatment ? String(selectedTreatment.id) : ""}
-              onChange={(e) => {
-                const treatment = treatments.find(
-                  (t) => t.id === e.target.value
-                );
-                setSelectedTreatment(treatment || null);
-              }}
-              required
-            >
-              <option value="">Velg behandling</option>
-              {treatments.map((treatment) => (
-                <option key={treatment.id} value={treatment.id}>
-                  {treatment.name}
-                </option>
-              ))}
-            </select>
+          <div className="payment-info-section">
+            <h4>Betalingsinformasjon:</h4>
+            <p>
+              Du kan enten betale ved oppmøte eller forhåndsbetale via Vipps.{" "}
+              <button
+                type="button"
+                className="link-button"
+                onClick={() => setShowQrModal(true)}
+              >
+                Se priser og betalingsmuligheter
+              </button>
+            </p>
           </div>
 
           {selectedTreatment && (
@@ -197,18 +215,27 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
           {isGroupBooking && selectedTreatment && (
             <div className="form-group">
-              <label>Gruppestørrelse:</label>
-              <input
-                type="number"
-                min="2"
-                value={groupSize < 2 ? 2 : groupSize}
-                onChange={(e) => setGroupSize(parseInt(e.target.value) || 2)}
+              <label>Antall personer:</label>
+              <select
+                value={groupSize}
+                onChange={handleGroupSizeChange}
                 required
-              />
-              <small>
-                {selectedTreatment.discounts.groupSize > 0 &&
-                  `Grupperabatt tilgjengelig fra ${selectedTreatment.discounts.groupSize} personer.`}
-              </small>
+                className="group-size-select"
+              >
+                <option value="">Velg antall personer</option>
+                <option value="2">2 personer</option>
+                <option value="3">3 personer</option>
+                <option value="4">4 personer</option>
+              </select>
+              <p className="group-booking-note">
+                Ønsker dere å bestille behandling for større grupper enn 4
+                personer, om det er bedriftsavtale eller arrangementer? Ta
+                gjerne kontakt via{" "}
+                <Link to="/kontakt" target="_blank" className="contact-link">
+                  kontakt siden
+                </Link>{" "}
+                for et skreddersydd tilbud.
+              </p>
             </div>
           )}
 
@@ -357,6 +384,26 @@ const BookingForm: React.FC<BookingFormProps> = ({
             </>
           )}
 
+          <div className="terms-acceptance">
+            <div className="checkbox-wrapper">
+              <input
+                type="checkbox"
+                id="acceptTerms"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                required
+              />
+              <label htmlFor="acceptTerms">
+                Jeg har lest og godtar{" "}
+                <Link to="/terms" target="_blank" rel="noopener noreferrer">
+                  vilkårene
+                </Link>
+                , inkludert reglene for avbestilling (24t - 100% / 48t - 50%
+                gebyr)
+              </label>
+            </div>
+          </div>
+
           <div className="form-actions">
             <button
               type="submit"
@@ -369,6 +416,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
               Avbryt
             </button>
           </div>
+
+          <QrCodeModal
+            isOpen={showQrModal}
+            onClose={() => setShowQrModal(false)}
+          />
         </form>
       </div>
     </div>
