@@ -5,18 +5,19 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { Treatment } from "@/backend/interfaces/Treatment";
-import { Location as VenueLocation } from "@/backend/interfaces/Location";
-import { CustomerLocation } from "@/backend/interfaces/Location";
-import EventDetails from "@/backend/interfaces/availabilityInterfaces/EventDetails";
-import { getAvailableSlotsByDate } from "@/backend/firebase/services/firebase.availabilityservice";
-import { createBooking } from "@/backend/firebase/services/firebase.bookingservice";
-import { getTreatments } from "@/backend/firebase/services/firebase.treatmentservice";
-import { getLocations } from "@/backend/firebase/services/firebase.locationservice";
-import { auth } from "@/backend/firebase/services/firebase.authservice";
-import { BookingData } from "@/backend/interfaces/BookingData";
+import { Treatment } from "../interfaces/Treatment";
+import { Location as VenueLocation } from "../interfaces/Location";
+import { CustomerLocation } from "../interfaces/Location";
+import EventDetails from "../interfaces/availabilityInterfaces/EventDetails";
+import { getAvailableSlotsByDate } from "../firebase/services/firebase.availabilityservice";
+import { createBooking } from "../firebase/services/firebase.bookingservice";
+import { getTreatments } from "../firebase/services/firebase.treatmentservice";
+import { getLocations } from "../firebase/services/firebase.locationservice";
+import { auth } from "../firebase/services/firebase.authservice";
+import { BookingData } from "../interfaces/BookingData";
 import { useNavigate } from "react-router-dom";
 import { startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
+import GuestLoginModal from "../../components/BookingCalendar/components/GuestBookingModal/GuestLoginModal";
 
 // Helper function to format dates as YYYY-MM-DD
 function formatDateForAPI(date: Date): string {
@@ -103,7 +104,7 @@ interface BookingContextType {
 
 // Create the context
 export const BookingContext = createContext<BookingContextType | undefined>(
-  undefined,
+  undefined
 );
 
 // Create a provider component
@@ -132,6 +133,9 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   const [dateManuallySelected, setDateManuallySelected] = useState(false);
 
+  // Add new state for guest login modal
+  const [showGuestLoginModal, setShowGuestLoginModal] = useState(false);
+
   // Ref to track dates currently being fetched
   const fetchingDates = useRef<Set<string>>(new Set());
 
@@ -141,7 +145,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(
-    null,
+    null
   );
 
   // Form and modal state
@@ -155,6 +159,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
   const [guestName, setGuestName] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
   const [customerMessage, setCustomerMessage] = useState("");
+
   // Fetch treatments and locations when the component mounts
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -224,7 +229,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
         `Got availability for ${dateStr}:`,
         result.availabilityByLocation.length > 0
           ? `${result.availabilityByLocation.length} locations`
-          : "No locations",
+          : "No locations"
       );
 
       if (result.eventDetails) {
@@ -375,7 +380,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     const safetyTimer = setTimeout(() => {
       if (isMounted && !initialDataLoaded) {
         console.log(
-          "DEBUG: Safety timeout triggered - forcing initialDataLoaded to true",
+          "DEBUG: Safety timeout triggered - forcing initialDataLoaded to true"
         );
         setIsPreloadingMonth(false);
         setInitialDataLoaded(true);
@@ -387,7 +392,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
       console.log(
         "DEBUG: Starting loadDataInBatches with",
         pendingDates.length,
-        "dates to load",
+        "dates to load"
       );
       // Increased max concurrent requests for faster loading
       const MAX_CONCURRENT_REQUESTS = 5; // Increased from 3 to 5
@@ -422,13 +427,13 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
           "DEBUG: Processing batch of",
           batchDates.length,
           "dates. Remaining dates:",
-          pendingDates.length - batchDates.length,
+          pendingDates.length - batchDates.length
         );
 
         try {
           // Run API calls for all dates in the batch in parallel
           const results = await Promise.allSettled(
-            batchDates.map((date) => fetchAvailabilityForDate(date)),
+            batchDates.map((date) => fetchAvailabilityForDate(date))
           );
 
           // Set initialDataLoaded to true after processing the first batch
@@ -463,7 +468,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
       // Done loading all dates
       if (isMounted) {
         console.log(
-          `Month data loading complete. Successful: ${successfullyLoaded}, Failed: ${failedToLoad}`,
+          `Month data loading complete. Successful: ${successfullyLoaded}, Failed: ${failedToLoad}`
         );
         setIsPreloadingMonth(false);
         // Add a small delay to ensure state is updated after isPreloadingMonth
@@ -494,7 +499,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     setInitialDataLoaded(false);
 
     console.log(
-      `Changing month to ${month.toLocaleDateString()}, starting data loading...`,
+      `Changing month to ${month.toLocaleDateString()}, starting data loading...`
     );
 
     // Create array of dates for current month
@@ -527,7 +532,12 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
 
     // All dates need to be loaded since we cleared the cache
     console.log(
-      `Generated ${datesInMonth.length} dates to preload for ${month.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}`,
+      `Generated ${
+        datesInMonth.length
+      } dates to preload for ${month.toLocaleDateString("nb-NO", {
+        month: "long",
+        year: "numeric",
+      })}`
     );
 
     if (datesInMonth.length === 0) {
@@ -587,19 +597,21 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     }, 300);
   };
 
-  // Confirm booking by constructing the booking object and calling createBooking
+  // Add handlers for guest login modal
+  const handleContinueAsGuest = () => {
+    setShowGuestLoginModal(false);
+    setIsGuestBooking(true);
+  };
+
+  const handleCloseGuestLoginModal = () => {
+    setShowGuestLoginModal(false);
+  };
+
+  // Update handleBookingConfirm
   const handleBookingConfirm = async () => {
     if (!auth.currentUser && !isGuestBooking) {
-      const confirmGuest = window.confirm(
-        "Du er ikke logget inn. Vil du fortsette som gjest?",
-      );
-      if (confirmGuest) {
-        setIsGuestBooking(true);
-        return;
-      } else {
-        navigate("/login");
-        return;
-      }
+      setShowGuestLoginModal(true);
+      return;
     }
 
     if (
@@ -639,7 +651,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
       }
       duration = selectedDuration;
       const durationOption = selectedTreatment.durations.find(
-        (d) => d.duration === duration,
+        (d) => d.duration === duration
       );
       if (!durationOption) {
         alert("Valgt varighet er ikke tilgjengelig for denne behandlingen.");
@@ -656,11 +668,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
       // Calculate effective duration per person
       const effectiveDuration = duration / groupSize;
       const durationOption = selectedTreatment.durations.find(
-        (d) => d.duration === effectiveDuration,
+        (d) => d.duration === effectiveDuration
       );
       if (!durationOption) {
         alert(
-          `Effektiv varighet per person (${effectiveDuration} minutter) er ikke gyldig for valgt behandling.`,
+          `Effektiv varighet per person (${effectiveDuration} minutter) er ikke gyldig for valgt behandling.`
         );
         return;
       }
@@ -682,7 +694,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
 
     console.log(`🕒 Creating booking for ${dateStr} at ${selectedTime}`);
     console.log(
-      `📅 Booking will be from ${startDateTime.toTimeString()} to ${endDateTime.toTimeString()}`,
+      `📅 Booking will be from ${startDateTime.toTimeString()} to ${endDateTime.toTimeString()}`
     );
     console.log(`⏱️ Total duration: ${duration} minutes`);
 
@@ -739,7 +751,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
 
         // Then fetch fresh data
         console.log(
-          `Refreshing availability data after booking for ${dateStr}...`,
+          `Refreshing availability data after booking for ${dateStr}...`
         );
         const updatedData = await fetchAvailabilityForDate(selectedDate);
 
@@ -748,8 +760,8 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
           console.log(
             `Updated timeslots received for ${dateStr}:`,
             updatedData.locationSlots.map(
-              (l) => `Location: ${l.availableSlots.length} slots`,
-            ),
+              (l) => `Location: ${l.availableSlots.length} slots`
+            )
           );
           setLocationSlots(updatedData.locationSlots);
         } else {
@@ -759,7 +771,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     } catch (error) {
       console.error("Error creating booking:", error);
       alert(
-        "Det oppsto en feil ved oppretting av booking, vennligst prøv igjen.",
+        "Det oppsto en feil ved oppretting av booking, vennligst prøv igjen."
       );
     }
   };
@@ -813,7 +825,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
 
       // Add a delay before refreshing to ensure database consistency
       console.log(
-        "Preparing to refresh availability data after cancellation...",
+        "Preparing to refresh availability data after cancellation..."
       );
 
       // Clear the cache for this date first
@@ -829,7 +841,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
         fetchAvailabilityForDate(selectedDate).then((updatedData) => {
           if (updatedData) {
             console.log(
-              `Updated data received after cancellation for ${dateStr}`,
+              `Updated data received after cancellation for ${dateStr}`
             );
             setLocationSlots(updatedData.locationSlots);
           }
@@ -905,6 +917,11 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
   return (
     <BookingContext.Provider value={contextValue}>
       {children}
+      <GuestLoginModal
+        isOpen={showGuestLoginModal}
+        onClose={handleCloseGuestLoginModal}
+        onContinueAsGuest={handleContinueAsGuest}
+      />
     </BookingContext.Provider>
   );
 };
