@@ -47,18 +47,15 @@ export function WorkHoursManager({
   const defaultLocation = useDefaultLocation(locations);
 
   // Setup initial empty schedule
-  const initialSchedule = DAYS.reduce(
-    (acc, norwegianDay) => {
-      const englishDay = DAY_MAPPING[norwegianDay];
-      acc[englishDay] = {
-        workhours: {
-          timeSlots: [],
-        },
-      };
-      return acc;
-    },
-    {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>,
-  );
+  const initialSchedule = DAYS.reduce((acc, norwegianDay) => {
+    const englishDay = DAY_MAPPING[norwegianDay];
+    acc[englishDay] = {
+      workhours: {
+        timeSlots: [],
+      },
+    };
+    return acc;
+  }, {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>);
 
   // Use our custom hook for managing the weekly schedule
   const {
@@ -75,6 +72,7 @@ export function WorkHoursManager({
   const [success, setSuccess] = useState<string | null>(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [activeDay, setActiveDay] = useState<string | null>(null);
+  const [expandedDays, setExpandedDays] = useState<string[]>([]);
 
   useEffect(() => {
     async function loadData() {
@@ -83,37 +81,31 @@ export function WorkHoursManager({
 
         if (defaultHours) {
           // Transform API data to our UI format
-          const uiSchedule = DAYS.reduce(
-            (acc, norwegianDay) => {
-              const englishDay = DAY_MAPPING[norwegianDay];
+          const uiSchedule = DAYS.reduce((acc, norwegianDay) => {
+            const englishDay = DAY_MAPPING[norwegianDay];
 
-              // Map the API response to our UI format
-              const timeSlots =
-                defaultHours?.[englishDay]?.workhours?.timeSlots || [];
+            // Map the API response to our UI format
+            const timeSlots =
+              defaultHours?.[englishDay]?.workhours?.timeSlots || [];
 
-              acc[englishDay] = {
-                workhours: {
-                  timeSlots:
-                    timeSlots.length > 0
-                      ? timeSlots.map((slot) => ({
-                          start:
-                            typeof slot.start === "string"
-                              ? slot.start
-                              : "09:00",
-                          end:
-                            typeof slot.end === "string" ? slot.end : "17:00",
-                          location:
-                            typeof slot.location === "string"
-                              ? slot.location
-                              : slot.location?.id || locations[0]?.id || "",
-                        }))
-                      : [],
-                },
-              };
-              return acc;
-            },
-            {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>,
-          );
+            acc[englishDay] = {
+              workhours: {
+                timeSlots:
+                  timeSlots.length > 0
+                    ? timeSlots.map((slot) => ({
+                        start:
+                          typeof slot.start === "string" ? slot.start : "09:00",
+                        end: typeof slot.end === "string" ? slot.end : "17:00",
+                        location:
+                          typeof slot.location === "string"
+                            ? slot.location
+                            : slot.location?.id || locations[0]?.id || "",
+                      }))
+                    : [],
+              },
+            };
+            return acc;
+          }, {} as Record<string, { workhours: { timeSlots: TimeSlotUI[] } }>);
 
           setSchedule(uiSchedule);
         }
@@ -141,7 +133,7 @@ export function WorkHoursManager({
     norwegianDay: string,
     index: number,
     field: "start" | "end",
-    value: string,
+    value: string
   ) => {
     scheduleOps.updateTimeSlot(norwegianDay, index, field, value);
   };
@@ -149,7 +141,7 @@ export function WorkHoursManager({
   const handleLocationChange = (
     norwegianDay: string,
     index: number,
-    locationId: string,
+    locationId: string
   ) => {
     if (locationId === "new") {
       setActiveDay(DAY_MAPPING[norwegianDay]);
@@ -173,7 +165,7 @@ export function WorkHoursManager({
           (slot) => ({
             ...slot,
             location: slot.location === "" ? newLocation.id : slot.location,
-          }),
+          })
         );
 
         setSchedule((prev) => ({
@@ -210,7 +202,7 @@ export function WorkHoursManager({
           };
           return acc;
         },
-        {} as WeeklySchedule,
+        {} as WeeklySchedule
       );
 
       await setDefaultWorkHours(apiSchedule);
@@ -221,6 +213,12 @@ export function WorkHoursManager({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleDayExpansion = (day: string) => {
+    setExpandedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
   };
 
   if (isLoading) {
@@ -241,17 +239,35 @@ export function WorkHoursManager({
       {success && <div className="success-message">{success}</div>}
 
       <div className="work-hours-schedule">
-        <div className="days-grid">
+        <div className="days-grid-workhours">
           {DAYS.map((norwegianDay) => {
             const englishDay = DAY_MAPPING[norwegianDay];
             const isDayOff =
               !schedule[englishDay]?.workhours?.timeSlots?.length;
+            const isExpanded = expandedDays.includes(norwegianDay);
 
             return (
               <div key={norwegianDay} className="day-schedule">
-                <div className="day-header">
-                  <h3 className="day-title">{norwegianDay}</h3>
-                  <label className="day-off-toggle">
+                <div
+                  className="day-header"
+                  onClick={() => toggleDayExpansion(norwegianDay)}
+                >
+                  <div className="day-header-content">
+                    <svg
+                      className={`expand-icon ${isExpanded ? "expanded" : ""}`}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M19 9l-7 7-7-7" />
+                    </svg>
+                    <h3 className="day-title">{norwegianDay}</h3>
+                  </div>
+                  <label
+                    className="day-off-toggle"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <input
                       type="checkbox"
                       checked={isDayOff}
@@ -264,7 +280,11 @@ export function WorkHoursManager({
                   </label>
                 </div>
 
-                <div className={`schedule-grid ${isDayOff ? "disabled" : ""}`}>
+                <div
+                  className={`schedule-grid ${isDayOff ? "disabled" : ""} ${
+                    isExpanded ? "expanded" : ""
+                  }`}
+                >
                   {!isDayOff &&
                     schedule[englishDay]?.workhours.timeSlots.map(
                       (timeSlot, index) => (
@@ -275,9 +295,10 @@ export function WorkHoursManager({
                             </span>
                             {index > 0 && (
                               <button
-                                onClick={() =>
-                                  handleRemoveTimeSlot(norwegianDay, index)
-                                }
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveTimeSlot(norwegianDay, index);
+                                }}
                                 className="remove-slot-button"
                               >
                                 Fjern
@@ -301,7 +322,7 @@ export function WorkHoursManager({
                                   norwegianDay,
                                   index,
                                   "start",
-                                  e.target.value,
+                                  e.target.value
                                 )
                               }
                               className="form-input"
@@ -324,7 +345,7 @@ export function WorkHoursManager({
                                   norwegianDay,
                                   index,
                                   "end",
-                                  e.target.value,
+                                  e.target.value
                                 )
                               }
                               className="form-input"
@@ -345,7 +366,7 @@ export function WorkHoursManager({
                                 handleLocationChange(
                                   norwegianDay,
                                   index,
-                                  e.target.value,
+                                  e.target.value
                                 )
                               }
                               className="form-input"
@@ -362,12 +383,15 @@ export function WorkHoursManager({
                             </select>
                           </div>
                         </div>
-                      ),
+                      )
                     )}
 
                   {!isDayOff && (
                     <button
-                      onClick={() => handleAddTimeSlot(norwegianDay)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddTimeSlot(norwegianDay);
+                      }}
                       className="add-slot-button"
                     >
                       + Legg til tidsperiode
