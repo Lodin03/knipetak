@@ -3,7 +3,7 @@ import emailjs from "@emailjs/browser";
 import "./ContactPage.css";
 import { useAuth } from "@/context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane} from "@fortawesome/free-solid-svg-icons";
 
 function ContactPage() {
   const { user } = useAuth();
