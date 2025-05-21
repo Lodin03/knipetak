@@ -6,6 +6,7 @@ import {
   faAward,
   faUserGear,
 } from "@fortawesome/free-solid-svg-icons";
+import Massasje2 from "../../../assets/images/Massasje2.jpg";
 
 const InfoComponent: React.FC = () => {
   return (
@@ -27,7 +28,7 @@ const InfoComponent: React.FC = () => {
             </div>
             <div className="intro-image">
               <img
-                src="/src/assets/images/Massasje2.jpg"
+                src={Massasje2}
                 alt="Helene muskelterapeut"
                 draggable="false"
               />

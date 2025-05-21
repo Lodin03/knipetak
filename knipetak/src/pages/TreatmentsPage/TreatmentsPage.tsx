@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import "./TreatmentsPage.css";
+import massasje_stol from "../../assets/images/massasje_stol.jpg";
+import massasje_bat from "../../assets/images/MassasjeBat.png";
+import knipetap_behandling from "../../assets/images/knipetak_behandling.jpg";
 
 function TreatmentsPage() {
   const [activeSection, setActiveSection] = useState<TreatmentType | null>(
@@ -57,7 +60,7 @@ function TreatmentsPage() {
         </div>
         <div className="treatments__hero-image">
           <img
-            src="/src/assets/images/massasje_stol.jpg"
+            src={massasje_stol}
             alt="Massasje behandling"
             draggable="false"
           />
@@ -136,7 +139,7 @@ function TreatmentsPage() {
         <div className="treatments__gallery">
           <div className="treatments__gallery-item">
             <img
-              src="/src/assets/images/MassasjeBat.png"
+              src={massasje_bat}
               alt="Massasje behandling"
             />
             <div className="treatments__gallery-overlay">
@@ -146,7 +149,7 @@ function TreatmentsPage() {
           </div>
           <div className="treatments__gallery-item">
             <img
-              src="/src/assets/images/knipetak_behandling.jpg"
+              src={knipetap_behandling}
               alt="Massasje behandling"
             />
             <div className="treatments__gallery-overlay">
