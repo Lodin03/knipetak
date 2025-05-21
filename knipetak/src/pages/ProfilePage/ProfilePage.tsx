@@ -12,6 +12,7 @@ import { Treatment } from "../../backend/interfaces/Treatment";
 import { Gender, UserData } from "../../backend/interfaces/UserData";
 import { useAuth } from "@/context/AuthContext";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import defaultProfileIcon from "../../assets/images/defaultProfileIcon.png";
 
 const Profile: React.FC = () => {
   // Use AuthContext instead of managing our own user state
@@ -264,7 +265,7 @@ const Profile: React.FC = () => {
             <div className="profile-header">
               <div className="profile-image-container">
                 <img
-                  src={profileImage || "src/assets/images/defaultProfileIcon.png"}
+                  src={profileImage || defaultProfileIcon}
                   alt="Profile"
                   className="profile-image"
                   draggable="false"

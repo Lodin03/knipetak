@@ -4,6 +4,7 @@ import "./ContactPage.css";
 import { useAuth } from "@/context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane} from "@fortawesome/free-solid-svg-icons";
+import kontakt_oss from "../../assets/images/kontakt_oss.jpg";
 
 function ContactPage() {
   const { user } = useAuth();
@@ -60,7 +61,7 @@ function ContactPage() {
     <div className="contact-container">
       <div className="contact-hero">
         <img 
-          src="/src/assets/images/kontakt_oss.jpg" 
+          src={kontakt_oss} 
           alt="Kontakt oss" 
           className="contact-hero__image"
         />

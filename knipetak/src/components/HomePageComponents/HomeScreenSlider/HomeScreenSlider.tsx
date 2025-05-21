@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import "./HomeScreenSlider.css";
+import Bildemassaje from "../../../assets/images/BildeMassasje.jpg";
+import Massasje2 from "../../../assets/images/Massasje2.jpg";
+import KnipetakBilde from "../../../assets/images/KnipetakBilde.jpg";
 
 interface Slide {
   src: string;
@@ -14,15 +17,15 @@ const HomeScreenSlider: React.FC = () => {
   // Define slides with proper typing
   const slides: Slide[] = [
     {
-      src: "/src/assets/images/BildeMassasje.jpg",
+      src: Bildemassaje,
       alt: "Professional massage therapy session",
     },
     {
-      src: "/src/assets/images/Massasje2.jpg",
+      src: Massasje2,
       alt: "Relaxing massage treatment",
     },
     {
-      src: "/src/assets/images/KnipetakBilde.jpg",
+      src: KnipetakBilde,
       alt: "Knipetak massage facility",
     },
   ];
