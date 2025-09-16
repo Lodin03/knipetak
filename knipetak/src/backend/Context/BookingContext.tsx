@@ -379,9 +379,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
     // Safety timeout to ensure loading overlay is dismissed even if preloading fails
     const safetyTimer = setTimeout(() => {
       if (isMounted && !initialDataLoaded) {
-        console.log(
-          "DEBUG: Safety timeout triggered - forcing initialDataLoaded to true"
-        );
+        // Safety timeout triggered - forcing initialDataLoaded to true
         setIsPreloadingMonth(false);
         setInitialDataLoaded(true);
       }
@@ -389,11 +387,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
 
     // Optimized data loading using batching with higher concurrency
     const loadDataInBatches = async () => {
-      console.log(
-        "DEBUG: Starting loadDataInBatches with",
-        pendingDates.length,
-        "dates to load"
-      );
+      // Starting loadDataInBatches
       // Increased max concurrent requests for faster loading
       const MAX_CONCURRENT_REQUESTS = 5; // Increased from 3 to 5
       let successfullyLoaded = 0;
@@ -423,12 +417,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({
         // Take the next batch of dates (up to max number)
         const batchDates = pendingDates.slice(0, MAX_CONCURRENT_REQUESTS);
         setPendingDates((prev) => prev.slice(MAX_CONCURRENT_REQUESTS));
-        console.log(
-          "DEBUG: Processing batch of",
-          batchDates.length,
-          "dates. Remaining dates:",
-          pendingDates.length - batchDates.length
-        );
+        // Processing batch of dates
 
         try {
           // Run API calls for all dates in the batch in parallel

@@ -13,6 +13,8 @@ import { Gender, UserData } from "../../backend/interfaces/UserData";
 import { useAuth } from "@/context/AuthContext";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import defaultProfileIcon from "../../assets/images/defaultProfileIcon.png";
+import DataExport from "../../components/DataExport/DataExport";
+import DeleteAccount from "../../components/DeleteAccount/DeleteAccount";
 
 const Profile: React.FC = () => {
   // Use AuthContext instead of managing our own user state
@@ -36,6 +38,9 @@ const Profile: React.FC = () => {
   const [phoneError, setPhoneError] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string>("");
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showDataExportModal, setShowDataExportModal] = useState(false);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -77,7 +82,34 @@ const Profile: React.FC = () => {
     loadUserData();
   }, [user]); // Only depend on user from AuthContext
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle escape key and body scroll lock for modals
+  useEffect(() => {
+    if (showDeleteAccount || showPrivacyModal || showDataExportModal) {
+      // Lock body scroll
+      document.body.style.overflow = "hidden";
+
+      // Handle escape key
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setShowDeleteAccount(false);
+          setShowPrivacyModal(false);
+          setShowDataExportModal(false);
+        }
+      };
+
+      document.addEventListener("keydown", handleEscape);
+
+      return () => {
+        // Unlock body scroll
+        document.body.style.overflow = "unset";
+        document.removeEventListener("keydown", handleEscape);
+      };
+    }
+  }, [showDeleteAccount, showPrivacyModal, showDataExportModal]);
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
@@ -98,17 +130,20 @@ const Profile: React.FC = () => {
 
     try {
       const storage = getStorage();
-      const storageRef = ref(storage, `profile_images/${user.uid}/${file.name}`);
-      
+      const storageRef = ref(
+        storage,
+        `profile_images/${user.uid}/${file.name}`
+      );
+
       // Last opp bildet
       await uploadBytes(storageRef, file);
-      
+
       // Hent nedlastingslenke
       const downloadURL = await getDownloadURL(storageRef);
-      
+
       // Oppdater brukerens profilbilde i Firestore
       await updateUserProfile(user.uid, { profileImage: downloadURL });
-      
+
       // Oppdater lokal state
       setProfileImage(downloadURL);
     } catch (error) {
@@ -155,7 +190,7 @@ const Profile: React.FC = () => {
   const validateBirthYear = (value: string) => {
     const numValue = parseInt(value);
     const currentYear = new Date().getFullYear();
-    
+
     if (isNaN(numValue)) {
       setBirthYearError("Fødselsår må være et tall");
       return false;
@@ -188,7 +223,7 @@ const Profile: React.FC = () => {
     const phoneRegex = /^(\+47|0047)?\s*[2-9]\d{7}$/;
     if (!phoneRegex.test(value.replace(/\s/g, ""))) {
       setPhoneError(
-        "Ugyldig telefonnummer. Må være 8 siffer og kan starte med +47",
+        "Ugyldig telefonnummer. Må være 8 siffer og kan starte med +47"
       );
       return false;
     }
@@ -247,7 +282,9 @@ const Profile: React.FC = () => {
       setIsEditing(false);
     } catch (error) {
       console.error("Feil ved lagring av profil:", error);
-      alert("Det oppsto en feil ved lagring av profilen. Vennligst prøv igjen.");
+      alert(
+        "Det oppsto en feil ved lagring av profilen. Vennligst prøv igjen."
+      );
     } finally {
       setIsSaving(false);
     }
@@ -299,7 +336,18 @@ const Profile: React.FC = () => {
               >
                 {isEditing ? "Avbryt" : "Rediger Profil"}
               </button>
-              <button className="action-button delete">Slett Profil</button>
+              <button
+                className="action-button delete"
+                onClick={() => setShowDeleteAccount(true)}
+              >
+                Slett Profil
+              </button>
+              <button
+                className="action-button privacy"
+                onClick={() => setShowPrivacyModal(true)}
+              >
+                🛡️ Personvern
+              </button>
               <button className="action-button logout" onClick={handleSignOut}>
                 Logg ut
               </button>
@@ -352,7 +400,9 @@ const Profile: React.FC = () => {
                             step="1"
                           />
                           {birthYearError && (
-                            <span className="error-message">{birthYearError}</span>
+                            <span className="error-message">
+                              {birthYearError}
+                            </span>
                           )}
                         </div>
                       ) : (
@@ -392,9 +442,7 @@ const Profile: React.FC = () => {
                             value={postalCode || ""}
                             onChange={(e) =>
                               setPostalCode(
-                                e.target.value
-                                  ? parseInt(e.target.value)
-                                  : null,
+                                e.target.value ? parseInt(e.target.value) : null
                               )
                             }
                             placeholder="Postnummer"
@@ -454,7 +502,10 @@ const Profile: React.FC = () => {
                     className="action-button save"
                     onClick={handleSave}
                     disabled={
-                      !!birthYearError || !!addressError || !!phoneError || isSaving
+                      !!birthYearError ||
+                      !!addressError ||
+                      !!phoneError ||
+                      isSaving
                     }
                   >
                     {isSaving ? "Lagrer..." : "Lagre endringer"}
@@ -501,6 +552,194 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Account Modal */}
+      {showDeleteAccount && (
+        <div
+          className="delete-modal-overlay"
+          onClick={() => setShowDeleteAccount(false)}
+        >
+          <div
+            className="delete-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="delete-modal-header">
+              <h3>🗑️ Slett min konto</h3>
+              <button
+                className="delete-modal-close"
+                onClick={() => setShowDeleteAccount(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="delete-modal-body">
+              <DeleteAccount />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Privacy Modal */}
+      {showPrivacyModal && (
+        <div
+          className="privacy-modal-overlay"
+          onClick={() => setShowPrivacyModal(false)}
+        >
+          <div
+            className="privacy-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="privacy-modal-header">
+              <h3>🛡️ Personvern og dine rettigheter</h3>
+              <button
+                className="privacy-modal-close"
+                onClick={() => setShowPrivacyModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="privacy-modal-body">
+              <div className="privacy-section">
+                <h4>Dine personvernrettigheter</h4>
+                <p>Som bruker av våre tjenester har du følgende rettigheter:</p>
+                <ul>
+                  <li>
+                    <strong>Rett til innsyn:</strong> Du kan se alle
+                    personopplysninger vi har om deg
+                  </li>
+                  <li>
+                    <strong>Rett til korrigering:</strong> Du kan be oss rette
+                    uriktige opplysninger
+                  </li>
+                  <li>
+                    <strong>Rett til sletting:</strong> Du kan be om å få
+                    opplysningene dine slettet
+                  </li>
+                  <li>
+                    <strong>Rett til dataportabilitet:</strong> Du kan få en
+                    kopi av dine data
+                  </li>
+                  <li>
+                    <strong>Rett til å trekke tilbake samtykke:</strong> Du kan
+                    når som helst trekke tilbake samtykket ditt
+                  </li>
+                </ul>
+              </div>
+
+              <div className="privacy-section">
+                <h4>Hvilke data vi samler</h4>
+                <ul>
+                  <li>Kontaktinformasjon (navn, e-post, telefon)</li>
+                  <li>Fødselsdato og kjønn</li>
+                  <li>Helseinformasjon relatert til behandling</li>
+                  <li>Adresse for hjemmebehandling</li>
+                  <li>Bookinghistorikk og preferanser</li>
+                </ul>
+              </div>
+
+              <div className="privacy-section">
+                <h4>Hvordan vi bruker dataene</h4>
+                <ul>
+                  <li>Administrere dine bookinger og behandlinger</li>
+                  <li>Kommunisere med deg om dine timer</li>
+                  <li>Gi deg personlig tilpasset behandling</li>
+                  <li>Forbedre våre tjenester</li>
+                  <li>Overholde lovpålagte forpliktelser</li>
+                </ul>
+              </div>
+
+              <div className="privacy-section">
+                <h4>Lagring og sikkerhet</h4>
+                <p>
+                  Vi bruker Google Firebase som teknisk plattform for sikker
+                  lagring av dine data. All data behandles i tråd med
+                  GDPR-regelverket og Googles sikkerhets- og
+                  personvernstandarder.
+                </p>
+                <p>
+                  Helseopplysninger oppbevares i henhold til helsepersonellovens
+                  krav om oppbevaring av pasientjournaler.
+                </p>
+              </div>
+
+              <div className="privacy-section">
+                <h4>Kontakt oss</h4>
+                <p>
+                  For spørsmål om personvern eller for å utøve dine rettigheter,
+                  kontakt oss på:
+                </p>
+                <p>
+                  <strong>E-post:</strong> post@knipetak.no
+                  <br />
+                  <strong>Telefon:</strong> +47 902 75 748
+                  <br />
+                  <strong>Adresse:</strong> Tobrotet 48, 5355 Knarrevik
+                </p>
+              </div>
+
+              <div className="privacy-actions">
+                <p>
+                  <strong>Ønsker du å utøve dine rettigheter?</strong>
+                </p>
+                <div className="privacy-buttons">
+                  <button
+                    className="privacy-action-btn primary"
+                    onClick={() => {
+                      setShowPrivacyModal(false);
+                      setShowDataExportModal(true);
+                    }}
+                  >
+                    📥 Eksporter mine data
+                  </button>
+                  <button
+                    className="privacy-action-btn secondary"
+                    onClick={() => {
+                      setShowPrivacyModal(false);
+                      setShowDeleteAccount(true);
+                    }}
+                  >
+                    🗑️ Slett min konto
+                  </button>
+                  <a
+                    href="/privacy"
+                    className="privacy-action-btn tertiary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    📋 Les full personvernerklæring
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Data Export Modal */}
+      {showDataExportModal && (
+        <div
+          className="data-export-modal-overlay"
+          onClick={() => setShowDataExportModal(false)}
+        >
+          <div
+            className="data-export-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="data-export-modal-header">
+              <h3>📥 Eksporter mine data</h3>
+              <button
+                className="data-export-modal-close"
+                onClick={() => setShowDataExportModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="data-export-modal-body">
+              <DataExport />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

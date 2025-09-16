@@ -45,10 +45,10 @@ function getOsloDayBounds(dateStr: string): {
   const tempDate = new Date(dateStr + "T00:00:00");
   const osloOffset = getOsloOffsetForDate(tempDate);
   const startOfDay = new Date(
-    Date.UTC(year, month - 1, day, 0 - osloOffset, 0, 0),
+    Date.UTC(year, month - 1, day, 0 - osloOffset, 0, 0)
   );
   const endOfDay = new Date(
-    Date.UTC(year, month - 1, day + 1, 0 - osloOffset, 0, 0),
+    Date.UTC(year, month - 1, day + 1, 0 - osloOffset, 0, 0)
   );
   return { startOfDay, endOfDay };
 }
@@ -63,25 +63,13 @@ const generateTimeSlots = (
   end: string,
   bookedRanges: { start: Date; end: Date }[],
   interval: number = 30,
-  minDuration: number = 30, // Default minimum treatment duration is 30 minutes
+  minDuration: number = 30 // Default minimum treatment duration is 30 minutes
 ): string[] => {
   if (!start || !end || start === "" || end === "") {
     return []; // Handle empty strings for start or end
   }
 
-  // For debugging
-  console.log("Generating time slots:");
-  console.log(`- Work hours: ${start} to ${end}`);
-  console.log(
-    `- Booked ranges: ${bookedRanges
-      .map(
-        (r) =>
-          `${r.start.toTimeString().substring(0, 5)}-${r.end
-            .toTimeString()
-            .substring(0, 5)}`,
-      )
-      .join(", ")}`,
-  );
+  // Generate time slots excluding booked ranges
   console.log(`- Minimum treatment duration: ${minDuration} minutes`);
 
   const slots: string[] = [];
@@ -104,7 +92,7 @@ const generateTimeSlots = (
   console.log("Normalized booked ranges for comparison:");
   normalizedBookedRanges.forEach((range) => {
     console.log(
-      `- ${range.start.toTimeString()} to ${range.end.toTimeString()}`,
+      `- ${range.start.toTimeString()} to ${range.end.toTimeString()}`
     );
   });
 
@@ -118,9 +106,7 @@ const generateTimeSlots = (
     allPotentialSlots.push(time.toTimeString().substring(0, 5)); // "HH:MM"
   }
 
-  console.log(
-    `Generated ${allPotentialSlots.length} potential slots from ${start} to ${end}`,
-  );
+  // Generate potential time slots
 
   // Check each potential slot against all bookings
   allPotentialSlots.forEach((timeStr) => {
@@ -143,7 +129,7 @@ const generateTimeSlots = (
             .toTimeString()
             .substring(0, 5)}-${range.end
             .toTimeString()
-            .substring(0, 5)} (with min duration ${minDuration} min)`,
+            .substring(0, 5)} (with min duration ${minDuration} min)`
         );
         break;
       }
@@ -160,7 +146,7 @@ const generateTimeSlots = (
 
 // Get available slots for a specific date
 export const getAvailableSlotsByDate = async (
-  dateStr: string,
+  dateStr: string
 ): Promise<AvailabilityResult | null> => {
   try {
     console.log(`🔍 Fetching availability for ${dateStr}`);
@@ -175,7 +161,7 @@ export const getAvailableSlotsByDate = async (
     }, 30); // Default to 30 min if no treatments found
 
     console.log(
-      `Minimum treatment duration across all treatments: ${minTreatmentDuration} minutes`,
+      `Minimum treatment duration across all treatments: ${minTreatmentDuration} minutes`
     );
 
     let workHours: WorkHours | null = null;
@@ -193,11 +179,11 @@ export const getAvailableSlotsByDate = async (
     const overrideQuery = query(
       collection(db, "availibilityOverrides"),
       where("date", ">=", Timestamp.fromDate(startOfDay)),
-      where("date", "<", Timestamp.fromDate(endOfDay)),
+      where("date", "<", Timestamp.fromDate(endOfDay))
     );
     const overrideSnapshot = await getDocs(overrideQuery);
     console.log(
-      `Override query returned ${overrideSnapshot.size} document(s).`,
+      `Override query returned ${overrideSnapshot.size} document(s).`
     );
 
     if (!overrideSnapshot.empty) {
@@ -244,7 +230,7 @@ export const getAvailableSlotsByDate = async (
     // Handle empty timeslots array case (weekends or days off)
     if (!workHours.timeSlots || workHours.timeSlots.length === 0) {
       console.log(
-        `⚠️ No time slots available for ${dateStr} (day off or weekend)`,
+        `⚠️ No time slots available for ${dateStr} (day off or weekend)`
       );
       return {
         availabilityByLocation: [],
@@ -259,26 +245,22 @@ export const getAvailableSlotsByDate = async (
 
     // Log the exact query parameters
     console.log(
-      `Querying bookings with date field: date >= ${startOfDay.toISOString()} AND date < ${endOfDay.toISOString()}`,
+      `Querying bookings with date field: date >= ${startOfDay.toISOString()} AND date < ${endOfDay.toISOString()}`
     );
 
     const bookingsQueryRef = query(
       bookingsRef,
       where("date", ">=", Timestamp.fromDate(startOfDay)),
-      where("date", "<", Timestamp.fromDate(endOfDay)),
+      where("date", "<", Timestamp.fromDate(endOfDay))
     );
 
     const bookingsSnapshot = await getDocs(bookingsQueryRef);
     console.log(
-      `Bookings query returned ${bookingsSnapshot.size} document(s).`,
+      `Bookings query returned ${bookingsSnapshot.size} document(s).`
     );
 
-    // Debug: Also try a different approach to query - get all bookings and filter manually
-    console.log(
-      "DEBUG: Trying alternative query approach to find missing bookings",
-    );
+    // Alternative approach: get all bookings and filter manually
     const allBookingsSnapshot = await getDocs(collection(db, "bookings"));
-    console.log(`Total bookings in database: ${allBookingsSnapshot.size}`);
 
     // Manually filter for the target date and log results
     const manuallyFilteredBookings = allBookingsSnapshot.docs.filter((doc) => {
@@ -290,14 +272,14 @@ export const getAvailableSlotsByDate = async (
       const targetDateStr = dateStr; // YYYY-MM-DD
 
       console.log(
-        `Comparing booking date: ${bookingDateStr} with target: ${targetDateStr} for ID: ${doc.id}`,
+        `Comparing booking date: ${bookingDateStr} with target: ${targetDateStr} for ID: ${doc.id}`
       );
 
       return bookingDateStr === targetDateStr;
     });
 
     console.log(
-      `Manually filtered found ${manuallyFilteredBookings.length} bookings for ${dateStr}`,
+      `Manually filtered found ${manuallyFilteredBookings.length} bookings for ${dateStr}`
     );
     if (manuallyFilteredBookings.length > 0) {
       console.log(
@@ -313,21 +295,21 @@ export const getAvailableSlotsByDate = async (
             },
             status: data.status,
           };
-        }),
+        })
       );
     }
 
     // Also check with just the timeslot
-    console.log("DEBUG: Trying timeslot-based query approach");
+    // Try timeslot-based query approach
     const timeslotBasedSnapshot = await getDocs(
       query(
         bookingsRef,
         where("timeslot.start", ">=", Timestamp.fromDate(startOfDay)),
-        where("timeslot.start", "<", Timestamp.fromDate(endOfDay)),
-      ),
+        where("timeslot.start", "<", Timestamp.fromDate(endOfDay))
+      )
     );
     console.log(
-      `Timeslot-based query found ${timeslotBasedSnapshot.size} bookings`,
+      `Timeslot-based query found ${timeslotBasedSnapshot.size} bookings`
     );
     if (timeslotBasedSnapshot.size > 0) {
       console.log(
@@ -343,7 +325,7 @@ export const getAvailableSlotsByDate = async (
             },
             status: data.status,
           };
-        }),
+        })
       );
     }
 
@@ -359,7 +341,7 @@ export const getAvailableSlotsByDate = async (
 
     // Debug bookings found
     console.log(
-      `🔍 Examining ${bookingsSnapshot.size} bookings for ${dateStr}`,
+      `🔍 Examining ${bookingsSnapshot.size} bookings for ${dateStr}`
     );
 
     // Process bookings from the main query
@@ -386,15 +368,15 @@ export const getAvailableSlotsByDate = async (
             : new Date(timeslot.end);
 
           console.log(
-            `Booking: ${startTime.toTimeString()} - ${endTime.toTimeString()}`,
+            `Booking: ${startTime.toTimeString()} - ${endTime.toTimeString()}`
           );
           console.log(
-            `Duration: ${Math.round((endTime - startTime) / 60000)} minutes`,
+            `Duration: ${Math.round((endTime - startTime) / 60000)} minutes`
           );
 
           // Add travel buffer to end time
           const endTimeWithBuffer = new Date(
-            endTime.getTime() + travelBuffer * 60000,
+            endTime.getTime() + travelBuffer * 60000
           );
 
           // Add the booking time range
@@ -404,7 +386,7 @@ export const getAvailableSlotsByDate = async (
           });
 
           console.log(
-            `Added booking range: ${startTime.toTimeString()} - ${endTimeWithBuffer.toTimeString()} (with ${travelBuffer}min buffer)`,
+            `Added booking range: ${startTime.toTimeString()} - ${endTimeWithBuffer.toTimeString()} (with ${travelBuffer}min buffer)`
           );
           activeBookings++;
         } catch (e) {
@@ -444,15 +426,15 @@ export const getAvailableSlotsByDate = async (
             : new Date(timeslot.end);
 
           console.log(
-            `Timeslot Booking: ${startTime.toTimeString()} - ${endTime.toTimeString()}`,
+            `Timeslot Booking: ${startTime.toTimeString()} - ${endTime.toTimeString()}`
           );
           console.log(
-            `Duration: ${Math.round((endTime - startTime) / 60000)} minutes`,
+            `Duration: ${Math.round((endTime - startTime) / 60000)} minutes`
           );
 
           // Add travel buffer to end time
           const endTimeWithBuffer = new Date(
-            endTime.getTime() + travelBuffer * 60000,
+            endTime.getTime() + travelBuffer * 60000
           );
 
           // Add the booking time range
@@ -462,7 +444,7 @@ export const getAvailableSlotsByDate = async (
           });
 
           console.log(
-            `Added timeslot booking range: ${startTime.toTimeString()} - ${endTimeWithBuffer.toTimeString()} (with ${travelBuffer}min buffer)`,
+            `Added timeslot booking range: ${startTime.toTimeString()} - ${endTimeWithBuffer.toTimeString()} (with ${travelBuffer}min buffer)`
           );
           activeBookings++;
         } catch (e) {
@@ -505,15 +487,15 @@ export const getAvailableSlotsByDate = async (
               : new Date(timeslot.end);
 
             console.log(
-              `Manual Booking: ${startTime.toTimeString()} - ${endTime.toTimeString()}`,
+              `Manual Booking: ${startTime.toTimeString()} - ${endTime.toTimeString()}`
             );
             console.log(
-              `Duration: ${Math.round((endTime - startTime) / 60000)} minutes`,
+              `Duration: ${Math.round((endTime - startTime) / 60000)} minutes`
             );
 
             // Add travel buffer to end time
             const endTimeWithBuffer = new Date(
-              endTime.getTime() + travelBuffer * 60000,
+              endTime.getTime() + travelBuffer * 60000
             );
 
             // Add the booking time range
@@ -523,7 +505,7 @@ export const getAvailableSlotsByDate = async (
             });
 
             console.log(
-              `Added manual booking range: ${startTime.toTimeString()} - ${endTimeWithBuffer.toTimeString()} (with ${travelBuffer}min buffer)`,
+              `Added manual booking range: ${startTime.toTimeString()} - ${endTimeWithBuffer.toTimeString()} (with ${travelBuffer}min buffer)`
             );
             activeBookings++;
           } catch (e) {
@@ -532,7 +514,7 @@ export const getAvailableSlotsByDate = async (
         } else {
           console.warn(
             `Manual booking ${doc.id} has invalid timeslot data:`,
-            timeslot,
+            timeslot
           );
         }
       });
@@ -544,8 +526,8 @@ export const getAvailableSlotsByDate = async (
         (r) =>
           `${r.start.toTimeString().substring(0, 5)} - ${r.end
             .toTimeString()
-            .substring(0, 5)}`,
-      ),
+            .substring(0, 5)}`
+      )
     );
 
     // Log booking statistics
@@ -574,23 +556,21 @@ export const getAvailableSlotsByDate = async (
           typeof timeSlot.start === "string"
             ? timeSlot.start
             : (timeSlot.start as unknown as Date).toTimeString?.()
-              ? (timeSlot.start as unknown as Date)
-                  .toTimeString()
-                  .substring(0, 5)
-              : "";
+            ? (timeSlot.start as unknown as Date).toTimeString().substring(0, 5)
+            : "";
 
         let endTime =
           typeof timeSlot.end === "string"
             ? timeSlot.end
             : (timeSlot.end as unknown as Date).toTimeString?.()
-              ? (timeSlot.end as unknown as Date).toTimeString().substring(0, 5)
-              : "";
+            ? (timeSlot.end as unknown as Date).toTimeString().substring(0, 5)
+            : "";
 
         // Log what we've extracted to debug the issue
         console.log(
           `Time slot processing for location ${JSON.stringify(
-            timeSlot.location,
-          )}:`,
+            timeSlot.location
+          )}:`
         );
         console.log(`- Original start: ${JSON.stringify(timeSlot.start)}`);
         console.log(`- Original end: ${JSON.stringify(timeSlot.end)}`);
@@ -612,7 +592,7 @@ export const getAvailableSlotsByDate = async (
               const minutes = start.getMinutes().toString().padStart(2, "0");
               startTime = `${hours}:${minutes}`;
               console.log(
-                `- Extracted startTime from getHours/getMinutes: "${startTime}"`,
+                `- Extracted startTime from getHours/getMinutes: "${startTime}"`
               );
             }
           } catch (err) {
@@ -634,7 +614,7 @@ export const getAvailableSlotsByDate = async (
               const minutes = end.getMinutes().toString().padStart(2, "0");
               endTime = `${hours}:${minutes}`;
               console.log(
-                `- Extracted endTime from getHours/getMinutes: "${endTime}"`,
+                `- Extracted endTime from getHours/getMinutes: "${endTime}"`
               );
             }
           } catch (err) {
@@ -714,7 +694,7 @@ export const getAvailableSlotsByDate = async (
           endTime,
           bookedRanges,
           15, // increment of 15 minutes
-          minTreatmentDuration, // Use minimum treatment duration for availability calculation
+          minTreatmentDuration // Use minimum treatment duration for availability calculation
         );
 
         return {
@@ -742,8 +722,8 @@ export const getAvailableSlotsByDate = async (
     console.log(
       `Final availability by location:`,
       availabilityByLocation.map(
-        (loc) => `Location: ${loc.availableSlots.length} available slots`,
-      ),
+        (loc) => `Location: ${loc.availableSlots.length} available slots`
+      )
     );
 
     return {
@@ -760,7 +740,7 @@ export const getAvailableSlotsByDate = async (
  * Sets the default weekly schedule for work hours
  */
 export async function setDefaultWorkHours(
-  weeklySchedule: WeeklySchedule,
+  weeklySchedule: WeeklySchedule
 ): Promise<void> {
   try {
     const defaultRef = doc(db, "defaultAvailability", "default_workhours");
@@ -800,7 +780,7 @@ export async function createWorkHoursOverride(
   date: Date,
   workhours: WorkHours,
   location: string,
-  eventId?: string,
+  eventId?: string
 ): Promise<string> {
   try {
     const override = {
@@ -812,7 +792,7 @@ export async function createWorkHoursOverride(
 
     const docRef = await addDoc(
       collection(db, "availibilityOverrides"),
-      override,
+      override
     );
     console.log("✅ Work hours override created with ID:", docRef.id);
     return docRef.id;
@@ -827,13 +807,13 @@ export async function createWorkHoursOverride(
  */
 export async function getWorkHoursOverrides(
   startDate: Date,
-  endDate: Date,
+  endDate: Date
 ): Promise<(OverrideData & { id: string; date: Date })[]> {
   try {
     const overridesQuery = query(
       collection(db, "availibilityOverrides"),
       where("date", ">=", Timestamp.fromDate(startDate)),
-      where("date", "<=", Timestamp.fromDate(endDate)),
+      where("date", "<=", Timestamp.fromDate(endDate))
     );
 
     const snapshot = await getDocs(overridesQuery);
@@ -852,7 +832,7 @@ export async function getWorkHoursOverrides(
  * Deletes a specific override by ID
  */
 export async function deleteWorkHoursOverride(
-  overrideId: string,
+  overrideId: string
 ): Promise<void> {
   try {
     const overrideRef = doc(db, "availibilityOverrides", overrideId);
@@ -868,14 +848,14 @@ export async function deleteWorkHoursOverride(
  * Retrieves the override work hours for a specific date
  */
 export async function getOverrideWorkHours(
-  date: string,
+  date: string
 ): Promise<OverrideData | null> {
   try {
     const { startOfDay, endOfDay } = getOsloDayBounds(date);
     const overrideQuery = query(
       collection(db, "availibilityOverrides"),
       where("date", ">=", Timestamp.fromDate(startOfDay)),
-      where("date", "<", Timestamp.fromDate(endOfDay)),
+      where("date", "<", Timestamp.fromDate(endOfDay))
     );
     const overrideSnapshot = await getDocs(overrideQuery);
 
@@ -895,7 +875,7 @@ export async function getOverrideWorkHours(
  */
 export async function setOverrideWorkHours(
   date: string,
-  overrideData: OverrideData,
+  overrideData: OverrideData
 ): Promise<void> {
   try {
     const { startOfDay } = getOsloDayBounds(date);
@@ -906,7 +886,7 @@ export async function setOverrideWorkHours(
         ...overrideData,
         date: Timestamp.fromDate(startOfDay),
       },
-      { merge: true },
+      { merge: true }
     );
     console.log("✅ Override work hours set successfully for", date);
   } catch (error) {

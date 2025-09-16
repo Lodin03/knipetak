@@ -61,7 +61,9 @@ function PrivacyPage() {
             Vi behandler dine personopplysninger for følgende formål:
           </p>
           <ul className="privacy-page__list">
-            <li>Å administrere dine bookinger og gi deg best mulig behandling</li>
+            <li>
+              Å administrere dine bookinger og gi deg best mulig behandling
+            </li>
             <li>Å kommunisere med deg om dine timer og behandlinger</li>
             <li>Å sende deg relevant informasjon om våre tjenester</li>
             <li>Åforbedre våre tjenester og nettside</li>
@@ -92,13 +94,24 @@ function PrivacyPage() {
             6. Lagring og sikkerhet
           </h2>
           <p className="privacy-page__text">
-          Vi oppbevarer dine personopplysninger så lenge det er nødvendig for å oppfylle formålene beskrevet ovenfor, eller så lenge det er påkrevd av gjeldende lovgivning. For helseopplysninger følger vi helsepersonellovens krav om oppbevaring av pasientjournaler.
+            Vi oppbevarer dine personopplysninger så lenge det er nødvendig for
+            å oppfylle formålene beskrevet ovenfor, eller så lenge det er
+            påkrevd av gjeldende lovgivning. For helseopplysninger følger vi
+            helsepersonellovens krav om oppbevaring av pasientjournaler.
           </p>
           <p className="privacy-page__text">
-          Vi bruker Google Firebase som teknisk plattform for autentisering, datalagring og drift av tjenesten. Personopplysninger lagres i Firebase Authentication, Firestore Database og Firebase Storage, og all data behandles i tråd med Googles sikkerhets- og personvernstandarder. 
+            Vi bruker Google Firebase som teknisk plattform for autentisering,
+            datalagring og drift av tjenesten. Personopplysninger lagres i
+            Firebase Authentication, Firestore Database og Firebase Storage, og
+            all data behandles i tråd med Googles sikkerhets- og
+            personvernstandarder.
           </p>
           <p className="privacy-page__text">
-          Vi har implementert både tekniske og organisatoriske sikkerhetstiltak for å beskytte dine personopplysninger mot uautorisert tilgang, tap eller endring. Kun autorisert personell har tilgang til helseopplysninger, og databehandlingen skjer innenfor rammen av inngåtte databehandleravtaler og GDPR-regelverket.
+            Vi har implementert både tekniske og organisatoriske
+            sikkerhetstiltak for å beskytte dine personopplysninger mot
+            uautorisert tilgang, tap eller endring. Kun autorisert personell har
+            tilgang til helseopplysninger, og databehandlingen skjer innenfor
+            rammen av inngåtte databehandleravtaler og GDPR-regelverket.
           </p>
         </section>
 
@@ -132,20 +145,60 @@ function PrivacyPage() {
             Som bruker av våre tjenester har du følgende rettigheter:
           </p>
           <ul className="privacy-page__list">
-            <li>Rett til innsyn i dine personopplysninger</li>
-            <li>Rett til å korrigere uriktige opplysninger</li>
             <li>
-              Rett til å få opplysninger slettet (med unntak av lovpålagte
+              <strong>Rett til innsyn:</strong> Du kan se alle
+              personopplysninger vi har om deg
+            </li>
+            <li>
+              <strong>Rett til korrigering:</strong> Du kan be oss rette
+              uriktige opplysninger
+            </li>
+            <li>
+              <strong>Rett til sletting:</strong> Du kan be om å få
+              opplysningene dine slettet (med unntak av lovpålagte
               journalopplysninger)
             </li>
-            <li>Rett til å begrense behandlingen</li>
-            <li>Rett til dataportabilitet</li>
-            <li>Rett til å trekke tilbake samtykke</li>
-            <li>Rett til å klage til Datatilsynet</li>
+            <li>
+              <strong>Rett til begrensning:</strong> Du kan be oss begrense
+              behandlingen av dine opplysninger
+            </li>
+            <li>
+              <strong>Rett til dataportabilitet:</strong> Du kan få en kopi av
+              dine data i et strukturert format
+            </li>
+            <li>
+              <strong>Rett til å trekke tilbake samtykke:</strong> Du kan når
+              som helst trekke tilbake samtykket ditt
+            </li>
+            <li>
+              <strong>Rett til å klage:</strong> Du kan klage til Datatilsynet
+              hvis du mener vi behandler dine opplysninger feil
+            </li>
           </ul>
           <p className="privacy-page__text">
-            For å utøve dine rettigheter, vennligst kontakt oss på
-            post@knipetak.no.
+            <strong>Slik utøver du rettighetene dine:</strong>
+          </p>
+          <ul className="privacy-page__list">
+            <li>
+              <strong>Innsyn og eksport:</strong> Logg inn på din profil og bruk
+              "Eksporter mine data"-funksjonen
+            </li>
+            <li>
+              <strong>Sletting av konto:</strong> Logg inn og bruk "Slett min
+              konto"-funksjonen i profilinnstillingene
+            </li>
+            <li>
+              <strong>Endring av samtykke:</strong> Bruk samtykke-innstillingene
+              på nettsiden
+            </li>
+            <li>
+              <strong>Øvrige henvendelser:</strong> Kontakt oss på
+              post@knipetak.no
+            </li>
+          </ul>
+          <p className="privacy-page__text">
+            Vi vil svare på henvendelser om utøvelse av rettigheter innen 30
+            dager.
           </p>
         </section>
 
@@ -154,7 +207,12 @@ function PrivacyPage() {
             9. Cookies og sporingsteknologi
           </h2>
           <p className="privacy-page__text">
-          Per i dag benytter ikke nettsiden informasjonskapsler (cookies) til analyse, sporing eller markedsføringsformål. Kun funksjonell informasjon som er nødvendig for tjenestens drift (som brukerinnlogging via Firebase) lagres. Skulle dette endres i fremtiden, vil det innhentes eksplisitt samtykke i henhold til gjeldende lovverk.
+            Per i dag benytter ikke nettsiden informasjonskapsler (cookies) til
+            analyse, sporing eller markedsføringsformål. Kun funksjonell
+            informasjon som er nødvendig for tjenestens drift (som
+            brukerinnlogging via Firebase) lagres. Skulle dette endres i
+            fremtiden, vil det innhentes eksplisitt samtykke i henhold til
+            gjeldende lovverk.
           </p>
         </section>
 

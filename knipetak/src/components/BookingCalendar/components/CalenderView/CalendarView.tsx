@@ -393,16 +393,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     onMonthChange(currentMonth);
   }, []); // Empty dependency array means this runs once on mount
 
-  // Debug log for initialDataLoaded
+  // Auto-close loading spinner after timeout to prevent infinite loading
   useEffect(() => {
-    console.log("DEBUG: CalendarView initialDataLoaded =", initialDataLoaded);
-
     // Add a timeout to auto-close the loading spinner after a few seconds
     let loadingTimer: number | undefined = undefined;
 
     if (!initialDataLoaded) {
       loadingTimer = window.setTimeout(() => {
-        console.log("DEBUG: Auto-dismissing loading overlay after timeout");
         onMonthChange(currentMonth); // Force refresh of the current month
       }, 5000); // 5 seconds timeout
     }
