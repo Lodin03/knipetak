@@ -14,7 +14,8 @@
   color: white;
   position: relative;
   overflow: hidden;
-  height: 80vh;
+  min-height: 70vh;
+  align-items: center;
 }
 
 .treatments__hero::before {
@@ -69,11 +70,12 @@
 .treatments__hero-image {
   position: relative;
   z-index: 2;
-  height: 72.5%;
+  height: 100%;
   width: 100%;
   overflow: hidden;
   border-radius: 2rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-height: 520px;
 }
 
 .treatments__hero-image img {
@@ -83,6 +85,12 @@
   object-position: center;
   transition: transform 0.5s ease;
   border-radius: 2rem;
+}
+
+@media (hover: hover) {
+  .treatments__hero-image img:hover {
+    transform: scale(1.02);
+  }
 }
 
 /* Gallery Section */
@@ -386,6 +394,12 @@
   .treatments__gallery {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  /* On touch devices, always show overlay content */
+  .treatments__gallery-overlay {
+    transform: translateY(0);
+    padding: 1.5rem;
   }
 
   .treatments__categories {

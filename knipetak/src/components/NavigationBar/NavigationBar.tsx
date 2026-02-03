@@ -77,13 +77,13 @@ function NavigationBar() {
         >
           Hjem
         </Link>
-        <Link
-          to="/book"
-          className={isPending ? "link-pending" : ""}
-          onClick={() => setIsMenuOpen(false)}
-        >
-          Book Time
-        </Link>
+          {/* <Link
+            to="/book"
+            className={isPending ? "link-pending" : ""}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Book Time
+          </Link> */}
         <Link
           to="/behandlinger"
           className={isPending ? "link-pending" : ""}
@@ -131,6 +131,7 @@ function NavigationBar() {
             Profil
           </Link>
         )}
+        {/*
         {!user && (
           <Link
             to="/login"
@@ -140,6 +141,7 @@ function NavigationBar() {
             Logg inn
           </Link>
         )}
+        */}
       </div>
     </>
   );

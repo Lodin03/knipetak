@@ -3,7 +3,7 @@ import { TreatmentType } from "../../interfaces/treatment.interface";
 import { treatmentData } from "../../data/treatmentData";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import "./TreatmentsPage.css";
 import massasje_stol from "../../assets/images/massasje_stol.jpg";
 import massasje_bat from "../../assets/images/MassasjeBat.png";
@@ -21,8 +21,8 @@ function TreatmentsPage() {
     setActiveSection(activeSection === section ? null : section);
   };
 
-  const handleBookClick = () => {
-    navigate("/book");
+  const handleContactClick = () => {
+    navigate("/kontakt");
   };
 
   const isActive = activeSection !== null;
@@ -163,14 +163,14 @@ function TreatmentsPage() {
       <section className="treatments__cta">
         <div className="treatments__cta-content">
           <h2>Klar for en avslappende behandling?</h2>
-          <p>Book en time i dag og opplev forskjellen</p>
+          <p>Ta kontakt i dag, så finner vi en tid som passer</p>
           <button
             className="treatments__cta-button"
-            onClick={handleBookClick}
-            aria-label="Book Time"
+            onClick={handleContactClick}
+            aria-label="Kontakt oss"
           >
-            <FontAwesomeIcon icon={faCalendarCheck} className="cta-icon" />
-            <span>Book Time</span>
+            <FontAwesomeIcon icon={faEnvelope} className="cta-icon" />
+            <span>Kontakt oss</span>
           </button>
         </div>
       </section>

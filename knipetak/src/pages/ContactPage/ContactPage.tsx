@@ -3,8 +3,7 @@ import emailjs from "@emailjs/browser";
 import "./ContactPage.css";
 import { useAuth } from "@/context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane} from "@fortawesome/free-solid-svg-icons";
-import kontakt_oss from "../../assets/images/kontakt_oss.jpg";
+import { faPaperPlane, faEnvelope, faPhone } from "@fortawesome/free-solid-svg-icons";
 
 function ContactPage() {
   const { user } = useAuth();
@@ -21,7 +20,9 @@ function ContactPage() {
     }
   }, [user]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { id, value } = e.target;
     setError("");
     setSuccess("");
@@ -59,71 +60,99 @@ function ContactPage() {
 
   return (
     <div className="contact-container">
-      <div className="contact-hero">
-        <img 
-          src={kontakt_oss} 
-          alt="Kontakt oss" 
-          className="contact-hero__image"
-        />
-        <div className="contact-hero__overlay">
-          <h1>Kontakt Oss</h1>
+      <div className="contact-shell">
+        <header className="contact-page-header">
+          <h1 className="contact-page-title">Kontakt</h1>
+          <p className="contact-page-subtitle">
+            Send oss en melding, så svarer vi så fort vi kan.
+          </p>
+        </header>
+
+        <div className="contact-grid">
+          <aside className="contact-card contact-card--info contact-box--animated">
+            <h2 className="contact-card-title">Kontaktinformasjon</h2>
+            <p className="contact-card-text">
+              Du kan også ringe eller sende e-post direkte.
+            </p>
+
+            <div className="contact-info">
+              <div className="contact-info__item">
+                <FontAwesomeIcon icon={faPhone} className="contact-info__icon" />
+                <span className="contact-info__text">+47 32 55 64 22</span>
+              </div>
+              <div className="contact-info__divider"></div>
+              <div className="contact-info__item">
+                <FontAwesomeIcon icon={faEnvelope} className="contact-info__icon" />
+                <span className="contact-info__text">Post@Knipetak.no</span>
+              </div>
+            </div>
+          </aside>
+
+          <section className="contact-card contact-card--form contact-box--animated">
+            <h2 className="contact-card-title">Send melding</h2>
+
+            {error && <div className="error-message">{error}</div>}
+            {success && <div className="success-message">{success}</div>}
+
+            <form onSubmit={handleSubmit} className="contact-form">
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">
+                  E-post
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="navn@epost.no"
+                  required
+                  disabled={!!user || isLoading}
+                />
+                {user && (
+                  <p className="form-hint">
+                    E-post er hentet fra profilen din.
+                  </p>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="message" className="form-label">
+                  Beskjed
+                </label>
+                <textarea
+                  id="message"
+                  value={message}
+                  onChange={handleInputChange}
+                  className="form-input form-input--tall"
+                  placeholder="Skriv meldingen din her..."
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="submit-button submit-button--animated"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span>Sender</span>
+                    <span className="loading-spinner" />
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faPaperPlane} />
+                    <span>Send</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </section>
         </div>
-      </div>
-      
-      <div className="contact-box">
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
-
-        <div className="contact-info">
-          <p className="contact-info__text">Tlf: +47 32 55 64 22</p>
-          <div className="contact-info__divider"></div>
-          <p className="contact-info__text">Epost: Post@Knipetak.no</p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">E-post</label>
-            <textarea
-              id="email"
-              value={email}
-              onChange={handleInputChange}
-              className="form-input form-input--short"
-              placeholder="Skriv e-postadressen din"
-              required
-              disabled={!!user || isLoading} // disables only if logged in or loading
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="message">Beskjed</label>
-            <textarea
-              id="message"
-              value={message}
-              onChange={handleInputChange}
-              className="form-input form-input--tall"
-              placeholder="Skriv meldingen din her"
-              required
-              disabled={isLoading}
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <span>Sending...</span>
-              </>
-            ) : (
-              <>
-                <FontAwesomeIcon icon={faPaperPlane} />
-                <span>Send Beskjed</span>
-              </>
-            )}
-          </button>
-        </form>
       </div>
     </div>
   );
