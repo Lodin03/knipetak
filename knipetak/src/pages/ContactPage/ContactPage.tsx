@@ -13,6 +13,11 @@ function ContactPage() {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Scroll to top on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Update email when user changes (e.g., after login)
   useEffect(() => {
     if (user?.email) {

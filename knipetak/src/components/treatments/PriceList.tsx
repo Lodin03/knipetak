@@ -1,6 +1,3 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import CTAButton from "@/components/CTAButton/CTAButton";
 import "./PriceList.css";
 
 const prices = [

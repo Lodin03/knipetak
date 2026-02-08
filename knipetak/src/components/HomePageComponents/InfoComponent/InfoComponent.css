@@ -294,8 +294,18 @@
     font-size: 2.25rem;
   }
 
+  .benefit-box {
+    border-top: none;
+    background: #ffffff;
+  }
+
   .benefit-box h3 {
     font-size: 1.25rem;
+  }
+
+  .treatment-type {
+    border-top: none;
+    background: #ffffff;
   }
 
   .treatment-type h4 {
@@ -329,6 +339,8 @@
 
   .benefit-box {
     padding: 1.5rem;
+    border-top: none;
+    background: #ffffff;
   }
 
   .benefit-icon {
@@ -345,6 +357,8 @@
 
   .treatment-type {
     padding: 1.5rem;
+    border-top: none;
+    background: #ffffff;
   }
 
   .treatment-type h4 {
