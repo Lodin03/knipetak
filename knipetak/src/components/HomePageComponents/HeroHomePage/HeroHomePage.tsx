@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
+import CTAButton from "@/components/CTAButton/CTAButton";
 import "./HeroHomePage.css";
 
 const HeroHomePage: React.FC = () => {
@@ -16,10 +16,9 @@ const HeroHomePage: React.FC = () => {
           <p className="hero-subtitle">
             Profesjonell muskelterapi der du er - hjemme eller på jobb
           </p>
-          <Link to="/book" className="hero-button">
-            <FontAwesomeIcon icon={faCalendarCheck} className="hero-icon" />
+          <CTAButton to="/kontakt" icon={faCalendarCheck}>
             Book Time
-          </Link>
+          </CTAButton>
         </div>
       </div>
     </div>

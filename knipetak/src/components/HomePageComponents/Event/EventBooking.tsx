@@ -1,17 +1,10 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers } from "@fortawesome/free-solid-svg-icons";
-import HomeScreenSlider from "../HomeScreenSlider/HomeScreenSlider";
+import { faUsers, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import CTAButton from "@/components/CTAButton/CTAButton";
 import "./EventBooking.css";
 
 const EventBooking: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleContactClick = () => {
-    navigate("/kontakt");
-  };
-
   return (
     <div className="home-event-section">
       <div className="event-content">
@@ -25,19 +18,12 @@ const EventBooking: React.FC = () => {
               vår. Dersom det ønskes å bestilles for noe mer eller til spesielle
               eventer, kan dere kontakte meg her:
             </p>
-            <button
-              className="action-button contact-button"
-              onClick={handleContactClick}
-              aria-label="Gå til kontakt"
-            >
+            <CTAButton to="/kontakt" icon={faEnvelope}>
               Kontakt Helene
-            </button>
+            </CTAButton>
           </div>
         </div>
 
-        <div className="event-slider">
-          <HomeScreenSlider />
-        </div>
       </div>
     </div>
   );

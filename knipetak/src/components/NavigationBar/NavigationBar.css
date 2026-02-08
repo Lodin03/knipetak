@@ -67,8 +67,10 @@
 .navLinks a {
   text-decoration: none;
   color: white;
-  font-weight: 500;
-  font-size: 1.2rem;
+  font-family: "Aleo", serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
   transition: all 0.3s ease;
   position: relative;
 }

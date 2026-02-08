@@ -1,7 +1,10 @@
+/* Hero Section - Minimalistic Design */
+
 .hero-container {
   position: relative;
   height: 75vh;
   width: 100%;
+  min-height: 500px;
 }
 
 .hero-background {
@@ -33,96 +36,166 @@
 
 .hero-text-container {
   text-align: center;
-  padding: 0 1rem;
+  padding: 0 2rem;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hero-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: white;
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: #ffffff;
   margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
 .hero-divider {
-  width: 6rem;
-  height: 2px;
-  background-color: white;
-  margin: 0 auto 1.5rem auto;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #70bac6 0%, #178192 100%);
+  margin: 0 auto 1.75rem auto;
+  border-radius: 2px;
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
-  color: white;
-  margin-bottom: 2rem;
-  max-width: 42rem;
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: #ffffff;
+  margin-bottom: 2.5rem;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.6;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .hero-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
-  background-color: #2b2c2d;
-  color: rgb(236, 235, 235);
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #178192 0%, #126570 100%);
+  color: #ffffff;
   padding: 1rem 2.5rem;
-  border-radius: 4rem;
-  font-size: 1.2rem;
-  font-weight: 600;
+  border-radius: 50px;
+  font-size: 1.125rem;
+  font-weight: 500;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(23, 129, 146, 0.35);
   position: relative;
   overflow: hidden;
-  flex-shrink: 0;
-  border: none;
-  outline: none;
+  border: 2px solid transparent;
+}
+
+.hero-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.hero-button:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .hero-button:hover {
-  transform: translateY(-0.25rem);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  background-color: rgb(236, 235, 235);
-  color: #2b2c2d;
-  border: none;
-  outline: none;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(23, 129, 146, 0.45);
+  background: linear-gradient(135deg, #1a94a8 0%, #157585 100%);
 }
 
 .hero-button:active {
   transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive styles */
-@media (min-width: 768px) {
-  .hero-title {
-    font-size: 3rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .hero-title {
-    font-size: 3.75rem;
-  }
+  box-shadow: 0 4px 16px rgba(23, 129, 146, 0.35);
 }
 
 .hero-icon {
-  font-size: 1.3rem;
-  animation: pulse 2s infinite;
+  font-size: 1.25rem;
+  position: relative;
+  z-index: 1;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 2.75rem;
   }
-  50% {
-    transform: scale(1.1);
+
+  .hero-subtitle {
+    font-size: 1.2rem;
   }
-  100% {
-    transform: scale(1);
+}
+
+@media (max-width: 768px) {
+  .hero-container {
+    height: 65vh;
+    min-height: 450px;
+  }
+
+  .hero-text-container {
+    padding: 0 1.5rem;
+  }
+
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-divider {
+    width: 60px;
+    height: 2px;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-button {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+  }
+
+  .hero-icon {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-container {
+    height: 60vh;
+    min-height: 400px;
+  }
+
+  .hero-text-container {
+    padding: 0 1rem;
+  }
+
+  .hero-title {
+    font-size: 1.85rem;
+  }
+
+  .hero-divider {
+    width: 50px;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-button {
+    padding: 0.75rem 1.75rem;
+    font-size: 0.95rem;
   }
 }
