@@ -18,6 +18,10 @@ const EventBooking: React.FC = () => {
               vår. Dersom det ønskes å bestilles for noe mer eller til spesielle
               eventer, kan dere kontakte meg her:
             </p>
+            <p style={{ marginTop: '1rem', fontStyle: 'italic' }}>
+              Helene har vært med på flere spennende eventer som Besseggløpet, 
+              Finseregatta, Fjellkjør og Bluescruise på Havila.
+            </p>
             <CTAButton to="/kontakt" icon={faEnvelope}>
               Kontakt Helene
             </CTAButton>

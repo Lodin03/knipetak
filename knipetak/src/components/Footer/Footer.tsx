@@ -15,17 +15,17 @@ function Footer() {
         {/* Logo Section */}
         <div className="footer-section">
           <img src={logo} alt="Knipetak Logo" className="footer-logo" />
-          <p>Bergens lokale muskelterapaut på hjul</p>
+          <p>Bergens lokale muskelterapeut på hjul</p>
         </div>
 
         {/* Contact Section */}
         <div className="footer-section">
           <h4>Kontakt Oss</h4>
-          <a href="mailto:post@knipetak.no" className="footer-link">
-            <FontAwesomeIcon icon={faEnvelope} /> post@knipetak.no
+          <a href="mailto:helene@knipetak.no" className="footer-link">
+            <FontAwesomeIcon icon={faEnvelope} /> helene@knipetak.no
           </a>
           <a href="tel:+4747474747" className="footer-link">
-            <FontAwesomeIcon icon={faPhone} /> +47 474 74 747
+            <FontAwesomeIcon icon={faPhone} /> +47 902 75 748
           </a>
         </div>
 

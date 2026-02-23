@@ -82,7 +82,7 @@ const DeleteAccount: React.FC = () => {
         );
       } else {
         alert(
-          "Det oppsto en feil ved sletting av kontoen. Vennligst kontakt oss på post@knipetak.no for hjelp."
+          "Det oppsto en feil ved sletting av kontoen. Vennligst kontakt oss på helene@knipetak.no for hjelp."
         );
       }
 
@@ -139,7 +139,7 @@ const DeleteAccount: React.FC = () => {
                 <ul>
                   <li>
                     <strong>Midlertidig deaktivering:</strong> Kontakt oss på
-                    post@knipetak.no
+                    helene@knipetak.no
                   </li>
                   <li>
                     <strong>Dataeksport:</strong> Last ned dine data før
@@ -263,7 +263,7 @@ const DeleteAccount: React.FC = () => {
       <div className="delete-account__contact">
         <p>
           <strong>Trenger du hjelp?</strong> Kontakt oss på{" "}
-          <a href="mailto:post@knipetak.no">post@knipetak.no</a> før du sletter
+          <a href="mailto:helene@knipetak.no">helene@knipetak.no</a> før du sletter
           kontoen.
         </p>
       </div>

@@ -83,12 +83,12 @@ function ContactPage() {
             <div className="contact-info">
               <div className="contact-info__item">
                 <FontAwesomeIcon icon={faPhone} className="contact-info__icon" />
-                <span className="contact-info__text">+47 32 55 64 22</span>
+                <span className="contact-info__text">+47 902 75 748</span>
               </div>
               <div className="contact-info__divider"></div>
               <div className="contact-info__item">
                 <FontAwesomeIcon icon={faEnvelope} className="contact-info__icon" />
-                <span className="contact-info__text">Post@Knipetak.no</span>
+                <span className="contact-info__text">helene@knipetak.no</span>
               </div>
             </div>
           </aside>

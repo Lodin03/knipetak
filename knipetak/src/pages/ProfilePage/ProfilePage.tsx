@@ -669,7 +669,7 @@ const Profile: React.FC = () => {
                   kontakt oss på:
                 </p>
                 <p>
-                  <strong>E-post:</strong> post@knipetak.no
+                  <strong>E-post:</strong> helene@knipetak.no
                   <br />
                   <strong>Telefon:</strong> +47 902 75 748
                   <br />

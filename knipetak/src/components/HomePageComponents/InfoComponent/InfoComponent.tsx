@@ -21,9 +21,7 @@ const InfoComponent: React.FC = () => {
                 Mitt navn er Helene og er muskelterapeut.
               </p>
               <p className="additional-intro">
-                Jeg er tilgjengelig til å komme der hvor du er. Det vil derfor
-                si at jeg kan komme til deres bedrift eller deres hjem. Jeg har
-                både benk og stol med meg.
+                Jeg er tilgjengelig til å komme der hvor du er.
               </p>
             </div>
             <div className="intro-image">

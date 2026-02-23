@@ -29,7 +29,7 @@ function PrivacyPage() {
             oss på:
           </p>
           <p className="privacy-page__text">
-            E-post: post@knipetak.no
+            E-post: helene@knipetak.no
             <br />
             Telefon: +47 902 75 748
             <br />
@@ -193,7 +193,7 @@ function PrivacyPage() {
             </li>
             <li>
               <strong>Øvrige henvendelser:</strong> Kontakt oss på
-              post@knipetak.no
+              helene@knipetak.no
             </li>
           </ul>
           <p className="privacy-page__text">

@@ -10,7 +10,7 @@ const HeroHomePage: React.FC = () => {
       <div className="hero-overlay" />
       <div className="hero-content">
         <div className="hero-text-container">
-          <h1 className="hero-title">Knipetak - En muskelterapaut på hjul!</h1>
+          <h1 className="hero-title">Knipetak - En muskelterapeut på hjul!</h1>
           <div className="hero-divider" />
           <p className="hero-subtitle">
             Profesjonell muskelterapi der du er - hjemme eller på jobb

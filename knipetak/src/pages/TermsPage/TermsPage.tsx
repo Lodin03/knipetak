@@ -154,7 +154,7 @@ function TermsPage() {
           <p className="terms-page__text">
             For spørsmål om disse vilkårene, vennligst kontakt oss på:
             <br />
-            E-post: post@knipetak.no
+            E-post: helene@knipetak.no
             <br />
             Telefon: +47 474 74 747
           </p>
