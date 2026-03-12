@@ -19,11 +19,6 @@ const EventBooking: React.FC = () => {
               massasjeutstyr, og damene kommer én etter én for behandling. En hyggelig
               og avslappende måte å tilbringe kvelden sammen med venninner.
             </p>
-            <p style={{ marginTop: '1rem' }}>
-              Gruppebookinger kan gjøres som vanlige bookinger på booking siden
-              vår. Dersom det ønskes å bestilles for noe mer eller til spesielle
-              eventer, kan dere kontakte meg her:
-            </p>
             <p style={{ marginTop: '1rem', fontStyle: 'italic' }}>
               Helene har vært med på flere spennende eventer som Besseggløpet, 
               Finseregatta, Fjellkjør og Bluescruise på Havila.

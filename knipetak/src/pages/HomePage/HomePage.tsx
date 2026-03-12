@@ -3,7 +3,6 @@ import HeroHomePage from "../../components/HomePageComponents/HeroHomePage/HeroH
 import InfoComponent from "../../components/HomePageComponents/InfoComponent/InfoComponent";
 import RatingsComponent from "../../components/HomePageComponents/RatingsComponent/RatingsComponent";
 import "../HomePage/HomePage.css";
-import EventBooking from "@/components/HomePageComponents/Event/EventBooking";
 import CTABook from "@/components/HomePageComponents/InfoComponent/CTA-Book/Cta-Book";
 
 const HomePage: React.FC = () => {
@@ -12,7 +11,6 @@ const HomePage: React.FC = () => {
       <HeroHomePage />
       <div className="mainContentHomepage">
         <InfoComponent />
-        <EventBooking />
         <RatingsComponent />
         {/* Full width additional info section */}
         <div className="full-width-section">

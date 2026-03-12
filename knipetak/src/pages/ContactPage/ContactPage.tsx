@@ -7,6 +7,7 @@ import { faPaperPlane, faEnvelope, faPhone } from "@fortawesome/free-solid-svg-i
 
 function ContactPage() {
   const { user } = useAuth();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState(user?.email || "");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -32,6 +33,7 @@ function ContactPage() {
     setError("");
     setSuccess("");
 
+    if (id === "name") setName(value);
     if (id === "message") setMessage(value);
     if (id === "email" && !user) setEmail(value); // Only update if not logged in
   };
@@ -42,18 +44,20 @@ function ContactPage() {
 
     try {
       const templateParams = {
-        from_email: email,
-        message,
+        name: name,
+        email: email,
+        message: message,
       };
 
       await emailjs.send(
-        "service_b9we3th",
+        "service_8cu23dq",
         "template_lvwabq4",
         templateParams,
-        "m7Ls2T8S_jvw9YWD6",
+        "zpYAgcaUsRUPATaGB",
       );
 
       setSuccess("Meldingen din har blitt sendt!");
+      setName("");
       setMessage("");
     } catch (err) {
       console.error("Failed to send message:", err);
@@ -100,6 +104,23 @@ function ContactPage() {
             {success && <div className="success-message">{success}</div>}
 
             <form onSubmit={handleSubmit} className="contact-form">
+              <div className="form-group">
+                <label htmlFor="name" className="form-label">
+                  Navn
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  autoComplete="name"
+                  value={name}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Ditt navn"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+
               <div className="form-group">
                 <label htmlFor="email" className="form-label">
                   E-post
