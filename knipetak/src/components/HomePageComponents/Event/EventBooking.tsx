@@ -13,7 +13,13 @@ const EventBooking: React.FC = () => {
 
           <div className="booking-type">
             <FontAwesomeIcon icon={faUsers} className="booking-icon" />
+            <h3 style={{ marginBottom: '1rem', color: '#2c5f2d' }}>Klubbkveld for Damer</h3>
             <p>
+              Den mest populære gruppebehandlingen! Jeg kommer hjem til en av dere med
+              massasjeutstyr, og damene kommer én etter én for behandling. En hyggelig
+              og avslappende måte å tilbringe kvelden sammen med venninner.
+            </p>
+            <p style={{ marginTop: '1rem' }}>
               Gruppebookinger kan gjøres som vanlige bookinger på booking siden
               vår. Dersom det ønskes å bestilles for noe mer eller til spesielle
               eventer, kan dere kontakte meg her:

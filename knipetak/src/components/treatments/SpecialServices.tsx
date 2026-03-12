@@ -10,13 +10,13 @@ import "./SpecialServices.css";
 const services = [
   {
     icon: faCalendarAlt,
-    title: "Eventer",
-    description: "Jeg har deltatt på ulike eventer slik som Strikkehelgen i Myrkdalen, klubbkvelder for damer, og diverse utdrikningslag."
+    title: "Gruppebooking",
+    description: "Et eksempel er vår mest populære gruppebehandlingen. La oss kalle det klubbkveld for damer! Jeg kommer hjem til dere, og dere kommer én etter én for litt behandling. Perfekt for en hyggelig samling med venner."
   },
   {
     icon: faUserGroup,
-    title: "Gruppebooking",
-    description: "Ønsker du å gjennomføre et annerledes arrangement som gir en unik opplevelse? Perfekt for vennegjenger, team-building eller spesielle anledninger."
+    title: "Eventer",
+    description: "Jeg har deltatt på ulike eventer slik som Strikkehelgen i Myrkdalen, Besseggløpet, Finseregatta, Fjellkjør, Bluescruise på Havila og diverse utdrikningslag. Perfekt for team-building eller spesielle anledninger."
   },
   {
     icon: faGift,
